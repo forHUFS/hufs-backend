@@ -33,7 +33,7 @@ module.exports = class Store extends Sequelize.Model{
 
     }
     static associate(db){
-        db.Store.belongsTo(db.StoreSubCategory, {foreignKey: 'storesubcategory_id', targetKey: 'id'});
-        db.Store.hasMany(db.StoreReview, { foreignKey: 'store_id', sourceKey: 'id'});
+        db.Store.belongsTo(db.StoreSubCategory, {foreignKey: 'storeSubCategoryId', targetKey: 'id'});
+        db.Store.hasMany(db.StoreReview, { foreignKey: 'storeId', sourceKey: 'id'});
     }
 }

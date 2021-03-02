@@ -41,7 +41,7 @@ exports.addPost = async (req,res,next)=> {
         const post = await Post.create({
             title: req.body.title,
             content: req.body.content,
-            board_id: req.body.boardid,
+            boardId: req.body.boardId,
         }, {
             transaction: t,
         });
@@ -53,7 +53,7 @@ exports.addPost = async (req,res,next)=> {
                     url.map(img => {
                         return Image.create({
                             url: img,
-                            post_id: post.id
+                            postId: post.id
                         }, {
                             transaction: t,
                         })
@@ -63,7 +63,7 @@ exports.addPost = async (req,res,next)=> {
         } else if (url && typeof url === 'string') {
             await Image.create( {
                 url: url,
-                post_id: post.id
+                postId: post.id
             }, {
                 transaction: t,
             });
@@ -86,7 +86,7 @@ exports.modifyPost = async(req,res,next)=> {
             transaction: t,
         });
         await Image.destroy({
-            where: { post_id: req.body.id },
+            where: { postId: req.body.id },
             transaction: t,
         });
         const url = req.body.url
@@ -96,7 +96,7 @@ exports.modifyPost = async(req,res,next)=> {
                     url.map(img => {
                         return Image.create({
                             url: img,
-                            post_id: req.body.id
+                            postId: req.body.id
                         }, {
                             transaction: t
                         })
@@ -105,7 +105,7 @@ exports.modifyPost = async(req,res,next)=> {
         } else if (url && typeof url === 'string') {
             await Image.create({
                 url: url,
-                post_id: req.body.id
+                postId: req.body.id
             }, {
                 transaction: t
             });
@@ -141,7 +141,7 @@ exports.readPost = async(req,res,next)=>{
 exports.deletePost = async(req,res,next)=>{
     try {
             const img = await Image.findAll({
-                where: { post_id: req.params.id, },
+                where: { postId: req.params.id, },
             });
             if (img) {
                 console.log(img);

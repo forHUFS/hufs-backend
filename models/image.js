@@ -20,6 +20,6 @@ module.exports = class Image extends Sequelize.Model{
 
     }
     static associate(db){
-        db.Image.belongsTo(db.Post, { onDelete: 'CASCADE', foreignKey: 'post_id', targetKey: 'id' });
+        db.Image.belongsTo(db.Post, { onDelete: 'CASCADE', foreignKey: 'postId', targetKey: 'id' });
     }
 }

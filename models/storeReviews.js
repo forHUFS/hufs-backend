@@ -32,6 +32,6 @@ module.exports = class StoreReview extends Sequelize.Model{
 
     }
     static associate(db){
-        db.StoreReview.belongsTo(db.Store, { onDelete: 'CASCADE', foreignKey: 'store_id', targetKey:'id'});
+        db.StoreReview.belongsTo(db.Store, { onDelete: 'CASCADE', foreignKey: 'storeId', targetKey:'id'});
     }
 }

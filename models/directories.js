@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 
-module.exports = class Directory extends Sequelize.Model{
+module.exports = class Directory extends Sequelize.Model {
     static init(sequelize) {
         return super.init({
             name: {
@@ -21,6 +21,9 @@ module.exports = class Directory extends Sequelize.Model{
 
 
     }
-    static associate(db){
+
+    static associate(db) {
     }
 }
+
+

@@ -32,13 +32,13 @@ exports.searchPosts = async (req, res, next)=> {
                 order: [['createdAt', 'DESC']]
 
             });
-
-            let result = []
             if (post.rows.length) {
                 res.status(200).json(this.paging(post, num));
             } else {
                 res.status(400).json({message: "검색 결과가 존재하지 않습니다"});
             }
+
+
         } else if (req.query.option === 'title') {
 
             const post = await Post.findAndCountAll({
@@ -49,12 +49,12 @@ exports.searchPosts = async (req, res, next)=> {
                 order: [['createdAt', 'DESC']]
 
             });
-            let result = []
             if (post.rows.length) {
                 res.status(200).json(this.paging(post, num));
             } else {
                 res.status(400).json({message: "검색 결과가 존재하지 않습니다"});
             }
+
 
         } else if (req.query.option === 'content') {
             const post = await Post.findAndCountAll({
@@ -65,7 +65,6 @@ exports.searchPosts = async (req, res, next)=> {
                 order: [['createdAt', 'DESC']]
 
             });
-            let result = []
             if (post.rows.length) {
                 res.status(200).json(this.paging(post, num));
             } else {
@@ -75,6 +74,8 @@ exports.searchPosts = async (req, res, next)=> {
         } else {
             res.status(400).json({message: "잘못된 요청입니다"});
         }
+
+
 
     } catch (err) {
         console.error(err);

@@ -21,7 +21,7 @@ module.exports = class Board extends Sequelize.Model{
 
     }
     static associate(db){
-        db.Board.hasMany(db.Post, { foreignKey: 'board_id', sourceKey: 'id'});
-        db.Board.belongsTo(db.Category, { foreignKey: 'category_id', targetKey: 'id'});
+        db.Board.hasMany(db.Post, { foreignKey: 'boardId', sourceKey: 'id'});
+        db.Board.belongsTo(db.Category, { foreignKey: 'categoryId', targetKey: 'id'});
     }
 }
