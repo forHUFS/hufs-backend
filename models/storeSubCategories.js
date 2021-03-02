@@ -21,7 +21,7 @@ module.exports = class StoreSubCategory extends Sequelize.Model{
 
     }
     static associate(db){
-        db.StoreSubCategory.belongsTo(db.StoreCategory,{foreignKey:'storecategory_id', targetKey: 'id'});
-        db.StoreSubCategory.hasMany(db.Store, {foreignKey: 'storesubcategory_id', sourceKey: 'id'});
+        db.StoreSubCategory.belongsTo(db.StoreCategory,{foreignKey:'storeCategoryId', targetKey: 'id'});
+        db.StoreSubCategory.hasMany(db.Store, {foreignKey: 'storeSubCategoryId', sourceKey: 'id'});
     }
 }

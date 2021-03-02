@@ -26,6 +26,6 @@ module.exports = class Reply extends Sequelize.Model{
 
     }
     static associate(db){
-        db.Reply.belongsTo(db.Post, { onDelete: 'CASCADE', foreignKey: 'post_id', targetKey: 'id' });
+        db.Reply.belongsTo(db.Post, { onDelete: 'CASCADE', foreignKey: 'postId', targetKey: 'id' });
     }
 }

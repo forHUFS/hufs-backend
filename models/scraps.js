@@ -16,7 +16,7 @@ module.exports = class Scrap extends Sequelize.Model{
 
     }
     static associate(db){
-        db.Scrap.belongsTo(db.Directory, { onDelete: 'CASCADE', foreignKey:'directory_id', targetKey: 'id'});
-        db.Scrap.belongsTo(db.Post,{ onDelete: 'CASCADE', foreignKey: 'post_id', targetKey: 'id'});
+        db.Scrap.belongsTo(db.Directory, { onDelete: 'CASCADE', foreignKey:'directoryId', targetKey: 'id'});
+        db.Scrap.belongsTo(db.Post,{ onDelete: 'CASCADE', foreignKey: 'postId', targetKey: 'id'});
     }
 }
