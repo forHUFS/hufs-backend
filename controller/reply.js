@@ -4,12 +4,25 @@ const sequelize = require('../models').sequelize;
 
 exports.addReply = async(req,res,next)=> {
     try {
-        await Reply.create({
+        const reply = await Reply.create({
             content: req.body.content,
-            post_id: req.body.postid,
+            postId: req.body.postId,
         });
-        res.status(201).json({message: "댓글 작성 성공"});
+        res.status(201).json({message: "댓글 작성 성공",reply});
 
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+}
+exports.addReReply = async(req,res,next)=>{
+    try {
+        const reply = await Reply.create({
+            content: req.body.content,
+            parentId: req.body.parentId,
+            postId: req.body.postId,
+        });
+        res.status(201).json({message: "대댓글 작성 완료", reply});
     } catch (err) {
         console.error(err);
         next(err);

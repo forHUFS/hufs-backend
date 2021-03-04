@@ -1,9 +1,10 @@
 const express = require('express');
-const { addReply, deleteReply, modifyReply, addReplyLike, cancelReplyLike } = require('../controller/reply');
+const { addReply, addReReply, deleteReply, modifyReply, addReplyLike, cancelReplyLike } = require('../controller/reply');
 
 const router = express.Router();
 
-router.post('/', addReply);
+router.post('/add', addReply);
+router.post('/add/re', addReReply);
 router.put('/', modifyReply);
 router.delete('/:id', deleteReply);
 

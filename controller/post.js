@@ -123,7 +123,7 @@ exports.readPost = async(req,res,next)=>{
         console.log(req.params);
         const post = await Post.findOne({
             where: { id: req.params.id },
-            include: [{model: Reply}, {model: Image , attributes: ['url']}]
+            include: [{model: Reply}, {model: Image , attributes: ['id','url']}]
         });
         console.log(post);
         if (post) {
@@ -143,7 +143,7 @@ exports.deletePost = async(req,res,next)=>{
             const img = await Image.findAll({
                 where: { postId: req.params.id, },
             });
-            if (img) {
+            if (img.length) {
                 console.log(img);
                 const obj = [];
                 img.map(i => {
