@@ -1,0 +1,15 @@
+openapi: 3.0.0
+info:
+  version: '1.0.0'
+  title: "HUFS API Docs"
+  description: "한국외국어대학교 웹 페이지 프로젝트 API 문서"
+servers:
+  - description: "API TEST"
+  - url: "http://localhost:8004/"
+paths:
+  /post:
+    get:
+      summary: "게시글 조회"
+      responses:
+        '200':
+          description: "정상 조회 완료"
