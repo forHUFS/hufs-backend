@@ -1,8 +1,11 @@
 const Post = require('../models/posts');
 const Image = require('../models/image');
 const Reply = require('../models/replies');
+const Report = require('../models/reports');
+const User = require('../models/users');
 const { s3 }= require('../uploads/upload');
 const sequelize = require('../models').sequelize;
+
 
 exports.addLike = async (req,res,next) => {
     try {
@@ -120,7 +123,7 @@ exports.readPost = async(req,res,next)=>{
     try {
         console.log(req.params);
         const post = await Post.findOne({
-            where: { id: req.params.id },
+            where: { id: req.params.id, isBlocked: false },
             include: [{model: Reply}, {model: Image , attributes: ['id','url']}]
         });
         console.log(post);

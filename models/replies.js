@@ -11,6 +11,11 @@ module.exports = class Reply extends Sequelize.Model{
                 type: Sequelize.INTEGER.UNSIGNED,
                 allowNull: false,
                 defaultValue: 0
+            },
+            isBlocked: {
+                type: Sequelize.BOOLEAN,
+                allowNull: false,
+                defaultValue: false
             }
         }, {
             sequelize,

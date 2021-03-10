@@ -10,7 +10,7 @@ exports.readPosts = async (req,res,next)=>{
         let offset = (num - 1) * 10;
 
         const post = await Post.findAndCountAll({
-            where: { boardId: req.params.id },
+            where: { boardId: req.params.id, isBlocked: false },
             offset: offset,
             limit: 10,
             order:  [['createdAt', 'DESC']]
@@ -45,7 +45,8 @@ exports.searchPostsInBoard = async (req, res, next)=>{
                         [Op.or]: [
                             {title: {[Op.and]: key}},
                             {content: {[Op.and]: key}}],
-                        boardId: req.params.id
+                        boardId: req.params.id,
+                        isBlocked: false,
                     },
                     offset: offset,
                     limit: 10,
@@ -61,7 +62,7 @@ exports.searchPostsInBoard = async (req, res, next)=>{
             } else if (req.query.option === 'title') {
 
                 const post = await Post.findAndCountAll({
-                    where: { title: {[Op.and]: key}, boardId: req.params.id },
+                    where: { title: {[Op.and]: key}, boardId: req.params.id, isBlocked: false },
                     offset: offset,
                     limit: 10,
                     order: [['createdAt', 'DESC']]
@@ -76,7 +77,7 @@ exports.searchPostsInBoard = async (req, res, next)=>{
 
             } else if (req.query.option === 'content') {
                 const post = await Post.findAndCountAll({
-                    where: { content: {[Op.and]: key}, boardId: req.params.id },
+                    where: { content: {[Op.and]: key}, boardId: req.params.id, isBlocked: false },
                     offset: offset,
                     limit: 10,
                     order: [['createdAt', 'DESC']]
