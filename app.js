@@ -3,11 +3,13 @@ const morgan = require('morgan');
 const path = require('path');
 const dotenv = require('dotenv');
 const { sequelize } = require('./models');
+const swaggerUi   = require('swagger-ui-express');
+const YAML        = require('yamljs');
+const swaggerSpec = YAML.load(path.join(__dirname, 'swagger/swagger.yaml'))
 const mainRouter = require('./routes/main');
 const postRouter = require('./routes/post');
 const boardRouter = require('./routes/board');
 const replyRouter = require('./routes/reply');
-
 
 dotenv.config();
 
@@ -30,6 +32,8 @@ app.use('/post', postRouter);
 app.use('/board', boardRouter);
 app.use('/reply', replyRouter);
 app.use('/', mainRouter);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 
 app.use((req,res,next)=>{
     const error = new Error(`${req.method} ${req.url} 라우터가 없음`);
