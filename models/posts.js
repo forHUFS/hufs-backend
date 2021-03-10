@@ -15,6 +15,11 @@ module.exports = class Post extends Sequelize.Model{
                 type: Sequelize.INTEGER.UNSIGNED,
                 allowNull: false,
                 defaultValue: 0,
+            },
+            isBlocked: {
+                type: Sequelize.BOOLEAN,
+                allowNull: false,
+                defaultValue: false,
             }
         }, {
             sequelize,
@@ -33,5 +38,7 @@ module.exports = class Post extends Sequelize.Model{
         db.Post.belongsTo(db.Board, { foreignKey: 'boardId', targetKey: 'id'});
         db.Post.hasMany(db.Reply, { foreignKey: 'postId', sourceKey: 'id'});
         db.Post.hasMany(db.Image, { foreignKey: 'postId', sourceKey: 'id'});
+        db.Post.belongsTo(db.User, { foreignKey: 'userId', targetKey: 'id' });
+        db.Post.hasMany(db.Scrap, { foreignKey: 'postId', sourceKey: 'id' });
     }
 }

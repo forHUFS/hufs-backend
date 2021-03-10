@@ -24,7 +24,8 @@ exports.searchPosts = async (req, res, next)=> {
                 where: {
                     [Op.or]: [
                         {title: {[Op.and]: key}},
-                        {content: {[Op.and]: key}}]
+                        {content: {[Op.and]: key}}],
+                    isBlocked: false
                 },
                 include: [{model: Board, attributes: ['title']}],
                 offset: offset,
@@ -42,7 +43,7 @@ exports.searchPosts = async (req, res, next)=> {
         } else if (req.query.option === 'title') {
 
             const post = await Post.findAndCountAll({
-                where: { title: {[Op.and]: key}},
+                where: { title: {[Op.and]: key}, isBlocked: false },
                 include: [{model: Board, attributes: ['title']}],
                 offset: offset,
                 limit: 10,
@@ -58,7 +59,7 @@ exports.searchPosts = async (req, res, next)=> {
 
         } else if (req.query.option === 'content') {
             const post = await Post.findAndCountAll({
-                where: { content: {[Op.and]: key}},
+                where: { content: {[Op.and]: key}, isBlocked: false },
                 include: [{model: Board, attributes: ['title']}],
                 offset: offset,
                 limit: 10,

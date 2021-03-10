@@ -8,7 +8,7 @@ module.exports = class Scrap extends Sequelize.Model{
             timestamps: true,
             underscored: true,
             modelName: 'Scrap',
-            paranoid: true,
+            paranoid: false,
             charset: 'utf8',
             collate: 'utf8_general_ci',
         });
