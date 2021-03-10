@@ -31,5 +31,9 @@ module.exports = class Report extends Sequelize.Model{
 
 
     }
-
+    static associate(db){
+        db.Report.belongsTo(db.User, { foreignKey: 'userId', targetKey: 'id' });
+        // 신고를 한 사람의 아이디
+        // 신고를 당한 사람의 아이디는 post를 타고 확인할 수 있으므로 추가 X
+    }
 }

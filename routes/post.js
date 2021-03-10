@@ -19,6 +19,7 @@ router.post('/deleteimg', deleteImg );
 router.get('/:id/addlike', addLike);
 router.get('/:id/dellike', delLike);
 
+
 router.get('/:id', readPost);
 router.delete('/:id', deletePost);
 
