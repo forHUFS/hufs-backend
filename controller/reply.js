@@ -1,4 +1,4 @@
-const Reply = require('../models/repiles');
+const Reply = require('../models/replies');
 const sequelize = require('../models').sequelize;
 
 

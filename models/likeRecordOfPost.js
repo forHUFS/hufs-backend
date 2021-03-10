@@ -1,13 +1,13 @@
 const Sequelize = require('sequelize');
 
-module.exports = class Scrap extends Sequelize.Model{
+module.exports = class LikeRecordOfPost extends Sequelize.Model{
     static init(sequelize) {
         return super.init({
         }, {
             sequelize,
             timestamps: true,
             underscored: true,
-            modelName: 'Scrap',
+            modelName: 'LikeRecordOfPost',
             paranoid: false,
             charset: 'utf8',
             collate: 'utf8_general_ci',
@@ -16,7 +16,7 @@ module.exports = class Scrap extends Sequelize.Model{
 
     }
     static associate(db){
-        db.Scrap.belongsTo(db.Directory, { onDelete: 'CASCADE', foreignKey:'directoryId', targetKey: 'id'});
-        db.Scrap.belongsTo(db.Post,{ onDelete: 'CASCADE', foreignKey: 'postId', targetKey: 'id'});
+        db.LikeRecordOfPost.belongsTo(db.Post, { onDelete: 'CASCADE', foreignKey:'postId', targetKey: 'id'});
+        db.LikeRecordOfPost.belongsTo(db.User,{ onDelete: 'CASCADE', foreignKey: 'userId', targetKey: 'id'});
     }
 }

@@ -23,6 +23,8 @@ module.exports = class Directory extends Sequelize.Model {
     }
 
     static associate(db) {
+        db.Directory.belongsTo(db.User, { onDelete: 'CASCADE', foreignKey: "userId", targetKey: "id" });
+        db.Directory.hasMany(db.Scrap, { onDelete: 'CASCADE', foreignKey: "directoryId", sourceKey: "id" });
     }
 }
 

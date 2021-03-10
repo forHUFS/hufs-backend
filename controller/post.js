@@ -1,10 +1,8 @@
 const Post = require('../models/posts');
 const Image = require('../models/image');
-const Reply = require('../models/repiles');
+const Reply = require('../models/replies');
 const { s3 }= require('../uploads/upload');
 const sequelize = require('../models').sequelize;
-
-
 
 exports.addLike = async (req,res,next) => {
     try {

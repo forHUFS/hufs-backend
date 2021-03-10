@@ -6,7 +6,6 @@ module.exports = class StoreSubCategory extends Sequelize.Model{
             name: {
                 type: Sequelize.STRING(16),
                 allowNull: false,
-                defaultValue: '기타'
             }
         }, {
             sequelize,
@@ -21,7 +20,7 @@ module.exports = class StoreSubCategory extends Sequelize.Model{
 
     }
     static associate(db){
-        db.StoreSubCategory.belongsTo(db.StoreCategory,{foreignKey:'storeCategoryId', targetKey: 'id'});
-        db.StoreSubCategory.hasMany(db.Store, {foreignKey: 'storeSubCategoryId', sourceKey: 'id'});
+        db.StoreSubCategory.belongsTo(db.StoreCategory,{ foreignKey:'storeCategoryId', targetKey: 'id' });
+        db.StoreSubCategory.hasMany(db.Store, { foreignKey: 'storeSubCategoryId', sourceKey: 'id' });
     }
 }
