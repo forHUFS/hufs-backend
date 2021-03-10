@@ -35,7 +35,5 @@ module.exports = class Post extends Sequelize.Model{
         db.Post.hasMany(db.Image, { foreignKey: 'postId', sourceKey: 'id'});
         db.Post.belongsTo(db.User, { foreignKey: 'userId', targetKey: 'id' });
         db.Post.hasMany(db.Scrap, { foreignKey: 'postId', sourceKey: 'id' });
-        db.Post.hasMany(db.LikeRecordOfPost, { foreignKey: 'postId', sourceKey: 'id' });
-        db.Post.hasMany(db.LikeRecordOfReply, { foreignKey: 'postId', sourceKey: 'id' });
     }
 }
