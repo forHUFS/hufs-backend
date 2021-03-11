@@ -8,9 +8,14 @@ module.exports = class User extends Sequelize.Model{
                 allowNull: false,
             },
             email: {
-                type    : Sequelize.STRING(16),
+                type    : Sequelize.STRING(64),
                 allowNull: false,
                 unique   : true,
+            },
+            webMail: {
+                type     : Sequelize.STRING(64),
+                allowNull: false,
+                unique   : true
             },
             nickname: {
                 type     : Sequelize.STRING(32),
@@ -27,13 +32,13 @@ module.exports = class User extends Sequelize.Model{
                 allowNull: true,
             },
             type: {
-                type: Sequelize.ENUM("before", "user", "block-user", "graduated-user" ,"admin"),
+                type: Sequelize.ENUM('before', 'user', 'suspension', 'graduated', 'admin'),
                 allowNull: false,
                 defaultValue: "before",
             },
             mainMajor: {
                 type: Sequelize.STRING(16),
-                allowNull: false,
+                allowNull: true,
             },
             secondMajor: {
                 type: Sequelize.STRING(16),
@@ -51,17 +56,17 @@ module.exports = class User extends Sequelize.Model{
             sequelize,
             timestamps: true,
             underscored: true,
-            modelName: "User",
-            tableName: "users",
+            modelName: 'User',
+            tableName: 'users',
             paranoid: true,
-            charset: "utf8mb4",
-            collate: "utf8mb4_general_ci",
+            charset: 'utf8mb4',
+            collate: 'utf8mb4_general_ci',
         });
 
 
     }
     static associate(db){
-        db.User.hasOne(db.Token, { foreignKey: "userId", sourceKey: "id"});
+        db.User.hasOne(db.Token, { foreignKey: 'userId', sourceKey: 'id'});
         // db.User.hasMany(db.creditScore, { foreignKey: "creditScoreId", sourceKey: "id"});
         // db.User.hasMany(db.timeTable, { foreignKey: "timeTableId", sourceKey: "id"});
         db.User.hasMany(db.Directory, { foreignKey: "userId", sourceKey: "id" });
