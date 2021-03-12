@@ -1,22 +1,17 @@
 const Sequelize = require('sequelize');
 
-module.exports = class Image extends Sequelize.Model{
+module.exports = class ReviewImage extends Sequelize.Model{
     static init(sequelize) {
         return super.init({
             url: {
                 type: Sequelize.STRING(300),
                 allowNull: false,
-            },
-            isDeleted: {
-                type: Sequelize.BOOLEAN,
-                allowNull: false,
-                defaultValue: false
             }
         }, {
             sequelize,
             timestamps: true,
             underscored: true,
-            modelName: 'Image',
+            modelName: 'ReviewImage',
             paranoid: false,
             charset: 'utf8',
             collate: 'utf8_general_ci',
@@ -25,6 +20,6 @@ module.exports = class Image extends Sequelize.Model{
 
     }
     static associate(db){
-        db.Image.belongsTo(db.Post, { onDelete: 'CASCADE', foreignKey: 'postId', targetKey: 'id' });
+        db.ReviewImage.belongsTo(db.StoreReview, { onDelete: 'CASCADE', foreignKey: 'storeReviewId', targetKey: 'id' });
     }
 }
