@@ -4,7 +4,7 @@ const { Op } = require('sequelize');
 
 exports.readPosts = async (req,res,next)=>{
     try {
-        const post = await Post.findAndCountAll({
+        const post = await Post.findAll({
             where: { boardId: req.params.id }
         });
         res.status(200).json({
