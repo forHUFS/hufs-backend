@@ -3,7 +3,7 @@ const { addLike, delLike, addPost, modifyPost, readPost, deletePost } = require(
 const { uploadImg, deleteImg } = require('../uploads/upload');
 const { upload } = require('../uploads/upload');
 
-
+const authUtil = require('../modules/auth');
 
 
 const router = express.Router();
@@ -20,7 +20,7 @@ router.get('/:id/addlike', addLike);
 router.get('/:id/dellike', delLike);
 
 
-router.get('/:id', readPost);
+router.get('/:id', authUtil.checkToken, readPost);
 router.delete('/:id', deletePost);
 
 module.exports = router;

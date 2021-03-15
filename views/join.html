@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form method="POST" action="" id="form">
+        <p><input type="text" id="email" placeholder="email" /></p>
+        <p><input type="text" id="name" placeholder="name" /></p>
+        <p><input type="text" id="nickname" placeholder="nickname" /></p>
+        <p><input type="text" id="mainMajor" placeholder="mainMajor" /></p>
+        <p><input type="text" id="webMail" placeholder="webMail" /></p>
+        <p><button type="submit" id="target">제출</button>
+    </form>
+</body>
+<script>
+    let email = document.getElementById('email');
+    let name = document.getElementById('name');
+    let nickname = document.getElementById('nickname');
+    let mainMajor = document.getElementById('mainMajor');
+    let webMail = document.getElementById('webMail');
+
+    let target = document.getElementById('target');
+    
+    target.addEventListener('click', function(e) {
+        e.preventDefault()
+        fetch('http://localhost:3000/user/sign-up', {
+            mehtod: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(
+                {
+                    'email': email.value,
+                    'name': name.value,
+                    'nickname': nickname.value,
+                    'mainMajor': mainMajor.value,
+                    'webMail': webMail.value
+                }
+            )
+        })
+        .then(res => res.json())
+        .then(res => console.log(res))
+    })
+
+</script>
+</html>
