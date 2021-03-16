@@ -1,19 +1,109 @@
 openapi: 3.0.0
 info:
-  version: '1.0.0'
-  title: "HUFS API Docs"
+  version: '0.0.1'
+  title: "HUFSPace API Documents"
   description: "한국외국어대학교 웹 페이지 프로젝트 API 문서"
 servers:
-  - description: "API TEST"
-  - url: "http://localhost:8004/"
+  - description: "테스트 서버"
+  - url: "http://52.78.2.40:8000/"
 paths:
-  /post:
+  /user/google:
     get:
-      summary: "게시글 수정"
+      summary: "구글 소셜 로그인"
+      consumes: "application/json"
+      produces: "application/json"
       responses:
-        '400':
-          description: "정상 조회 완료"
-      summary: "dwdwd"
+        "200":
+          description: "카카오 소셜 로그인 정상 완료"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: "integer"
+                    example: 200
+                  message:
+                    type: "string"
+                    example: "SUCCESS"
+
+  /user/kakao:
+    get:
+      summary: "카카오 소셜 로그인"
+      consumes: "application/json"
+      produces: "application/json"
       responses:
-        '404':
-          description: "정상 조회 완료"
+        "200":
+          description: "카카오 소셜 로그인 정상 완료"
+          content:
+            appplication/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: "integer"
+                    example: 200
+                  message:
+                    type: "string"
+                    example: "SUCCESS"
+
+
+  /user/sign-up:
+    post:
+      summary: "회원 가입"
+      consumes: "application/json"
+      produces: "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "회원 가입에 필요한 데이터 (webMail의 경우 @hufs.ac.kr 앞 부분까지만 입력)"
+          required: true
+          schema:
+            $ref: "#/definitions/User"
+      responses:
+        "201":
+          description: "회원 가입 정상 완료"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: "integer"
+                    example: 200
+                  message:
+                    type: "string"
+                    example: "SUCCESS"
+        "400":
+          description: "이미 존재하는 사용자"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "integer"
+                    example: 400
+                  message:
+                    type: "string"
+                    example: "ALREADY_EXISTS"
+
+
+        
+definitions:
+  User:
+    type: "object"
+    required:
+    - "name"
+    - "nickname"
+    - "webMail"
+    properties:
+      name:
+        type: "string"
+        example: "이태현"
+      nickname:
+        type: "string"
+        example: "도비"
+      webMail:
+        type: "string"
+        example: "dlxogus0417"
