@@ -1,13 +1,13 @@
 const express  = require('express');
 const passport = require('passport');
 
-const { emailAuth, socialAuth, signUp }   = require('../controller/user');
+const { emailAuth, userAuth, socialAuth, } = require('../controller/user');
 
-const router        = express.Router();
+const router = express.Router();
 
 router.get('', emailAuth.checkEmail);
 
-router.post('/sign-up', signUp.createUser);
+router.post('/sign-up', userAuth.signUp);
 
 router.get('/sign-out', async(req, res) => {
     req.logout()
@@ -16,7 +16,7 @@ router.get('/sign-out', async(req, res) => {
 
 
 router.get('/google', socialAuth.google);
-router.get('google/callback', socialAuth.googleCallBack);
+router.get('/google/callback', socialAuth.googleCallBack);
 
 router.get('/kakao', socialAuth.kakao);
 router.get('/kakao/callback', socialAuth.kakaoCallBack);

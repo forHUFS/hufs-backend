@@ -88,8 +88,8 @@ const emailAuth = {
     }
 }
 
-const signUp = {
-    createUser: async(req, res) => {
+const userAuth = {
+    signUp: async(req, res) => {
         try {
             const newUser = await User.create(
                 {
@@ -102,9 +102,9 @@ const signUp = {
         
             const sendEmail = await emailAuth.sendEmail(req, res)
         
-            return res.status(200).json(
+            return res.status(201).json(
                 {
-                    code: 200,
+                    code: 201,
                     message: "SUCCESS"
                 }
             )
@@ -113,62 +113,68 @@ const signUp = {
                 return res.status(400).json(
                     {
                         code: 400,
-                        message: "ALREADY EXISTS"
+                        message: "ALREADY_EXISTS"
                     }
                 )
             }
         }
-    }
-}
+    },
 
-const signIn  = async(req, res, err, user) => {
-    if (err) {
-        return res.status(400).json(
-            {
-                code: 400,
-                message: err
-            }
-        );
-    }
-    
-    if (!user) {
-        // return to main page
-        return res.redirect('/');
-    }
-
-    const exUser = await User.findOne(
-        {
-            where: {email: user.email}
-        }
-    )
-
-    if (exUser) {
-        req.login(exUser, {session: false}, (err) => {
-            const payload = {
-                id      : exUser.id,
-                email   : exUser.email,
-                type    : exUser.type
-            };
-
-            accessToken = jwt.sign(payload, secretKey, options);
-            console.log(accessToken)
-            return res.cookie(
-                'HUFSpace-User',
-                accessToken,
+    signIn: async(req, res, error, user) => {
+        if (error) {
+            return res.status(400).json(
                 {
-                    maxAge: 1000 * 60 * 60,
-                    httpOnly: true,
-                    secure: false
-                }
-            ).status(200).json(
-                {
-                    code: 200,
-                    message: "SUCCESS"
+                    code: 400,
+                    message: error
                 }
             );
-        })
-    } else {
-        return res.redirect('/user/sign-up');
+        }
+        
+        if (!user) {
+            // return to main page
+            return res.redirect('/');
+        }
+    
+        const exUser = await User.findOne(
+            {
+                where: {email: user.email}
+            }
+        )
+    
+        if (exUser) {
+            console.log(req.login)
+            req.login(exUser, {session: false}, (error) => {
+
+                const payload = {
+                    id      : exUser.id,
+                    email   : exUser.email,
+                    type    : exUser.type
+                };
+    
+                accessToken = jwt.sign(payload, secretKey, options);
+                console.log(accessToken)
+                return res.cookie(
+                    'HUFSpace-User',
+                    accessToken,
+                    {
+                        maxAge: 1000 * 60 * 60,
+                        httpOnly: true,
+                        secure: false
+                    }
+                ).status(200).json(
+                    {
+                        code: 200,
+                        message: "SUCCESS"
+                    }
+                );
+            })
+        } else {
+            return res.redirect('/user/sign-up');
+        }
+    },
+
+    signOut: async(req, res) => {
+
     }
 }
 
@@ -178,8 +184,8 @@ const socialAuth = {
     },
 
     googleCallBack: async(req, res) => {
-        passport.authenticate('google', (err, user) => {
-                signIn(req, res, err, user);
+        passport.authenticate('google', (error, user) => {
+                userAuth.signIn(req, res, error, user);
             }
         )(req, res);
     },
@@ -190,10 +196,10 @@ const socialAuth = {
 
     kakaoCallBack: async(req, res) => {
         passport.authenticate('kakao', (error, user) => {
-                signIn(req, res, error, user);
+                userAuth.signIn(req, res, error, user);
             }
         )(req, res);
     }
 }
 
-module.exports = { emailAuth, socialAuth, signUp };
+module.exports = { emailAuth, userAuth, socialAuth };

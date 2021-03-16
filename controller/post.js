@@ -136,13 +136,13 @@ exports.modifyPost = async(req,res,next)=> {
 }
 exports.readPost = async(req,res,next)=>{
     try {
-        console.log(req);
-        console.log(req.params);
+        console.log(req.user);
+        // console.log(req.params);
         const post = await Post.findOne({
             where: { id: req.params.id, isBlocked: false },
             include: [{model: Reply}, {model: Image , attributes: ['id','url']}]
         });
-        console.log(post);
+        //console.log(post);
         if (post) {
             res.status(200).json({
                 code: 200,

@@ -34,7 +34,7 @@ module.exports = class User extends Sequelize.Model{
             type: {
                 type: Sequelize.ENUM('before', 'user', 'suspension', 'graduated', 'admin'),
                 allowNull: false,
-                defaultValue: "before",
+                defaultValue: 'before',
             },
             mainMajor: {
                 type: Sequelize.STRING(16),
@@ -67,8 +67,6 @@ module.exports = class User extends Sequelize.Model{
     }
     static associate(db){
         db.User.hasOne(db.Token, { foreignKey: 'userId', sourceKey: 'id'});
-        // db.User.hasMany(db.creditScore, { foreignKey: "creditScoreId", sourceKey: "id"});
-        // db.User.hasMany(db.timeTable, { foreignKey: "timeTableId", sourceKey: "id"});
         db.User.hasMany(db.Directory, { foreignKey: "userId", sourceKey: "id" });
         db.User.hasMany(db.Post, { foreignKey: "userId", sourceKey: "id" });
         db.User.hasMany(db.Reply, { foreignKey: "userId", sourceKey: "id" });
