@@ -1,9 +1,7 @@
-const express       = require('express');
-const jwt           = require('jsonwebtoken');
-const passport      = require('passport');
+const express  = require('express');
+const passport = require('passport');
 
-const { verifyToken } = require('../modules/auth');
-const { emailAuth, res, signUp }   = require('../controller/user');
+const { emailAuth, socialAuth, signUp }   = require('../controller/user');
 
 const router        = express.Router();
 
@@ -11,33 +9,17 @@ router.get('', emailAuth.checkEmail);
 
 router.post('/sign-up', signUp.createUser);
 
-router.get(
-    '/google',
-    res.google
-);
-
-router.get(
-    '/google/callback',
-    res.googleCallBack
-);
-
-router.get(
-    '/kakao',
-    passport.authenticate('kakao')
-);
-
-router.get(
-    '/kakao/callback',
-    passport.authenticate('kakao'), async(req, res) => {
-        res.redirect('/')
-    }
-)
-
-router.get(
-    '/logout', async(req, res) => {
+router.get('/sign-out', async(req, res) => {
     req.logout()
     res.redirect('/') 
 });
+
+
+router.get('/google', socialAuth.google);
+router.get('google/callback', socialAuth.googleCallBack);
+
+router.get('/kakao', socialAuth.kakao);
+router.get('/kakao/callback', socialAuth.kakaoCallBack);
 
 
 module.exports = router;

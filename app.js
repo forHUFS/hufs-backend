@@ -1,32 +1,38 @@
-const express = require('express');
-const configurePassport = require('./config/passport');
-const session = require('express-session');
+// package
+const express      = require('express');
+const session      = require('express-session');
 const cookieParser = require('cookie-parser')
+const morgan       = require('morgan');
+const path         = require('path');
+const dotenv       = require('dotenv');
 
-const morgan = require('morgan');
-const path = require('path');
-const dotenv = require('dotenv');
-const { sequelize } = require('./models');
-const swaggerUi   = require('swagger-ui-express');
+// swagger
 const YAML        = require('yamljs');
+const swaggerUi   = require('swagger-ui-express');
 const swaggerSpec = YAML.load(path.join(__dirname, 'swagger/swagger.yaml'))
-const mainRouter = require('./routes/main');
-const postRouter = require('./routes/post');
-const boardRouter = require('./routes/board');
-const replyRouter = require('./routes/reply');
-const userRouter = require('./routes/user');
 
-const { signUp } = require('./controller/user')
+// config
+const configurePassport = require('./config/passport');
+
+// routes
+const { sequelize } = require('./models');
+const mainRouter    = require('./routes/main');
+const postRouter    = require('./routes/post');
+const boardRouter   = require('./routes/board');
+const replyRouter   = require('./routes/reply');
+const userRouter    = require('./routes/user');
+
 
 dotenv.config();
 
 const app = express();
+
 app.set('port', process.env.PORT || 3000);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'html');
 
 app.use(morgan('dev'));
-app.use(cookieParser())
+app.use(cookieParser());
 app.use(
     session(
         {
@@ -53,46 +59,19 @@ sequelize.sync({force:false})
         console.error(err);
     });
 
+
+// For Login Flow Test
+app.use(express.static(path.join(__dirname, 'views')));
+
 app.use(express.json());
 app.use(express.urlencoded({extended:false}));
 app.use('/post', postRouter);
 app.use('/board', boardRouter);
 app.use('/reply', replyRouter);
 app.use('/user', userRouter);
-
-// app.get('/', (req, res) => {
-//     res.send(`
-//         <h3>Node Passport Social Login</h3>
-//         <a href="/user/google">Login with Google</a>
-//         <a href="/user/kakao">Login with Kakao</a>
-//     `)
-// })
-
-// app.get('/user/sign-up', (req, res) => {
-//     res.send(`
-//         <form mehotd="POST" action="" id="form">
-//             <p><input type="text" id="email" placeholder="email" /></p>
-//             <p><input type="text" id="name" placeholder="name" /></p>
-//             <p><input type="text" id="nickname" placeholder="nickname" /></p>
-//             <p><input type="text" id="mainMajor" placeholder="mainMajor" /></p>
-//             <p><input type="text" id="webMail" placeholder="webMail" /></p>
-//             <p><button type="submit" id="target">제출</button>
-//         </form> 
-//     `)
-// })
-
-
-// app.post('/user/sign-up', fetch('/user/sign-up', {method: 'POST'}))
-
-app.use(express.static(path.join(__dirname, 'views')));
-
-// Social Login Test
-// app.get('/', (req, res) => {
-//     res.sendFile('test')
-//   })
-
-
 app.use('/', mainRouter);
+
+// API Document by using swagger
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 
@@ -101,6 +80,7 @@ app.use((req,res,next)=>{
     error.status = 404;
     next(error);
 });
+
 app.use((err,req,res,next)=>{
     const message = err.message;
     const error = process.env.NODE_ENV !== 'production'? err:{};

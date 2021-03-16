@@ -1,19 +1,17 @@
-const jwt             = require('jsonwebtoken');
-const crypto          = require('crypto');
-const passport        = require('passport');
+const jwt      = require('jsonwebtoken');
+const crypto   = require('crypto');
+const passport = require('passport');
 
-const User            = require('../models/users');
-const Token           = require('../models/tokens');
 
 const secretKey       = require('../config/secretKey').secretKey;
 const options         = require('../config/secretKey').options;
 const { transporter } = require('../config/email');
 
-
+const User  = require('../models/users');
+const Token = require('../models/tokens');
 
 
 const token = crypto.randomBytes(20).toString('hex');
-
 
 const emailAuth = {
     sendEmail: async(req, res) => {
@@ -93,7 +91,7 @@ const emailAuth = {
 const signUp = {
     createUser: async(req, res) => {
         try {
-            const newUser  = await User.create(
+            const newUser = await User.create(
                 {
                     email: req.body.email,
                     name: req.body.name,
@@ -134,6 +132,7 @@ const signIn  = async(req, res, err, user) => {
     }
     
     if (!user) {
+        // return to main page
         return res.redirect('/');
     }
 
@@ -148,8 +147,7 @@ const signIn  = async(req, res, err, user) => {
             const payload = {
                 id      : exUser.id,
                 email   : exUser.email,
-                type    : exUser.type,
-                nickname: exUser.nickname
+                type    : exUser.type
             };
 
             accessToken = jwt.sign(payload, secretKey, options);
@@ -174,22 +172,28 @@ const signIn  = async(req, res, err, user) => {
     }
 }
 
-
-
-const res = {
+const socialAuth = {
     google: async(req, res) => {
-        passport.authenticate('google', {scope: ['profile', 'email']})(req, res)
+        passport.authenticate('google', {scope: ['profile', 'email']})(req, res);
     },
 
     googleCallBack: async(req, res) => {
         passport.authenticate('google', (err, user) => {
-            signIn(req, res, err, user)
-        }
-    )(req, res)}
+                signIn(req, res, err, user);
+            }
+        )(req, res);
+    },
+
+    kakao: async(req, res) => {
+        passport.authenticate('kakao')(req, res);
+    },
+
+    kakaoCallBack: async(req, res) => {
+        passport.authenticate('kakao', (error, user) => {
+                signIn(req, res, error, user);
+            }
+        )(req, res);
+    }
 }
 
-module.exports = {
-    emailAuth,
-    res,
-    signUp
-};
+module.exports = { emailAuth, socialAuth, signUp };
