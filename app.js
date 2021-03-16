@@ -31,7 +31,7 @@ app.use(
     session(
         {
             secret:'NDKBM9wwJ75jrBrCRQ-mqymO', // 쿠키 임의 변조 방지 -> 세션 암호화
-            coocie: { 
+            cookie: {
                 // expires: 기본 값은 클라이언트 종료
                 maxAge: 60 * 60 * 1000, // expires 보다 우선 되는 쿠키 만료 시간
                 httpOnly: true, // Javascript로 쿠키 접근 x

@@ -3,12 +3,14 @@ const Image = require('../models/image');
 const Reply = require('../models/replies');
 const Report = require('../models/reports');
 const User = require('../models/users');
+const LikeRecord = require('../models/likeRecord');
 const { s3 }= require('../uploads/upload');
 const sequelize = require('../models').sequelize;
 
 
 exports.addLike = async (req,res,next) => {
     try {
+        const postId = req.params.id;
         await Post.update({
             like: sequelize.literal('`like`+1')
         }, {
@@ -44,6 +46,7 @@ exports.delLike = async (req,res,next)=> {
 
 exports.addPost = async (req,res,next)=> {
     try {
+        console.log(req.body.decoded.id);
         await sequelize.transaction(async (t)=>{
         const post = await Post.create({
             title: req.body.title,
@@ -133,6 +136,7 @@ exports.modifyPost = async(req,res,next)=> {
 }
 exports.readPost = async(req,res,next)=>{
     try {
+        console.log(req);
         console.log(req.params);
         const post = await Post.findOne({
             where: { id: req.params.id, isBlocked: false },
@@ -198,3 +202,19 @@ exports.deletePost = async(req,res,next)=>{
     }
 }
 
+async function checkLikeRecord(postId, userId) {
+    try {
+        const record = await LikeRecord.findOne({
+            where: {
+                targetId: postId,
+                targetObject: 1,
+                userId: userId,
+            }
+        });
+        return !!record;
+    } catch (err) {
+        console.error(err);
+        return false;
+    }
+
+}

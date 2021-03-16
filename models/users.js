@@ -14,7 +14,7 @@ module.exports = class User extends Sequelize.Model{
             },
             webMail: {
                 type     : Sequelize.STRING(64),
-                allowNull: false,
+                allowNull: true,
                 unique   : true
             },
             nickname: {

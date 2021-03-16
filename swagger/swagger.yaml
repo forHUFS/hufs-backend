@@ -9,7 +9,7 @@ servers:
 paths:
   /post:
     get:
-      summary: "게시글 조회"
+      summary: "dwdwd"
       responses:
-        '200':
+        '404':
           description: "정상 조회 완료"
