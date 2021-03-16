@@ -13,3 +13,7 @@ paths:
       responses:
         '400':
           description: "정상 조회 완료"
+      summary: "dwdwd"
+      responses:
+        '404':
+          description: "정상 조회 완료"

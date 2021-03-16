@@ -8,7 +8,11 @@ exports.addReply = async(req,res,next)=> {
             content: req.body.content,
             postId: req.body.postId,
         });
-        res.status(201).json({message: "댓글 작성 성공",reply});
+        res.status(201).json({
+            code: 201,
+            message: "댓글 작성 성공",
+            reply
+        });
 
     } catch (err) {
         console.error(err);
@@ -22,7 +26,11 @@ exports.addReReply = async(req,res,next)=>{
             parentId: req.body.parentId,
             postId: req.body.postId,
         });
-        res.status(201).json({message: "대댓글 작성 완료", reply});
+        res.status(201).json({
+            code: 201,
+            message: "대댓글 작성 완료",
+            reply
+        });
     } catch (err) {
         console.error(err);
         next(err);
@@ -33,7 +41,10 @@ exports.deleteReply = async(req,res,next) => {
         await Reply.destroy({
             where: { id: req.params.id }
         });
-        res.status(200).json({message: "삭제 완료"});
+        res.status(200).json({
+            code: 200,
+            message: "삭제 완료"
+        });
 
     } catch (err) {
         console.error(err);
@@ -47,7 +58,10 @@ exports.modifyReply = async(req,res,next) => {
         }, {
             where: { id: req.body.id }
         });
-        res.status(200).json({message: "댓글 수정 완료"});
+        res.status(200).json({
+            code: 200,
+            message: "댓글 수정 완료"
+        });
     } catch (err) {
 
     }
@@ -59,7 +73,10 @@ exports.addReplyLike = async (req,res,next) => {
         }, {
             where: { id: req.params.id }
         });
-        res.status(200).json({message: "좋아요 완료"});
+        res.status(200).json({
+            code: 200,
+            message: "좋아요 완료"
+        });
 
     } catch (err) {
         console.error(err);
@@ -73,7 +90,10 @@ exports.cancelReplyLike = async (req,res,next)=> {
         }, {
             where: { id: req.params.id }
         });
-        res.status(200).json({message: "좋아요 취소 완료"});
+        res.status(200).json({
+            code: 200,
+            message: "좋아요 취소 완료"
+        });
 
     } catch (err) {
         console.error(err);

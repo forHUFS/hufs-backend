@@ -1,5 +1,5 @@
 const Sequelize         = require('sequelize');
-const env               = process.env.NODE_ENV || 'development';
+const env               = process.env.NODE_ENV || 'development'
 const config            = require('../config/database.json')[env];
 const Board             = require('./boards');
 const Category          = require('./categories');
@@ -9,6 +9,7 @@ const LikeRecord        = require('./likeRecord');
 const Post              = require('./posts');
 const Reply             = require('./replies');
 const Report            = require('./reports');
+const ReviewImage       = require('./reviewImage');
 const Scrap             = require('./scraps');
 const StoreCategory     = require('./storeCategories');
 const StoreReview       = require('./storeReviews');
@@ -22,7 +23,6 @@ const sequelize  = new Sequelize(
     config.database, config.username, config.password, config
 );
 
-
 db.Board             = Board;
 db.Category          = Category;
 db.Directory         = Directory;
@@ -31,6 +31,7 @@ db.LikeRecord        = LikeRecord;
 db.Post              = Post;
 db.Reply             = Reply;
 db.Report            = Report;
+db.ReviewImage       = ReviewImage;
 db.Scrap             = Scrap;
 db.StoreCategory     = StoreCategory;
 db.StoreReview       = StoreReview;

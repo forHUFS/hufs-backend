@@ -3,18 +3,23 @@ const Image = require('../models/image');
 const Reply = require('../models/replies');
 const Report = require('../models/reports');
 const User = require('../models/users');
+const LikeRecord = require('../models/likeRecord');
 const { s3 }= require('../uploads/upload');
 const sequelize = require('../models').sequelize;
 
 
 exports.addLike = async (req,res,next) => {
     try {
+        const postId = req.params.id;
         await Post.update({
             like: sequelize.literal('`like`+1')
         }, {
             where: { id: req.params.id }
         });
-        res.status(200).json({message: "좋아요 완료"});
+        res.status(200).json({
+            code: 200,
+            message: "좋아요 완료"
+        });
 
     } catch (err) {
         console.error(err);
@@ -28,7 +33,10 @@ exports.delLike = async (req,res,next)=> {
        }, {
            where: { id: req.params.id }
        });
-       res.status(200).json({message: "좋아요 취소 완료"});
+       res.status(200).json({
+           code: 200,
+           message: "좋아요 취소 완료"
+       });
 
     } catch (err) {
         console.error(err);
@@ -38,6 +46,7 @@ exports.delLike = async (req,res,next)=> {
 
 exports.addPost = async (req,res,next)=> {
     try {
+        console.log(req.body.decoded.id);
         await sequelize.transaction(async (t)=>{
         const post = await Post.create({
             title: req.body.title,
@@ -69,7 +78,10 @@ exports.addPost = async (req,res,next)=> {
                 transaction: t,
             });
         }
-        res.status(201).json({message: "게시글 작성 완료"});
+        res.status(201).json({
+            code: 201,
+            message: "게시글 작성 완료"
+        });
         });
     } catch (err) {
         console.error(err);
@@ -111,7 +123,10 @@ exports.modifyPost = async(req,res,next)=> {
                 transaction: t
             });
         }
-        res.status(200).json({message: "수정 완료"});
+        res.status(200).json({
+            code: 200,
+            message: "수정 완료"
+        });
         });
     } catch (err) {
         console.error(err);
@@ -121,6 +136,7 @@ exports.modifyPost = async(req,res,next)=> {
 }
 exports.readPost = async(req,res,next)=>{
     try {
+        console.log(req);
         console.log(req.params);
         const post = await Post.findOne({
             where: { id: req.params.id, isBlocked: false },
@@ -128,9 +144,15 @@ exports.readPost = async(req,res,next)=>{
         });
         console.log(post);
         if (post) {
-            res.status(200).json(post);
+            res.status(200).json({
+                code: 200,
+                post
+            });
         } else {
-            res.status(400).json({message: "게시글이 존재하지 않습니다"});
+            res.status(400).json({
+                code: 400,
+                message: "게시글이 존재하지 않습니다"
+            });
         }
     } catch (err) {
         console.error(err);
@@ -158,7 +180,10 @@ exports.deletePost = async(req,res,next)=>{
                     })
                     .catch(err => {
                         console.error(err);
-                        res.status(400).json({message: "이미지 삭제 오류"});
+                        res.status(500).json({
+                            code: 500,
+                            message: "이미지 삭제 오류"
+                        });
                     });
 
 
@@ -166,7 +191,10 @@ exports.deletePost = async(req,res,next)=>{
             await Post.destroy({
             where: { id: req.params.id },
         });
-        res.status(200).json({message: "삭제 완료"});
+        res.status(200).json({
+            code: 200,
+            message: "삭제 완료"
+        });
 
     } catch (err){
         console.error(err);
@@ -174,3 +202,19 @@ exports.deletePost = async(req,res,next)=>{
     }
 }
 
+async function checkLikeRecord(postId, userId) {
+    try {
+        const record = await LikeRecord.findOne({
+            where: {
+                targetId: postId,
+                targetObject: 1,
+                userId: userId,
+            }
+        });
+        return !!record;
+    } catch (err) {
+        console.error(err);
+        return false;
+    }
+
+}

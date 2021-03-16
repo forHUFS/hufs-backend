@@ -13,7 +13,7 @@ module.exports = class LikeRecord extends Sequelize.Model{
             }
         }, {
             sequelize,
-            timestamps: true,
+            timestamps: false,
             underscored: true,
             modelName: 'LikeRecord',
             paranoid: false,

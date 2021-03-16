@@ -11,10 +11,6 @@ module.exports = class StoreReview extends Sequelize.Model{
                 type: Sequelize.TEXT,
                 allowNull: false,
             },
-            image: {
-                type: Sequelize.STRING(300),
-                allowNull: true,
-            },
             score: {
                 type: Sequelize.DECIMAL(2,1),
                 allowNull: false,
@@ -34,5 +30,6 @@ module.exports = class StoreReview extends Sequelize.Model{
     static associate(db){
         db.StoreReview.belongsTo(db.Store, { foreignKey: 'storeId', targetKey:'id'});
         db.StoreReview.belongsTo(db.User, { foreignKey: 'userId', targetKey: 'id'});
+        db.StoreReview.hasMany(db.ReviewImage, { foreignKey: 'storeReviewId', sourceKey: 'id' });
     }
 }
