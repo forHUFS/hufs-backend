@@ -45,7 +45,6 @@ const authUtil = {
         req.id       = user.id;
         req.email    = user.email;
         req.type     = user.type;
-        req.nickname = user.nickname;
         next();
     }
 }
