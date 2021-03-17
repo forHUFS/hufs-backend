@@ -8,11 +8,7 @@ const router = express.Router();
 router.get('', emailAuth.checkEmail);
 
 router.post('/sign-up', userAuth.signUp);
-
-router.get('/sign-out', async(req, res) => {
-    req.logout()
-    res.redirect('/') 
-});
+router.get('/sign-out', userAuth.signOut); // REST post로 변경 예정, 테스트를 위해 get
 
 
 router.get('/google', socialAuth.google);

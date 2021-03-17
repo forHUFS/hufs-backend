@@ -2,9 +2,9 @@ const jwt      = require('jsonwebtoken');
 const crypto   = require('crypto');
 const passport = require('passport');
 
-
-const secretKey       = require('../config/secretKey').secretKey;
-const options         = require('../config/secretKey').options;
+const jwtSecretKey    = require('../config/secretKey').jwtSecretKey;
+const jwtOptions      = require('../config/secretKey').jwtOptions;
+const cookieOptions   = require('../config/secretKey').cookieOptions;
 const { transporter } = require('../config/email');
 
 const User  = require('../models/users');
@@ -142,7 +142,7 @@ const userAuth = {
         )
     
         if (exUser) {
-            console.log(req.login)
+            
             req.login(exUser, {session: false}, (error) => {
 
                 const payload = {
@@ -151,16 +151,12 @@ const userAuth = {
                     type    : exUser.type
                 };
     
-                accessToken = jwt.sign(payload, secretKey, options);
+                accessToken = jwt.sign(payload, jwtSecretKey, jwtOptions);
                 console.log(accessToken)
                 return res.cookie(
-                    'HUFSpace-User',
+                    'user',
                     accessToken,
-                    {
-                        maxAge: 1000 * 60 * 60,
-                        httpOnly: true,
-                        secure: false
-                    }
+                    cookieOptions
                 ).status(200).json(
                     {
                         code: 200,
@@ -174,7 +170,13 @@ const userAuth = {
     },
 
     signOut: async(req, res) => {
-
+        // req.session.destroy()
+        return res.clearCookie('user').status(200).json(
+            {
+                code: 200,
+                message: "LoggedOut_SUCCESS"
+            }
+        )
     }
 }
 
