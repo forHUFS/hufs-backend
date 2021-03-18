@@ -19,6 +19,6 @@ module.exports = class ReviewImage extends Sequelize.Model{
 
     }
     static associate(db){
-        db.Reply.belongsTo(db.StoreReview, { onDelete: 'CASCADE', foreignKey: 'postId', targetKey: 'id' });
+        db.ReviewImage.belongsTo(db.StoreReview, { onDelete: 'CASCADE', foreignKey: 'storeId', targetKey: 'id' });
     }
 }
