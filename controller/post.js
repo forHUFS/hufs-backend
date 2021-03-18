@@ -3,8 +3,10 @@ const Reply = require('../models/replies');
 const ReportOfPost = require('../models/reportOfPost');
 const User = require('../models/users');
 const LikeRecordOfPost = require('../models/likeRecordOfPost');
-const { deleteImg }= require('../uploads/upload');
+const { deleteImg } = require('../uploads/upload');
+const { userReport } = require('../middlewares/reports');
 const { Op } = require('sequelize');
+
 const sequelize = require('../models').sequelize;
 
 exports.addLike = async (req,res,next) => {
@@ -228,8 +230,8 @@ exports.report = async(req,res,next) => {
                 console.log(post.report);
 
                 if (post.report >= 5) {
-
-                // 유저 신고 카운트 +1 -> 5 ->
+                    req.userId = post.userId;
+                    await userReport(req,res,next);
                 }
 
                 res.status(200).json({
