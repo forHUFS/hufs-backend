@@ -2,9 +2,9 @@ const jwt      = require('jsonwebtoken');
 const crypto   = require('crypto');
 const passport = require('passport');
 
-
-const secretKey       = require('../config/secretKey').secretKey;
-const options         = require('../config/secretKey').options;
+const jwtSecretKey    = require('../config/secretKey').jwtSecretKey;
+const jwtOptions      = require('../config/secretKey').jwtOptions;
+const cookieOptions   = require('../config/secretKey').cookieOptions;
 const { transporter } = require('../config/email');
 
 const User  = require('../models/users');
@@ -35,14 +35,14 @@ const emailAuth = {
             } else {
                 try {
                     user = await User.findOne({where: {email: req.body.email}});
-            
+
                     Token.create(
                         {
                             emailToken: token,
                             userId    : user.id
                         }
                     );
-                    
+
                     return res.status(200).json(
                         {
                             code: 200,
@@ -90,18 +90,19 @@ const emailAuth = {
 
 const userAuth = {
     signUp: async(req, res) => {
+
         try {
             const newUser = await User.create(
                 {
-                    email: req.body.email,
+                    email: req.email,
                     name: req.body.name,
                     nickname: req.body.nickname,
                     webMail: req.body.webMail
                 }
             )
-        
+
             const sendEmail = await emailAuth.sendEmail(req, res)
-        
+
             return res.status(201).json(
                 {
                     code: 201,
@@ -120,7 +121,7 @@ const userAuth = {
         }
     },
 
-    signIn: async(req, res, error, user) => {
+    signIn: async(req, res, error, userEmail) => {
         if (error) {
             return res.status(400).json(
                 {
@@ -129,20 +130,30 @@ const userAuth = {
                 }
             );
         }
-        
-        if (!user) {
+
+        console.log(userEmail)
+
+        if (!userEmail) {
             // return to main page
             return res.redirect('/');
         }
-    
+
         const exUser = await User.findOne(
             {
-                where: {email: user.email}
+                where: {email: userEmail}
             }
         )
-    
+
         if (exUser) {
-            console.log(req.login)
+            // if (exUser.type === 'suspension') {
+            //     return res.status(401).json(
+            //         {
+            //             code: 401,
+            //             message: "SUSPENDED_USER"
+            //         }
+            //     )
+            // }
+
             req.login(exUser, {session: false}, (error) => {
 
                 const payload = {
@@ -150,17 +161,13 @@ const userAuth = {
                     email   : exUser.email,
                     type    : exUser.type
                 };
-    
-                accessToken = jwt.sign(payload, secretKey, options);
+
+                accessToken = jwt.sign(payload, jwtSecretKey, jwtOptions);
                 console.log(accessToken)
                 return res.cookie(
-                    'HUFSpace-User',
+                    'user',
                     accessToken,
-                    {
-                        maxAge: 1000 * 60 * 60,
-                        httpOnly: true,
-                        secure: false
-                    }
+                    cookieOptions
                 ).status(200).json(
                     {
                         code: 200,
@@ -169,12 +176,79 @@ const userAuth = {
                 );
             })
         } else {
+            req.email = userEmail
             return res.redirect('/user/sign-up');
         }
     },
 
     signOut: async(req, res) => {
+        // req.session.destroy()
+        return res.clearCookie('user').status(200).json(
+            {
+                code: 200,
+                message: "SIGNED_OUT_SUCCESS"
+            }
+        )
+    }
+}
 
+const userInfo = {
+    updateUser: async(req, res) => {
+        user = await User.findOne({where: {id: req.user.id}})
+        console.log(user)
+        try {
+            user.nickname = req.body.nickname
+
+            await user.save()
+
+            return res.status(204).json(
+                {
+                    code: 204,
+                    message: 'USER_INFO_UPDATED'
+                }
+            )
+        } catch (error) {
+            // Unique Error
+            console.log(error)
+
+            if (error.message === 'Validation error') {
+                return res.status(400).json(
+                    {
+                        code: 400,
+                        message: 'ALERDAY_EXISTS'
+                    }
+                );
+            }
+            return res.status(500).json(
+                {
+                    code: 500,
+                    message: error.message
+                }
+            );
+        }
+    },
+
+    deleteUser: async(req, res) => {
+        try {
+            await User.destroy({where: {id: req.user.id}})
+
+            return res.status(204).json(
+                {
+                    code: 204,
+                    message: 'DEL_USER_SUCCESS'
+                }
+            )
+        } catch (error) {
+            // DB ERROR > 존재하지 않는 경우... 왜? 보안을 위해, postman 통한 공격
+            console.log(error)
+
+            return res.status(500).json(
+                {
+                    code: 500,
+                    message: error.message
+                }
+            )
+        }
     }
 }
 
@@ -202,4 +276,4 @@ const socialAuth = {
     }
 }
 
-module.exports = { emailAuth, userAuth, socialAuth };
+module.exports = { emailAuth, userAuth, socialAuth, userInfo };
