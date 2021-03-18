@@ -17,7 +17,7 @@ exports.upload = upload({
         s3: this.s3,
         bucket: 'hufsweb',
         key(req, file, cb){
-            cb(null, `original/${Date.now()}${path.basename(file.originalname)}`);
+            cb(null, `post/${Date.now()}${path.basename(file.originalname)}`);
         }
     }),
     limits: { fileSize: 5*1024*1024 }
@@ -26,28 +26,30 @@ exports.upload = upload({
 exports.uploadImg = (req,res)=>{
     console.log(req.files);
     const location = req.files.map(img => img.location);
-    res.status(200).json({ url: location });
+    res.status(200).json({
+        code: 200,
+        url: location
+    });
 }
-exports.deleteImg = async (req,res,next)=> {
+exports.deleteImg = async (url)=> {
     try {
-        console.log(req.body);
-        const url = req.body.url.split('/').slice(-2);
-        const img = url.join('/');
-        const params = {
-            Bucket: 'hufsweb',
-            Key: img
-        };
-        await this.s3.deleteObject(params).promise()
+        let obj = [];
+        url.map(i => {
+            const tmp = i.split('/').slice(-2);
+            const url = tmp.join('/');
+            obj.push({Key: url});
+        });
+        await this.s3.deleteObjects({Bucket: 'hufsweb', Delete: { Objects: obj }}).promise()
             .then(data => {
                 console.log("이미지 삭제 완료", data);
-                res.status(200).json({message: "이미지 삭제 완료"});
+                return data;
             })
             .catch(err => {
                 console.error("이미지 삭제 오류", err);
-                res.status(400).json({message: "이미지 삭제 오류"});
+                return err;
             });
     } catch (err){
         console.error(err);
-        next(err);
+        return err;
     }
 }

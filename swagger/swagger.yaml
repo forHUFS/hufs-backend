@@ -20,11 +20,11 @@ paths:
           schema:
             type: object
             required:
-            - nickname
+              - nickname
             properties:
               nickname:
                 type: string
-                example: 도비         
+                example: 도비
 
       responses:
         204:
@@ -153,7 +153,7 @@ paths:
                     example: 400
                   message:
                     type: string
-                    example: ALREADY_EXISTS          
+                    example: ALREADY_EXISTS
 
   /user/sign-out:
     post:
@@ -173,15 +173,15 @@ paths:
                     example: 200
                   message:
                     type: string
-                    example: SIGNED_OUT_SUCCESS                    
-        
+                    example: SIGNED_OUT_SUCCESS
+
 definitions:
   User:
     type: object
     required:
-    - name
-    - nickname
-    - webMail
+      - name
+      - nickname
+      - webMail
     properties:
       name:
         type: string

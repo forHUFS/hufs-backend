@@ -5,7 +5,7 @@ module.exports = class ReviewImage extends Sequelize.Model{
         return super.init({
             url: {
                 type: Sequelize.STRING(300),
-                allowNull: false,
+                allowNull: false
             }
         }, {
             sequelize,
@@ -17,9 +17,8 @@ module.exports = class ReviewImage extends Sequelize.Model{
             collate: 'utf8_general_ci',
         });
 
-
     }
     static associate(db){
-        db.ReviewImage.belongsTo(db.StoreReview, { onDelete: 'CASCADE', foreignKey: 'storeReviewId', targetKey: 'id' });
+        db.ReviewImage.belongsTo(db.StoreReview, { onDelete: 'CASCADE', foreignKey: 'storeId', targetKey: 'id' });
     }
 }

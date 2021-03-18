@@ -14,7 +14,7 @@ const authUtil = {
                 }
             );
         }
-    
+
         try {
             req.user = jwt.verify(token, jwtSecretKey);
             return next();
@@ -41,8 +41,8 @@ const authUtil = {
     isAuthorized: async(req, res, next) => {
         try {
             const type = req.user.type;
-    
-            if (type === 'admin' || type === 'graduated' || type === 'user') {   
+
+            if (type === 'admin' || type === 'graduated' || type === 'user') {
                 return next();
             } else if (type === 'suspension') {
                 return res.status(401).json(
@@ -61,7 +61,7 @@ const authUtil = {
             }
         } catch (error) {
             console.log(error)
-    
+
             return res.status(500).json(
                 {
                     code: 500,
@@ -99,7 +99,7 @@ const authUtil = {
     isGraduated: async(req, res, next) => {
         try {
             const type = req.user.type
-            if (type === 'admin' || 'graduated') {
+            if (type === 'admin' || type === 'graduated') {
                 return next();
             } else {
                 return res.status(401).json(

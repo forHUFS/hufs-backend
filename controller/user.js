@@ -35,14 +35,14 @@ const emailAuth = {
             } else {
                 try {
                     user = await User.findOne({where: {email: req.body.email}});
-            
+
                     Token.create(
                         {
                             emailToken: token,
                             userId    : user.id
                         }
                     );
-                    
+
                     return res.status(200).json(
                         {
                             code: 200,
@@ -100,9 +100,9 @@ const userAuth = {
                     webMail: req.body.webMail
                 }
             )
-        
+
             const sendEmail = await emailAuth.sendEmail(req, res)
-        
+
             return res.status(201).json(
                 {
                     code: 201,
@@ -132,18 +132,18 @@ const userAuth = {
         }
 
         console.log(userEmail)
-        
+
         if (!userEmail) {
             // return to main page
             return res.redirect('/');
         }
-    
+
         const exUser = await User.findOne(
             {
                 where: {email: userEmail}
             }
         )
-    
+
         if (exUser) {
             // if (exUser.type === 'suspension') {
             //     return res.status(401).json(
@@ -153,7 +153,7 @@ const userAuth = {
             //         }
             //     )
             // }
-            
+
             req.login(exUser, {session: false}, (error) => {
 
                 const payload = {
@@ -161,7 +161,7 @@ const userAuth = {
                     email   : exUser.email,
                     type    : exUser.type
                 };
-    
+
                 accessToken = jwt.sign(payload, jwtSecretKey, jwtOptions);
                 console.log(accessToken)
                 return res.cookie(
@@ -200,7 +200,7 @@ const userInfo = {
             user.nickname = req.body.nickname
 
             await user.save()
-            
+
             return res.status(204).json(
                 {
                     code: 204,
