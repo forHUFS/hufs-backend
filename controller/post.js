@@ -4,7 +4,6 @@ const ReportOfPost = require('../models/reportOfPost');
 const User = require('../models/users');
 const LikeRecordOfPost = require('../models/likeRecordOfPost');
 const { deleteImg }= require('../uploads/upload');
-const { checkLikeRecordOfReply } = require('./reply');
 const { Op } = require('sequelize');
 const sequelize = require('../models').sequelize;
 

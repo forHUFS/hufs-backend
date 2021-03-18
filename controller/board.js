@@ -1,5 +1,4 @@
 const Post = require('../models/posts');
-const Board = require('../models/boards');
 const User = require('../models/users');
 const { deleteImg } = require('../uploads/upload');
 const { Op } = require('sequelize');

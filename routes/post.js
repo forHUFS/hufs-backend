@@ -1,6 +1,6 @@
 const express = require('express');
 const { addLike, delLike, modifyPost, readPost, deletePost, cancelPost, cancelEdit, report } = require('../controller/post');
-const { uploadImg, deleteImg } = require('../uploads/upload');
+const { uploadImg } = require('../uploads/upload');
 const { upload } = require('../uploads/upload');
 const { authUtil } = require('../middlewares/auth');
 
