@@ -1,11 +1,11 @@
 const jwt = require('jsonwebtoken')
 
-const jwtSecretKey = require('../config/secretKey').jwtSecretKey;
+const secretKey = require('../config/secretKey').secretKey;
 
 
 const authUtil = {
     isSignedIn: async(req, res, next) => {
-        const token = req.cookies['user'];
+        const token = req.cookies['HUFSpace-User'];
         if (!token) {
             return res.status(400).json(
                 {
@@ -16,7 +16,7 @@ const authUtil = {
         }
     
         try {
-            req.user = jwt.verify(token, jwtSecretKey);
+            req.user = jwt.verify(token, secretKey);
             return next();
         } catch (error) {
             console.log(error)
@@ -41,10 +41,9 @@ const authUtil = {
     isAuthorized: async(req, res, next) => {
         try {
             const type = req.user.type;
-
-            if (type === 'admin' || type === 'graduated' || type === 'user') {   
+    
+            if (type === 'admin' || 'graduated' || 'user') {   
                 return next();
-
             } else if (type === 'suspension') {
                 return res.status(401).json(
                     {
@@ -100,7 +99,7 @@ const authUtil = {
     isGraduated: async(req, res, next) => {
         try {
             const type = req.user.type
-            if (type === 'admin' || type === 'graduated') {
+            if (type === 'admin' || 'graduated') {
                 return next();
             } else {
                 return res.status(401).json(
