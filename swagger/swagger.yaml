@@ -7,103 +7,188 @@ servers:
   - description: "테스트 서버"
   - url: "http://52.78.2.40:8000/"
 paths:
-  /user/google:
-    get:
-      summary: "구글 소셜 로그인"
-      consumes: "application/json"
-      produces: "application/json"
+  /user:
+    put:
+      summary: 회원 정보 수정
+      consumes: application/json
+      produces: application/json
+      parameters:
+        - in: body
+          name: body
+          description: 회원 정보 수정
+          required: true
+          schema:
+            type: object
+            required:
+            - nickname
+            properties:
+              nickname:
+                type: string
+                example: 도비         
+
       responses:
-        "200":
-          description: "카카오 소셜 로그인 정상 완료"
+        204:
+          description: 회원 정보 정상 수정
           content:
             application/json:
               schema:
                 type: object
                 properties:
                   code:
-                    type: "integer"
+                    type: integer
+                    example: 204
+                  message:
+                    type: string
+                    example: USER_INFO_UPDATED
+        400:
+          description: 이미 존재하는 닉네임
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: ALREADY_EXISTS
+
+    delete:
+      summary: 회원 탈퇴
+      consumes: application/json
+      produces: application/json
+      responses:
+        204:
+          description: 회원 정상 탈퇴
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 204
+                  message:
+                    type: string
+                    example: DEL_USER_SUCCESS
+
+
+  /user/google:
+    get:
+      summary: 구글 소셜 로그인
+      consumes: application/json
+      produces: application/json
+      responses:
+        200:
+          description: 구글 소셜 로그인 정상 완료
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
                     example: 200
                   message:
-                    type: "string"
-                    example: "SUCCESS"
+                    type: string
+                    example: SUCCESS
 
   /user/kakao:
     get:
-      summary: "카카오 소셜 로그인"
-      consumes: "application/json"
-      produces: "application/json"
+      summary: 카카오 소셜 로그인
+      consumes: application/json
+      produces: application/json
       responses:
-        "200":
-          description: "카카오 소셜 로그인 정상 완료"
+        200:
+          description: 카카오 소셜 로그인 정상 완료
           content:
             appplication/json:
               schema:
                 type: object
                 properties:
                   code:
-                    type: "integer"
+                    type: integer
                     example: 200
                   message:
-                    type: "string"
-                    example: "SUCCESS"
+                    type: string
+                    example: SUCCESS
 
 
   /user/sign-up:
     post:
-      summary: "회원 가입"
-      consumes: "application/json"
-      produces: "application/json"
+      summary: 회원 가입
+      consumes: application/json
+      produces: application/json
       parameters:
-        - in: "body"
-          name: "body"
-          description: "회원 가입에 필요한 데이터 (webMail의 경우 @hufs.ac.kr 앞 부분까지만 입력)"
+        - in: body
+          name: body
+          description: 회원 가입에 필요한 데이터 (webMail의 경우 @hufs.ac.kr 앞 부분까지만 입력)
           required: true
           schema:
             $ref: "#/definitions/User"
       responses:
-        "201":
-          description: "회원 가입 정상 완료"
+        201:
+          description: 회원 가입 정상 완료
           content:
             application/json:
               schema:
                 type: object
                 properties:
                   code:
-                    type: "integer"
+                    type: integer
                     example: 200
                   message:
-                    type: "string"
-                    example: "SUCCESS"
-        "400":
-          description: "이미 존재하는 사용자"
+                    type: string
+                    example: SUCCESS
+        400:
+          description: 이미 존재하는 사용자
           content:
             application/json:
               schema:
-                type: "object"
+                type: object
                 properties:
                   code:
-                    type: "integer"
+                    type: integer
                     example: 400
                   message:
-                    type: "string"
-                    example: "ALREADY_EXISTS"
+                    type: string
+                    example: ALREADY_EXISTS          
 
-
+  /user/sign-out:
+    post:
+      summary: 로그아웃
+      consumes: application/json
+      produces: application/json
+      responses:
+        200:
+          description: 회원 가입 정상 완료
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: SIGNED_OUT_SUCCESS                    
         
 definitions:
   User:
-    type: "object"
+    type: object
     required:
-    - "name"
-    - "nickname"
-    - "webMail"
+    - name
+    - nickname
+    - webMail
     properties:
       name:
-        type: "string"
-        example: "이태현"
+        type: string
+        example: 이태현
       nickname:
-        type: "string"
-        example: "도비"
+        type: string
+        example: 도비
       webMail:
-        type: "string"
-        example: "dlxogus0417"
+        type: string
+        example: dlxogus0417
