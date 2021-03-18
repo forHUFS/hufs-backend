@@ -17,5 +17,4 @@ router.get('/google/callback', socialAuth.googleCallBack);
 router.get('/kakao', socialAuth.kakao);
 router.get('/kakao/callback', socialAuth.kakaoCallBack);
 
-
 module.exports = router;
