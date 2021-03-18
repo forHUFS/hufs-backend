@@ -1,8 +1,9 @@
 const Post = require('../models/posts');
 const Board = require('../models/boards');
+const User = require('../models/users');
 const { Op } = require('sequelize');
 
-exports.searchPosts = async (req, res, next)=> {
+exports.searchPosts = async (req, res, next)=>{
     try {
         let keyword = req.query.keyword;
         keyword = keyword.trim();
@@ -13,6 +14,7 @@ exports.searchPosts = async (req, res, next)=> {
             });
         }
         keyword = keyword.replace(/\s\s+/gi, ' ');
+
         let key = [];
         keyword.split(' ').map(k => {
             if (k.length > 1) {
@@ -27,21 +29,24 @@ exports.searchPosts = async (req, res, next)=> {
                         {title: {[Op.and]: key}},
                         {content: {[Op.and]: key}}],
                 },
+                include: [{model: Board, attributes: ['title']},
+                          {model: User, attributes: ['nickname']}]
             });
-
 
         } else if (req.query.option === 'title') {
 
             var post = await Post.findAll({
                 where: { title: {[Op.and]: key} },
-                include: [{model: Board, attributes: ['title']}],
+                include: [{model: Board, attributes: ['title']},
+                          {model: User, attributes: ['nickname']}]
             });
 
 
         } else if (req.query.option === 'content') {
             var post = await Post.findAll({
-                where: { content: {[Op.and]: key} },
-                include: [{model: Board, attributes: ['title']}],
+                where: { content: {[Op.and]: key}},
+                include: [{model: Board, attributes: ['title']},
+                          {model: User, attributes: ['nickname']}]
             });
 
         } else {
@@ -62,9 +67,11 @@ exports.searchPosts = async (req, res, next)=> {
             });
         }
 
+
     } catch (err) {
         console.error(err);
         next(err);
 
     }
+
 }

@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize');
 
+
 module.exports = class Post extends Sequelize.Model{
     static init(sequelize) {
         return super.init({
@@ -15,12 +16,14 @@ module.exports = class Post extends Sequelize.Model{
                 type: Sequelize.INTEGER.UNSIGNED,
                 allowNull: false,
                 defaultValue: 0,
+
             },
-            isBlocked: {
-                type: Sequelize.BOOLEAN,
+            report: {
+                type: Sequelize.INTEGER.UNSIGNED,
                 allowNull: false,
-                defaultValue: false,
-            }
+                defaultValue: 0,
+            },
+
         }, {
             sequelize,
             timestamps: true,
@@ -37,8 +40,11 @@ module.exports = class Post extends Sequelize.Model{
     static associate(db)    {
         db.Post.belongsTo(db.Board, { foreignKey: 'boardId', targetKey: 'id'});
         db.Post.hasMany(db.Reply, { foreignKey: 'postId', sourceKey: 'id'});
-        db.Post.hasMany(db.Image, { foreignKey: 'postId', sourceKey: 'id'});
+        db.Post.hasMany(db.Image, {  foreignKey: 'postId', sourceKey: 'id'});
         db.Post.belongsTo(db.User, { foreignKey: 'userId', targetKey: 'id' });
         db.Post.hasMany(db.Scrap, { foreignKey: 'postId', sourceKey: 'id' });
+        db.Post.hasMany(db.LikeRecordOfPost, { foreignKey: 'postId', sourceKey: 'id' });
+        db.Post.hasMany(db.ReportOfPost, { foreignKey: 'postId', sourceKey: 'id' });
+
     }
 }

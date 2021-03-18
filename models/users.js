@@ -70,7 +70,10 @@ module.exports = class User extends Sequelize.Model{
         db.User.hasMany(db.Directory, { foreignKey: "userId", sourceKey: "id" });
         db.User.hasMany(db.Post, { foreignKey: "userId", sourceKey: "id" });
         db.User.hasMany(db.Reply, { foreignKey: "userId", sourceKey: "id" });
-        db.User.hasMany(db.LikeRecord, { foreignKey: "userId", sourceKey: "id" });
+        db.User.hasMany(db.LikeRecordOfPost, { foreignKey: "userId", sourceKey: "id" });
+        db.User.hasMany(db.LikeRecordOfReply, { foreignKey: "userId", sourceKey: "id" });
+        db.User.hasMany(db.ReportOfPost, { foreignKey: "userId", sourceKey: "id" });
+        db.User.hasMany(db.ReportOfReply, { foreignKey: "userId", sourceKey: "id" });
 
     }
 }

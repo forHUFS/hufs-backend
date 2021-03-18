@@ -1,26 +1,28 @@
 const express = require('express');
-const { addLike, delLike, addPost, modifyPost, readPost, deletePost } = require('../controller/post');
+const { addLike, delLike, modifyPost, readPost, deletePost, cancelPost, cancelEdit, report } = require('../controller/post');
 const { uploadImg, deleteImg } = require('../uploads/upload');
 const { upload } = require('../uploads/upload');
-
 const { authUtil } = require('../middlewares/auth');
 
 
 const router = express.Router();
 
 
-router.post('/', addPost);
-router.put('/', modifyPost);
-
+router.post('/back', cancelPost);
+router.post('/edit/back', cancelEdit);
 
 router.post('/img', upload.array('img',5), uploadImg);
-router.post('/deleteimg', deleteImg );
 
-router.get('/:id/addlike', addLike);
-router.get('/:id/dellike', delLike);
 
+router.get('/:id/addlike', authUtil.isSignedIn, authUtil.isAuthorized, addLike);
+router.get('/:id/dellike', authUtil.isSignedIn, authUtil.isAuthorized, delLike);
+
+router.post('/:id/report', authUtil.isSignedIn, authUtil.isAuthorized, report);
 
 router.get('/:id', authUtil.isSignedIn, authUtil.isAuthorized, readPost);
-router.delete('/:id', deletePost);
+router.put('/:id', authUtil.isSignedIn, authUtil.isAuthorized, modifyPost);
+router.delete('/:id', authUtil.isSignedIn, authUtil.isAuthorized, deletePost);
+
+
 
 module.exports = router;

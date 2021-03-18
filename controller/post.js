@@ -1,25 +1,42 @@
 const Post = require('../models/posts');
-const Image = require('../models/image');
 const Reply = require('../models/replies');
-const Report = require('../models/reports');
+const ReportOfPost = require('../models/reportOfPost');
 const User = require('../models/users');
-const LikeRecord = require('../models/likeRecord');
-const { s3 }= require('../uploads/upload');
+const LikeRecordOfPost = require('../models/likeRecordOfPost');
+const { deleteImg }= require('../uploads/upload');
+const { checkLikeRecordOfReply } = require('./reply');
+const { Op } = require('sequelize');
 const sequelize = require('../models').sequelize;
-
 
 exports.addLike = async (req,res,next) => {
     try {
         const postId = req.params.id;
-        await Post.update({
-            like: sequelize.literal('`like`+1')
-        }, {
-            where: { id: req.params.id }
-        });
-        res.status(200).json({
-            code: 200,
-            message: "좋아요 완료"
-        });
+        const userId = req.user.id;
+        if (!await checkLikeRecord(postId, userId)) {
+            await sequelize.transaction(async (t)=> {
+            await Post.update({
+                like: sequelize.literal('`like`+1')
+            }, {
+                where: { id: postId },
+                transaction: t
+            });
+            await LikeRecordOfPost.create({
+                postId: postId,
+                userId: userId,
+            },{
+                transaction: t
+            });
+            res.status(200).json({
+                code: 200,
+                message: "좋아요 완료"
+            });
+            });
+        } else {
+            res.status(400).json({
+                code: 400,
+                message: "이미 추천한 게시글입니다"
+            });
+        }
 
     } catch (err) {
         console.error(err);
@@ -28,131 +45,111 @@ exports.addLike = async (req,res,next) => {
 }
 exports.delLike = async (req,res,next)=> {
     try {
-       await Post.update({
-           like: sequelize.literal('`like`-1')
-       }, {
-           where: { id: req.params.id }
-       });
-       res.status(200).json({
-           code: 200,
-           message: "좋아요 취소 완료"
-       });
-
-    } catch (err) {
-        console.error(err);
-        next(err);
-    }
-}
-
-exports.addPost = async (req,res,next)=> {
-    try {
-        console.log(req.body.decoded.id);
-        await sequelize.transaction(async (t)=>{
-        const post = await Post.create({
-            title: req.body.title,
-            content: req.body.content,
-            boardId: req.body.boardId,
-        }, {
-            transaction: t,
-        });
-        const url = req.body.url;
-        console.log(url);
-
-        if (url && Array.isArray(url)) {
-                const image = await Promise.all(
-                    url.map(img => {
-                        return Image.create({
-                            url: img,
-                            postId: post.id
-                        }, {
-                            transaction: t,
-                        })
-                    })
-                );
-
-        } else if (url && typeof url === 'string') {
-            await Image.create( {
-                url: url,
-                postId: post.id
-            }, {
-                transaction: t,
-            });
-        }
-        res.status(201).json({
-            code: 201,
-            message: "게시글 작성 완료"
-        });
-        });
-    } catch (err) {
-        console.error(err);
-        next(err);
-    }
-}
-exports.modifyPost = async(req,res,next)=> {
-    try {
-        await sequelize.transaction( async (t)=> {
-        await Post.update({
-            title: req.body.title,
-            content: req.body.content,
-        }, {
-            where: {id: req.body.id},
-            transaction: t,
-        });
-        await Image.destroy({
-            where: { postId: req.body.id },
-            transaction: t,
-        });
-        const url = req.body.url
-        console.log("url: ", url);
-        if (url && Array.isArray(url)) {
-                const image = await Promise.all(
-                    url.map(img => {
-                        return Image.create({
-                            url: img,
-                            postId: req.body.id
-                        }, {
-                            transaction: t
-                        })
-                    })
-                );
-        } else if (url && typeof url === 'string') {
-            await Image.create({
-                url: url,
-                postId: req.body.id
-            }, {
-                transaction: t
-            });
-        }
-        res.status(200).json({
-            code: 200,
-            message: "수정 완료"
-        });
-        });
-    } catch (err) {
-        console.error(err);
-        next(err);
-    }
-
-}
-exports.readPost = async(req,res,next)=>{
-    try {
-        console.log(req.user);
-        // console.log(req.params);
-        const post = await Post.findOne({
-            where: { id: req.params.id, isBlocked: false },
-            include: [{model: Reply}, {model: Image , attributes: ['id','url']}]
-        });
-        //console.log(post);
-        if (post) {
-            res.status(200).json({
-                code: 200,
-                post
+        const postId = req.params.id;
+        const userId = req.user.id;
+        if (await checkLikeRecord(postId, userId)) {
+            await sequelize.transaction(async (t)=> {
+                await Post.update({
+                    like: sequelize.literal('`like`-1')
+                }, {
+                    where: { id: postId },
+                    transaction: t
+                });
+                await LikeRecordOfPost.destroy({
+                    postId: postId,
+                    userId: userId,
+                    transaction: t
+                });
+                res.status(200).json({
+                    code: 200,
+                    message: "좋아요 취소 완료"
+                });
             });
         } else {
             res.status(400).json({
                 code: 400,
-                message: "게시글이 존재하지 않습니다"
+                message: "추천한 게시글에 대해서만 추천을 취소할 수 있습니다"
             });
+        }
+
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+}
+
+
+exports.cancelPost = async (req,res,next)=> {
+    try {
+
+        const url = req.body.url;
+        await deleteImg(url);
+        res.status(200).json({
+            code: 200,
+            message: "글 작성 취소: 이미지 삭제 완료"
+        });
+
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+}
+
+exports.modifyPost = async(req,res,next)=> {
+    try {
+         await Post.update({
+            title: req.body.title,
+            content: req.body.content,
+        },{
+            where : {
+                id: req.params.id,
+                userId: req.user.id
+            }
+        });
+
+        const url = req.body.url;
+        if (url && url.length){
+            await deleteImg(url);
+        }
+        res.status(200).json({
+            code: 200,
+            message: "게시글 수정 완료"
+
+        });
+
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+
+}
+exports.cancelEdit = async (req,res,next)=> {
+    try {
+        const url = req.body.url;
+        await deleteImg(url);
+        res.status(200).json({
+            code: 200,
+            message: "글 수정 취소: 이미지 삭제 완료"
+        });
+
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+}
+exports.readPost = async(req,res,next)=>{
+    try {
+        const post = await Post.findOne({
+            where: { id: req.params.id, report: { [Op.lt]: 5 } },
+            include: [{ model: Reply }, { model: User , attributes: ['nickname'] }]
+        });
+        if (post) {
+            res.status(200).json({
+                code: 200,
+                post: post,
+            });
+        } else {
+            res.status(400).json({message: "게시글이 존재하지 않습니다"});
         }
     } catch (err) {
         console.error(err);
@@ -163,51 +160,102 @@ exports.readPost = async(req,res,next)=>{
 }
 exports.deletePost = async(req,res,next)=>{
     try {
-            const img = await Image.findAll({
-                where: { postId: req.params.id, },
-            });
-            if (img.length) {
-                console.log(img);
-                const obj = [];
-                img.map(i => {
-                    const tmp = i.dataValues.url.split('/').slice(-2);
-                    const url = tmp.join('/');
-                    obj.push({Key: url});
-                });
-                await s3.deleteObjects({Bucket: 'hufsweb', Delete: { Objects: obj }}).promise()
-                    .then(data => {
-                        console.log("이미지 삭제 완료", data);
-                    })
-                    .catch(err => {
-                        console.error(err);
-                        res.status(500).json({
-                            code: 500,
-                            message: "이미지 삭제 오류"
-                        });
-                    });
-
-
+        const post = await Post.findOne({
+            where: { id: req.params.id }
+        });
+        console.log(post);
+        if (post.userId === req.user.id || req.user.type === 'admin') {
+            let m;
+            let img = [];
+            let reg = /<img[^>]*src=[\"']?([^>\"']+)[\"']?[^>]*>/g
+            while (m = await reg.exec(post.content)) {
+                img.push(m[1]);
             }
-            await Post.destroy({
-            where: { id: req.params.id },
-        });
-        res.status(200).json({
-            code: 200,
-            message: "삭제 완료"
-        });
+            if (img.length) {
+                await deleteImg(img);
+            }
 
+            await Post.destroy({
+                where: { id: req.params.id },
+            });
+
+            res.status(200).json({
+                code: 200,
+                message: "삭제 완료"
+            });
+        } else {
+            res.status(400).json({
+                code: 400,
+                message: "본인이 게시한 글만 삭제할 수 있습니다"
+            });
+        }
     } catch (err){
         console.error(err);
         next(err);
     }
 }
 
-async function checkLikeRecord(postId, userId) {
+exports.report = async(req,res,next) => {
     try {
-        const record = await LikeRecord.findOne({
+        const postId = req.params.id;
+        const userId = req.user.id;
+        const record = await ReportOfPost.findOne({
             where: {
-                targetId: postId,
-                targetObject: 1,
+                postId: postId,
+                userId: req.user.id
+            }
+        });
+        if (!record) {
+            await sequelize.transaction(async (t)=> {
+                await ReportOfPost.create({
+                    content: req.body.content,
+                    detail: req.body.detail,
+                    postId: postId,
+                    userId: userId
+                }, {
+                    transaction: t
+                });
+                await Post.update({
+                    report: sequelize.literal('`report`+1')
+                },{
+                    where: { id: postId },
+                    transaction: t,
+                });
+                const post = await Post.findOne({
+                    where: { id: postId },
+                    transaction: t,
+                });
+                console.log(post);
+                console.log(post.report);
+
+                if (post.report >= 5) {
+
+                // 유저 신고 카운트 +1 -> 5 ->
+                }
+
+                res.status(200).json({
+                    code: 200,
+                    message: "신고 완료"
+                });
+
+            });
+        } else {
+            res.status(400).json({
+                code: 400,
+                message: "이미 신고한 게시글입니다"
+            });
+        }
+
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+}
+async function checkLikeRecord (postId, userId) {
+    try {
+        const record = await LikeRecordOfPost.findOne({
+            where: {
+                postId: postId,
                 userId: userId,
             }
         });

@@ -1,16 +1,41 @@
 const Post = require('../models/posts');
 const Board = require('../models/boards');
+const User = require('../models/users');
+const { deleteImg } = require('../uploads/upload');
 const { Op } = require('sequelize');
 
 exports.readPosts = async (req,res,next)=>{
     try {
         const post = await Post.findAll({
-            where: { boardId: req.params.id }
+            where: { boardId: req.params.id },
+            include: [{model: User, attributes: ['nickname'] }]
         });
         res.status(200).json({
             code: 200,
             post
         });
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+}
+exports.addPost = async (req,res,next)=> {
+    try {
+        await Post.create({
+            title: req.body.title,
+            content: req.body.content,
+            boardId: req.params.id,
+            userId: req.user.id
+        });
+        const url = req.body.url;
+        if (url && url.length) {
+            await deleteImg(url);
+        }
+        res.status(201).json({
+            code: 201,
+            message: "게시글 작성 완료"
+        });
+
     } catch (err) {
         console.error(err);
         next(err);
@@ -43,19 +68,22 @@ exports.searchPostsInBoard = async (req, res, next)=>{
                             {title: {[Op.and]: key}},
                             {content: {[Op.and]: key}}],
                         boardId: req.params.id,
-                    }
+                    },
+                    include: [{model: User, attributes: ['nickname']}]
                 });
 
             } else if (req.query.option === 'title') {
 
                 var post = await Post.findAll({
                     where: { title: {[Op.and]: key}, boardId: req.params.id },
+                    include: [{model: User, attributes: ['nickname']}]
                 });
 
 
             } else if (req.query.option === 'content') {
                 var post = await Post.findAll({
                     where: { content: {[Op.and]: key}, boardId: req.params.id },
+                    include: [{model: User, attributes: ['nickname']}]
                 });
 
             } else {
