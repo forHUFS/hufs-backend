@@ -6,6 +6,7 @@ module.exports = class Directory extends Sequelize.Model {
             name: {
                 type: Sequelize.STRING(16),
                 allowNull: false,
+                unique: true,
                 defaultValue: '기타'
             }
         }, {
@@ -25,5 +26,3 @@ module.exports = class Directory extends Sequelize.Model {
     static associate(db) {
     }
 }
-
-
