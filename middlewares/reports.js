@@ -17,30 +17,40 @@ exports.userReport = async(req, res, next) => {
 
             await user.save();
 
-            console.log('After Suspended')
-            console.log(user)
-            console.log(user.reportCount)
-            console.log(user.suspensionCount)
-            console.log(user.type)
-            return res.status(200).json(
-                {
-                    code: 200,
-                    message: 'User_Type_Updated'
-                }
-            );
-        } else {
-            console.log('Before Suspended')
-            console.log(user)
-            console.log(user.reportCount)
-            console.log(user.suspensionCount)
-            console.log(user.type)
-            return res.status(200).json(
-                {
-                    code: 200,
-                    message: 'Suspension_Count_Updated'
-                }
-            );
-        }
+            // console.log('After Suspended')
+            // console.log(user)
+            // console.log(user.reportCount)
+            // console.log(user.suspensionCount)
+            // console.log(user.type)
+            // return res.status(200).json(
+            //     {
+            //         code: 200,
+            //         message: 'User_Type_Updated'
+            //     }
+            // );
+        } // else {
+            // console.log('Before Suspended')
+            // console.log(user)
+            // console.log(user.reportCount)
+            // console.log(user.suspensionCount)
+            // console.log(user.type)
+            // return res.status(200).json(
+            //     {
+            //         code: 200,
+            //         message: 'Suspension_Count_Updated'
+            //     }
+            // );
+        // }
+
+
+        // 게시글과 댓글 모두 사용자가 신고 처리 했을 때 위 과정을 거친 이후 아래 response를 받는다.
+        return res.status(200).json(
+            {
+                code: 200,
+                message: 'REPORT_SUCCESS'
+            }
+        )
+
     } catch (error) {
         console.log(error);
         return res.status(500).json(
