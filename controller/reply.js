@@ -1,6 +1,7 @@
 const Reply = require('../models/replies');
 const LikeRecordOfReply = require('../models/likeRecordOfReply');
 const ReportOfReply = require('../models/reportOfReply');
+const { userReport } = require('../middlewares/reports');
 const sequelize = require('../models').sequelize;
 
 
@@ -14,8 +15,8 @@ exports.addReply = async(req,res,next)=> {
         });
 
         res.status(201).json({
-            code: 201,
-            message: "댓글 작성 성공"
+            data: "",
+            message: ""
         });
 
 
@@ -32,7 +33,10 @@ exports.addReReply = async(req,res,next)=>{
             postId: req.body.postId,
             userId: req.user.id
         });
-        res.status(201).json({message: "대댓글 작성 완료", reply});
+        res.status(201).json({
+            data: "",
+            message: ""
+        });
     } catch (err) {
         console.error(err);
         next(err);
@@ -43,18 +47,25 @@ exports.deleteReply = async(req,res,next) => {
         const reply = await Reply.findOne({
             where: { id: req.params.id }
         });
-        if (reply.userId === req.user.id || req.user.type === 'admin') {
-            await Reply.destroy({
-                where: { id: req.params.id }
-            });
-            res.status(200).json({
-                code: 200,
-                message: "삭제 완료"
-            });
+        if (reply) {
+            if (reply.userId === req.user.id || req.user.type === 'admin') {
+                await Reply.destroy({
+                    where: {id: req.params.id}
+                });
+                res.status(200).json({
+                    data: "",
+                    message: ""
+                });
+            } else {
+                res.status(403).json({
+                    data: "",
+                    message: "FORBIDDEN"
+                })
+            }
         } else {
-            res.status(400).json({
-                code: 400,
-                message: "본인의 댓글만 삭제할 수 있습니다"
+            res.status(404).json({
+                data: "",
+                message: "RESOURCE_NOT_FOUND"
             })
         }
 
@@ -65,20 +76,26 @@ exports.deleteReply = async(req,res,next) => {
 }
 exports.modifyReply = async(req,res,next) => {
     try {
-        await Reply.update({
+        const reply = await Reply.update({
             content: req.body.content,
         }, {
             where: {
-                id: req.body.id,
+                id: req.params.id,
                 userId: req.user.id
             }
 
         });
-        res.status(200).json({
-            code: 200,
-            message: "댓글 수정 완료"
-
-        });
+        if (reply[0]===0) {
+            res.status(400).json({
+                data: "",
+                message: "BAD_REQUEST"
+            });
+        } else {
+            res.status(200).json({
+                data: "",
+                message: ""
+            });
+        }
 
     } catch (err) {
         console.error(err);
@@ -104,14 +121,14 @@ exports.addReplyLike = async (req,res,next) => {
                     transaction: t
                 });
                 res.status(200).json({
-                    code: 200,
-                    message: "좋아요 완료"
+                    data: "",
+                    message: ""
                 });
             });
         } else {
             res.status(400).json({
-                code: 400,
-                message: "이미 추천한 댓글입니다"
+                data: "",
+                message: "INVALID"
             });
        }
 
@@ -140,14 +157,14 @@ exports.cancelReplyLike = async (req,res,next)=> {
                 transaction: t
             });
             res.status(200).json({
-                code: 200,
-                message: "좋아요 취소 완료"
+                data: "",
+                message: ""
             });
             });
         } else {
             res.status(400).json({
-                code: 400,
-                message: "추천한 댓글에 대해서만 추천을 취소할 수 있습니다"
+                data: "",
+                message: "INVALID"
             });
         }
 
@@ -182,25 +199,28 @@ exports.report = async(req,res,next) => {
                     transaction: t,
                 });
                 const reply = await Reply.findOne({
-                    where: { id: replyId }
+                    where: { id: replyId },
+                    transaction: t
                 });
                 console.log(reply);
                 console.log(reply.report);
                 if (reply.report >= 5) {
+                    req.userId = reply.userId;
+                    userReport(req,res,next);
+                } else {
+                    res.status(200).json({
+                        data: "",
+                        message: ""
+                    });
 
-                    // 유저 신고 카운트 +1
                 }
 
-                res.status(200).json({
-                    code: 200,
-                    message: "댓글 신고 완료"
-                });
 
             });
         } else {
             res.status(400).json({
-                code: 400,
-                message: "이미 신고한 댓글입니다"
+                data: "",
+                message: "INVALID"
             });
         }
 

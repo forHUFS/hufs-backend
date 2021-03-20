@@ -10,8 +10,8 @@ exports.readPosts = async (req,res,next)=>{
             include: [{model: User, attributes: ['nickname'] }]
         });
         res.status(200).json({
-            code: 200,
-            post
+            data: post,
+            message: ""
         });
     } catch (err) {
         console.error(err);
@@ -31,8 +31,8 @@ exports.addPost = async (req,res,next)=> {
             await deleteImg(url);
         }
         res.status(201).json({
-            code: 201,
-            message: "게시글 작성 완료"
+            data: "",
+            message: ""
         });
 
     } catch (err) {
@@ -44,11 +44,18 @@ exports.addPost = async (req,res,next)=> {
 exports.searchPostsInBoard = async (req, res, next)=>{
     try {
             let keyword = req.query.keyword;
+            let option = req.query.option;
+            if (!keyword || !option) {
+                res.status(400).json({
+                    data: "",
+                    message: "QUERY"
+                });
+            } else {
             keyword = keyword.trim();
             if (keyword.length < 2) {
-                return res.status(400).json({
-                    code: 400,
-                    message: "두 글자 이상을 검색해 주세요"
+                return res.status(412).json({
+                    data: "",
+                    message: "INVALID"
                 });
             }
             keyword = keyword.replace(/\s\s+/gi, ' ');
@@ -59,7 +66,7 @@ exports.searchPostsInBoard = async (req, res, next)=>{
                     key.push({[Op.regexp]: k});
                 }
             });
-            if (req.query.option === 'titleAndContent') {
+            if (option === 'titleAndContent') {
 
                 var post = await Post.findAll({
                     where: {
@@ -71,10 +78,11 @@ exports.searchPostsInBoard = async (req, res, next)=>{
                     include: [{model: User, attributes: ['nickname']}]
                 });
 
-            } else if (req.query.option === 'title') {
+            } else if (option === 'title') {
 
                 var post = await Post.findAll({
                     where: { title: {[Op.and]: key}, boardId: req.params.id },
+                    order: [['createAt', 'DESC']],
                     include: [{model: User, attributes: ['nickname']}]
                 });
 
@@ -85,24 +93,34 @@ exports.searchPostsInBoard = async (req, res, next)=>{
                     include: [{model: User, attributes: ['nickname']}]
                 });
 
+            } else if (option === 'nick') {
+                const user = await User.findOne({
+                    where: { nickname: {[Op.and]: key}}
+                });
+                if (user) {
+                    var post = await Post.findAll({
+                        where: {userId: user.id, boardId: req.params.id},
+                        include: [{model: User, attributes: ['nickname']}]
+                    });
+                }
             } else {
-                res.status(400).json({
-                    code: 400,
-                    message: "잘못된 요청입니다"
+                res.status(421).json({
+                    data: "",
+                    message: "INVALID"
                 });
             }
-        if (post.length) {
+        if (post && post.length) {
             res.status(200).json({
-                code: 200,
-                post
+                data: post,
+                message: ""
             });
         } else {
-            res.status(202).json({
-                code: 202,
-                message: "검색 결과가 존재하지 않습니다"
+            res.status(204).json({
+                data: "",
+                message: ""
             });
         }
-
+            }
 
     } catch (err) {
         console.error(err);

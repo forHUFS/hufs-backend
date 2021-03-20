@@ -30,5 +30,6 @@ module.exports = class StoreReview extends Sequelize.Model{
     static associate(db){
         db.StoreReview.belongsTo(db.Store, { onDelete: 'CASCADE', foreignKey: 'storeId', targetKey:'id'});
         db.StoreReview.belongsTo(db.User, { foreignKey: 'userId', targetKey: 'id' });
+        db.StoreReview.hasMany(db.ReviewImage, { foreignKey: 'storeReviewId', sourceKey: 'id'});
     }
 }
