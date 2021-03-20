@@ -1,6 +1,7 @@
 const Reply = require('../models/replies');
 const LikeRecordOfReply = require('../models/likeRecordOfReply');
 const ReportOfReply = require('../models/reportOfReply');
+const { userReport } = require('../middlewares/reports');
 const sequelize = require('../models').sequelize;
 
 
@@ -187,8 +188,8 @@ exports.report = async(req,res,next) => {
                 console.log(reply);
                 console.log(reply.report);
                 if (reply.report >= 5) {
-
-                    // 유저 신고 카운트 +1
+                    req.userId = reply.userId;
+                    userReport(req,res,next);
                 }
 
                 res.status(200).json({

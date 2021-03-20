@@ -49,6 +49,14 @@ exports.searchPosts = async (req, res, next)=>{
                           {model: User, attributes: ['nickname']}]
             });
 
+        } else if (req.query.option === 'nick') {
+            const user = await User.findOne({
+                where: {nickname: {[Op.and]: key}}
+            });
+            var post = await Post.findAll({
+                where: {userId: user.id, boardId: req.params.id},
+                include: [{model: User, attributes: ['nickname']}]
+            });
         } else {
             res.status(400).json({
                 code: 400,

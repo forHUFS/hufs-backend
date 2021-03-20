@@ -33,7 +33,7 @@ app.set('view engine', 'html');
 app.use(morgan('dev'));
 app.use(cookieParser());
 
-configurePassport(app)
+configurePassport(app);
 
 sequelize.sync({force:false})
     .then(()=>{

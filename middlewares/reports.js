@@ -6,7 +6,7 @@ const User = require('../models/users');
 exports.userReport = async(req, res, next) => {
     // 테스트를 위해 req.user.id 로 User Id를 받았다.
     try {
-        user = await User.findOne({where: {id: req.user.id}});
+        user = await User.findOne({where: {id: req.userId}});
         user.reportCount = user.reportCount + 1;
 
         await user.save();

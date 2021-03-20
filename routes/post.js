@@ -4,9 +4,7 @@ const { uploadImg } = require('../uploads/upload');
 const { upload } = require('../uploads/upload');
 const { authUtil } = require('../middlewares/auth');
 
-
 const router = express.Router();
-
 
 router.post('/back', cancelPost);
 router.post('/edit/back', cancelEdit);

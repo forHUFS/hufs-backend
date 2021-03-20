@@ -140,7 +140,7 @@ const userAuth = {
 
         const exUser = await User.findOne(
             {
-                where: {email: userEmail}
+                where: {email: userEmail }
             }
         )
 
