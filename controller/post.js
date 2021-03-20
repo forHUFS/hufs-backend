@@ -28,14 +28,14 @@ exports.addLike = async (req,res,next) => {
                 transaction: t
             });
             res.status(200).json({
-                data: "",
-                message: ""
+                code: 200,
+                message: "좋아요 완료"
             });
             });
         } else {
             res.status(400).json({
-                data: "",
-                message: "INVALID"
+                code: 400,
+                message: "이미 추천한 게시글입니다"
             });
         }
 
@@ -62,14 +62,14 @@ exports.delLike = async (req,res,next)=> {
                     transaction: t
                 });
                 res.status(200).json({
-                    data: "",
-                    message: ""
+                    code: 200,
+                    message: "좋아요 취소 완료"
                 });
             });
         } else {
             res.status(400).json({
-                data: "",
-                message: "INVALID"
+                code: 400,
+                message: "추천한 게시글에 대해서만 추천을 취소할 수 있습니다"
             });
         }
 
@@ -86,8 +86,8 @@ exports.cancelPost = async (req,res,next)=> {
         const url = req.body.url;
         await deleteImg(url);
         res.status(200).json({
-            data: "",
-            message: ""
+            code: 200,
+            message: "글 작성 취소: 이미지 삭제 완료"
         });
 
     } catch (err) {
@@ -98,7 +98,7 @@ exports.cancelPost = async (req,res,next)=> {
 
 exports.modifyPost = async(req,res,next)=> {
     try {
-         const post = await Post.update({
+         await Post.update({
             title: req.body.title,
             content: req.body.content,
         },{
@@ -107,22 +107,17 @@ exports.modifyPost = async(req,res,next)=> {
                 userId: req.user.id
             }
         });
-         console.log(post);
-         if (post[0] === 0) {
-             res.status(400).json({
-                 data: "",
-                 message: "BAD_REQUEST"
-             });
-         } else {
-             const url = req.body.url;
-             if (url && url.length) {
-                 await deleteImg(url);
-             }
-             res.status(200).json({
-                 data: "",
-                 message: ""
-             });
-         }
+
+        const url = req.body.url;
+        if (url && url.length){
+            await deleteImg(url);
+        }
+        res.status(200).json({
+            code: 200,
+            message: "게시글 수정 완료"
+
+        });
+
     } catch (err) {
         console.error(err);
         next(err);
@@ -134,8 +129,8 @@ exports.cancelEdit = async (req,res,next)=> {
         const url = req.body.url;
         await deleteImg(url);
         res.status(200).json({
-            data: "",
-            message: ""
+            code: 200,
+            message: "글 수정 취소: 이미지 삭제 완료"
         });
 
     } catch (err) {
@@ -147,19 +142,15 @@ exports.readPost = async(req,res,next)=>{
     try {
         const post = await Post.findOne({
             where: { id: req.params.id, report: { [Op.lt]: 5 } },
-            include: [{ model: Reply, include: [{model: User, attributes: ['nickname']}] },
-                      { model: User , attributes: ['nickname'] }]
+            include: [{ model: Reply }, { model: User , attributes: ['nickname'] }]
         });
         if (post) {
             res.status(200).json({
-                data: post,
-                message: ""
+                code: 200,
+                post: post,
             });
         } else {
-            res.status(404).json({
-                data: "",
-                message: "RESOURCE_NOT_FOUND"
-            });
+            res.status(400).json({message: "게시글이 존재하지 않습니다"});
         }
     } catch (err) {
         console.error(err);
@@ -174,39 +165,31 @@ exports.deletePost = async(req,res,next)=>{
             where: { id: req.params.id }
         });
         console.log(post);
-        if (post) {
-            if (post.userId === req.user.id || req.user.type === 'admin') {
-                let m;
-                let img = [];
-                let reg = /<img[^>]*src=[\"']?([^>\"']+)[\"']?[^>]*>/g
-                while (m = await reg.exec(post.content)) {
-                    img.push(m[1]);
-                }
-                if (img.length) {
-                    await deleteImg(img);
-                }
-
-                await Post.destroy({
-                    where: {id: req.params.id},
-                });
-
-                res.status(200).json({
-                    data: "",
-                    message: ""
-                });
-            } else {
-                res.status(403).json({
-                    data: "",
-                    message: "FORBIDDEN"
-                });
+        if (post.userId === req.user.id || req.user.type === 'admin') {
+            let m;
+            let img = [];
+            let reg = /<img[^>]*src=[\"']?([^>\"']+)[\"']?[^>]*>/g
+            while (m = await reg.exec(post.content)) {
+                img.push(m[1]);
             }
-        } else {
-            res.status(404).json({
-                data: "",
-                message: "RESOURCE_NOT_FOUND"
-            })
-        }
+            if (img.length) {
+                await deleteImg(img);
+            }
 
+            await Post.destroy({
+                where: { id: req.params.id },
+            });
+
+            res.status(200).json({
+                code: 200,
+                message: "삭제 완료"
+            });
+        } else {
+            res.status(400).json({
+                code: 400,
+                message: "본인이 게시한 글만 삭제할 수 있습니다"
+            });
+        }
     } catch (err){
         console.error(err);
         next(err);
@@ -248,19 +231,19 @@ exports.report = async(req,res,next) => {
 
                 if (post.report >= 5) {
                     req.userId = post.userId;
-                    userReport(req,res,next);
-                } else {
-                    res.status(200).json({
-                        data: "",
-                        message: ""
-                    });
+                    await userReport(req,res,next);
                 }
+
+                res.status(200).json({
+                    code: 200,
+                    message: "신고 완료"
+                });
 
             });
         } else {
             res.status(400).json({
-                data: "",
-                message: "INVALID"
+                code: 400,
+                message: "이미 신고한 게시글입니다"
             });
         }
 
