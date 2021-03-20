@@ -190,12 +190,14 @@ exports.report = async(req,res,next) => {
                 if (reply.report >= 5) {
                     req.userId = reply.userId;
                     userReport(req,res,next);
+                } else {
+                    res.status(200).json({
+                        code: 200,
+                        message: "댓글 신고 완료"
+                    });
+
                 }
 
-                res.status(200).json({
-                    code: 200,
-                    message: "댓글 신고 완료"
-                });
 
             });
         } else {

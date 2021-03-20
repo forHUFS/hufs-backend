@@ -231,13 +231,15 @@ exports.report = async(req,res,next) => {
 
                 if (post.report >= 5) {
                     req.userId = post.userId;
-                    await userReport(req,res,next);
+                    userReport(req,res,next);
+                } else {
+                    res.status(200).json({
+                        code: 200,
+                        message: "신고 완료"
+                    });
                 }
 
-                res.status(200).json({
-                    code: 200,
-                    message: "신고 완료"
-                });
+
 
             });
         } else {
