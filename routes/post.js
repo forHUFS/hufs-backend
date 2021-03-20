@@ -3,6 +3,7 @@ const { addLike, delLike, modifyPost, readPost, deletePost, cancelPost, cancelEd
 const { uploadImg } = require('../uploads/upload');
 const { upload } = require('../uploads/upload');
 const { authUtil } = require('../middlewares/auth');
+const Post = require('../models/posts');
 
 const router = express.Router();
 

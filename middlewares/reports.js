@@ -46,8 +46,8 @@ exports.userReport = async(req, res, next) => {
         // 게시글과 댓글 모두 사용자가 신고 처리 했을 때 위 과정을 거친 이후 아래 response를 받는다.
         return res.status(200).json(
             {
-                code: 200,
-                message: 'REPORT_SUCCESS'
+                data: "",
+                message: ""
             }
         )
 

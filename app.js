@@ -19,6 +19,7 @@ const mainRouter    = require('./routes/main');
 const postRouter    = require('./routes/post');
 const boardRouter   = require('./routes/board');
 const replyRouter   = require('./routes/reply');
+const storeRouter   = require('./routes/store');
 const userRouter    = require('./routes/user');
 
 
@@ -52,6 +53,7 @@ app.use(express.urlencoded({extended:false}));
 app.use('/post', postRouter);
 app.use('/board', boardRouter);
 app.use('/reply', replyRouter);
+app.use('/store', storeRouter);
 app.use('/user', userRouter);
 app.use('/', mainRouter);
 

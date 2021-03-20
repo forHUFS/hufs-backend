@@ -6,11 +6,18 @@ const { Op } = require('sequelize');
 exports.searchPosts = async (req, res, next)=>{
     try {
         let keyword = req.query.keyword;
+        let option = req.query.option;
+        if (!keyword || !option) {
+            res.status(400).json({
+                data: "",
+                message: "QUERY"
+            });
+        } else {
         keyword = keyword.trim();
         if (keyword.length < 2) {
-            return res.status(400).json({
-                code: 400,
-                message: "두 글자 이상을 검색해 주세요"
+            return res.status(412).json({
+                data: "",
+                message: "INVALID"
             });
         }
         keyword = keyword.replace(/\s\s+/gi, ' ');
@@ -21,7 +28,7 @@ exports.searchPosts = async (req, res, next)=>{
                 key.push({[Op.regexp]: k});
             }
         });
-        if (req.query.option === 'titleAndContent') {
+        if (option === 'titleAndContent') {
 
             var post = await Post.findAll({
                 where: {
@@ -33,7 +40,7 @@ exports.searchPosts = async (req, res, next)=>{
                           {model: User, attributes: ['nickname']}]
             });
 
-        } else if (req.query.option === 'title') {
+        } else if (option === 'title') {
 
             var post = await Post.findAll({
                 where: { title: {[Op.and]: key} },
@@ -42,39 +49,42 @@ exports.searchPosts = async (req, res, next)=>{
             });
 
 
-        } else if (req.query.option === 'content') {
+        } else if (option === 'content') {
             var post = await Post.findAll({
                 where: { content: {[Op.and]: key}},
                 include: [{model: Board, attributes: ['title']},
                           {model: User, attributes: ['nickname']}]
             });
 
-        } else if (req.query.option === 'nick') {
+        } else if (option === 'nick') {
             const user = await User.findOne({
                 where: {nickname: {[Op.and]: key}}
             });
-            var post = await Post.findAll({
-                where: {userId: user.id, boardId: req.params.id},
-                include: [{model: User, attributes: ['nickname']}]
-            });
+            if (user) {
+                var post = await Post.findAll({
+                    where: {userId: user.id, boardId: req.params.id},
+                    include: [{model: Board, attributes: ['title']},
+                              {model: User, attributes: ['nickname']}]
+                });
+            }
         } else {
-            res.status(400).json({
-                code: 400,
-                message: "잘못된 요청입니다"
+            res.status(421).json({
+                data: "",
+                message: "INVALID"
             });
         }
-        if (post.length) {
+        if (post && post.length) {
             res.status(200).json({
-                code: 200,
-                post
+                data: post,
+                message: ""
             });
         } else {
-            res.status(202).json({
-                code: 202,
-                message: "검색 결과가 존재하지 않습니다"
+            res.status(204).json({
+                data: "",
+                message: ""
             });
         }
-
+        }
 
     } catch (err) {
         console.error(err);
