@@ -8,6 +8,25 @@ servers:
   - url: "http://52.78.2.40:8000/"
 paths:
   /user:
+    get:
+      summary: 회원 정보 조회
+      consumes: application/json
+      produces: application/json
+      responses:
+        200:
+          description: 회원 정보 정상 조회
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    example: { email: 0417taehyun@gmail.com, webMail: dlxogus0417@hufs.ac.kr, nickname: 도비 }
+                  message:
+                    type: string
+                    example: ""           
+
     put:
       summary: 회원 정보 수정
       consumes: application/json
@@ -25,56 +44,34 @@ paths:
               nickname:
                 type: string
                 example: 도비
-
       responses:
-        204:
+        200:
           description: 회원 정보 정상 수정
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  code:
-                    type: integer
-                    example: 204
-                  message:
-                    type: string
-                    example: USER_INFO_UPDATED
-        400:
+                $ref: "#/definitions/Success-response"
+        409:
           description: 이미 존재하는 닉네임
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  code:
-                    type: integer
-                    example: 400
-                  message:
-                    type: string
-                    example: ALREADY_EXISTS
+                $ref: "#/definitions/Invalid-response"
 
     delete:
       summary: 회원 탈퇴
       consumes: application/json
       produces: application/json
       responses:
-        204:
+        200:
           description: 회원 정상 탈퇴
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  code:
-                    type: integer
-                    example: 204
-                  message:
-                    type: string
-                    example: DEL_USER_SUCCESS
+                $ref: "#/definitions/Success-response"
 
 
-  /user/google:
+  /user/sign-in/google:
     get:
       summary: 구글 소셜 로그인
       consumes: application/json
@@ -85,16 +82,9 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: SUCCESS
+                $ref: "#/definitions/Success-response"
 
-  /user/kakao:
+  /user/sign-in/kakao:
     get:
       summary: 카카오 소셜 로그인
       consumes: application/json
@@ -105,14 +95,7 @@ paths:
           content:
             appplication/json:
               schema:
-                type: object
-                properties:
-                  code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: SUCCESS
+                $ref: "#/definitions/Success-response"
 
 
   /user/sign-up:
@@ -126,34 +109,34 @@ paths:
           description: 회원 가입에 필요한 데이터 (webMail의 경우 @hufs.ac.kr 앞 부분까지만 입력)
           required: true
           schema:
-            $ref: "#/definitions/User"
+                type: object
+                required:
+                  - name
+                  - nickname
+                  - webMail
+                properties:
+                  name:
+                    type: string
+                    example: 이태현
+                  nickname:
+                    type: string
+                    example: 도비
+                  webMail:
+                    type: string
+                    example: dlxogus0417
       responses:
-        201:
+        200:
           description: 회원 가입 정상 완료
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: SUCCESS
-        400:
-          description: 이미 존재하는 사용자
+                $ref: "#/definitions/Success-response"
+        409:
+          description: 이미 존재하는 닉네임
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  code:
-                    type: integer
-                    example: 400
-                  message:
-                    type: string
-                    example: ALREADY_EXISTS
+                $ref: "#/definitions/Invalid-response"
 
   /user/sign-out:
     post:
@@ -162,33 +145,273 @@ paths:
       produces: application/json
       responses:
         200:
-          description: 회원 가입 정상 완료
+          description: 로그아웃 정상 완료
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Success-response"
+
+  /user/directory:
+    get:
+      summary: 스크랩을 위해 생성된 디렉토리 조회
+      consumes: application/json
+      produces: application/json
+      responses:
+        200:
+          description: 디렉토리 정상 조회 완료
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  code:
-                    type: integer
-                    example: 200
+                  data:
+                    type: object
+                    example: [ { id: 4, name: 팁 }, { id: 6, name: 기타 } ]
                   message:
                     type: string
-                    example: SIGNED_OUT_SUCCESS
+                    example: ""
+
+    post:
+      summary: 스크랩을 위해 디렉토리 생성
+      consumes: application/json
+      produces: application/json
+      parameters:
+        - in: body
+          name: body
+          description: 
+          required: true
+          schema:
+            $ref: "#/definitions/Directory"   
+      responses:
+        200:
+          description: 디렉토리 정상 생성 완료
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Success-response"
+        409:
+          description: 이미 존재하는 디렉토리 이름 
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Invalid-response"
+
+    put:
+      summary: 스크랩을 위해 생성된 디렉토리 수정
+      consumes: application/json
+      produces: application/json
+      parameters:
+        - in: body
+          name: body
+          description: 변경 될 디렉토리 이름
+          required: true
+          schema:
+            $ref: "#/definitions/Directory"
+        - in: query
+          name: id
+          description: 디렉토리 아이디
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: 디렉토리 정상 생성 완료
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Success-response"
+        409:
+          description: 이미 존재하는 디렉토리 이름 
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Invalid-response"
+
+    delete:
+      summary: 스크랩을 위해 생성된 디렉토리 삭제
+      consumes: application/json
+      produces: application/json
+      parameters:
+        - in: query
+          name: id
+          description: 디렉토리 아이디
+          required: true
+          schema:
+            type: integer     
+      responses:
+        200:
+          description: 디렉토리 정상 삭제 완료
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Success-response"
+        422:
+          description: 디렉토리 아이디 쿼리 스트링으로 필요 
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Query-response"  
+  
+  /user/scrap:
+    get:
+      summary: 사용자가 스크랩한 게시글 조회
+      consumes: application/json
+      produces: application/json
+      parameters:
+        - in: query
+          name: directoryId
+          description: 디렉토리 아이디
+          required: true
+          schema:
+            type: integer      
+      responses:
+        200:
+          description: 스크랩 정상 조회 완료
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    example: [ { scrapId: 4, postId: 1, postTitle: 첫 번째 게시글 }, { scarpId: 5, postId: 2, postTitle: 두 번째 게시글 } ]
+                  message:
+                    type: string
+                    example: ""
+        422:
+          description: 디렉토리 아이디 쿼리 스트링으로 필요 
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Query-response"
+
+    post:
+      summary: 게시글 스크랩
+      consumes: application/json
+      produces: application/json
+      parameters:
+        - in: query
+          name: postId
+          description: 게시글 아이디
+          required: true
+          schema:
+            type: integer      
+      responses:
+        200:
+          description: 정상 스크랩 완료
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Success-response"
+        409:
+          description: 이미 스크랩한 게시글
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Invalid-response"
+        422:
+          description: 게시글 아이디 쿼리 스트링으로 필요 
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Query-response"
+
+    put:
+      summary: 사용자가 스크랩한 게시글 디렉토리 이동
+      consumes: application/json
+      produces: application/json
+      parameters:
+        - in: query
+          name: postId
+          description: 게시글 아이디
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: directoryId
+          description: 디렉토리 아이디
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: 스크랩 정상 조회 완료
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Success-response"
+        422:
+          description: 게시글 아이디와 디렉토리 아이디 쿼리 스트링으로 필요 
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Query-response"
+
+    delete:
+      summary: 사용자 스크랩 삭제
+      consumes: application/json
+      produces: application/json
+      parameters:
+        - in: query
+          name: id
+          description: 스크랩 아이디
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: 스크랩 정상 조회 완료
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Success-response"
+        422:
+          description: 스크랩 아이디 쿼리 스트링으로 필요 
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Query-response"
+
+
 
 definitions:
-  User:
+  # 성공
+  Success-response:
+    type: object
+    properties:
+      data:
+        type: object
+        example: ""
+      message:
+        type: string
+        example: ""
+
+  # 이미 존재하는 데이터
+  Invalid-response:
+    type: object
+    properties:
+      data:
+        example: ""
+      message:
+        type: string
+        example: INVALID
+
+  # 쿼리 스트링 누락
+  Query-response:
+    type: object
+    properties:
+      data:
+        example: ""
+      message:
+        type: string
+        example: QUERY
+
+  # 디렉토리 Body Request
+  Directory:
     type: object
     required:
       - name
-      - nickname
-      - webMail
     properties:
-      name:
-        type: string
-        example: 이태현
       nickname:
         type: string
-        example: 도비
-      webMail:
-        type: string
-        example: dlxogus0417
+        example: 학교생활 팁 모음

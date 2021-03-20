@@ -7,8 +7,11 @@ const jwtOptions      = require('../config/secretKey').jwtOptions;
 const cookieOptions   = require('../config/secretKey').cookieOptions;
 const { transporter } = require('../config/email');
 
-const User  = require('../models/users');
-const Token = require('../models/tokens');
+const User      = require('../models/users');
+const Post      = require('../models/posts');
+const Token     = require('../models/tokens');
+const Scrap     = require('../models/scraps');
+const Directory = require('../models/directories');
 
 
 const token = crypto.randomBytes(20).toString('hex');
@@ -43,14 +46,14 @@ const emailAuth = {
                         }
                     );
 
-                    return res.status(200).json(
-                        {
-                            code: 200,
-                            message: token
-                        }
-                    );
                 } catch (error) {
                     console.log(error);
+                    return res.status(500).json(
+                        {
+                            data: "",
+                            message: error.message
+                        }
+                    )
                 }
             }
             // ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client at ServerResponse.setHeader 해결 필요
@@ -60,30 +63,44 @@ const emailAuth = {
         });
     },
 
-    checkEmail: async(req, res) => {
+    checkEmail: async(req, res, next) => {
         try {
-            emailToken   = req.query.token
-            const tokenTable   = await Token.findOne(
-                {
-                    where: {emailToken: emailToken}
-                }
-            );
-
-            const user = await User.update(
-                {
-                    "type": "user"
-                },
-                {
-                    where: {
-                        id: tokenTable.userId
+            if (!req.query.token) {
+                return next();
+            } else {
+                const tokenTable = await Token.findOne(
+                    {
+                        where: {emailToken: emailToken}
                     }
-                }
-            );
+                );
 
-            return res.redirect('/');
+                await User.update(
+                    {
+                        "type": "user"
+                    },
+                    {
+                        where: {
+                            id: tokenTable.userId
+                        }
+                    }
+                );
+
+                return res.status(200).json(
+                    {
+                        data: "",
+                        message: ""
+                    }
+                );
+            }
 
         } catch (error) {
             console.log(error);
+            return res.status(500).json(
+                {
+                    data: "",
+                    message: error.message
+                }
+            )
         }
     }
 }
@@ -92,29 +109,33 @@ const userAuth = {
     signUp: async(req, res) => {
 
         try {
-            const newUser = await User.create(
+            const user = await User.create(
                 {
-                    email: req.email,
+                    email: req.body.email, // req.email로 변경 예정
                     name: req.body.name,
                     nickname: req.body.nickname,
                     webMail: req.body.webMail
                 }
             )
 
-            const sendEmail = await emailAuth.sendEmail(req, res)
+            console.log(user.id)
 
-            return res.status(201).json(
+            await Directory.create({userId: user.id})
+
+            await emailAuth.sendEmail(req, res)
+
+            return res.status(200).json(
                 {
-                    code: 201,
+                    data: "",
                     message: "SUCCESS"
                 }
             )
         } catch (error) {
             if (error.message === "Validation error") {
-                return res.status(400).json(
+                return res.status(409).json(
                     {
-                        code: 400,
-                        message: "ALREADY_EXISTS"
+                        data: "",
+                        message: "INVALID"
                     }
                 )
             }
@@ -123,10 +144,10 @@ const userAuth = {
 
     signIn: async(req, res, error, userEmail) => {
         if (error) {
-            return res.status(400).json(
+            return res.status(500).json(
                 {
-                    code: 400,
-                    message: error
+                    data: "",
+                    message: error.message
                 }
             );
         }
@@ -170,8 +191,8 @@ const userAuth = {
                     cookieOptions
                 ).status(200).json(
                     {
-                        code: 200,
-                        message: "SUCCESS"
+                        data: "",
+                        message: ""
                     }
                 );
             })
@@ -185,43 +206,68 @@ const userAuth = {
         // req.session.destroy()
         return res.clearCookie('user').status(200).json(
             {
-                code: 200,
-                message: "SIGNED_OUT_SUCCESS"
+                data: "",
+                message: ""
             }
         )
     }
 }
 
 const userInfo = {
+    getUser: async(req, res) => {
+        user = await User.findOne({where: {id: req.user.id}});
+        const userInfo = {
+            'email': user.email,
+            'webMail': `${user.webMail}@hufs.ac.kr`,
+            'nickname': user.nickname,
+        }
+        try {
+            return res.status(200).json(
+                {
+                    data: userInfo,
+                    message: ""
+                }
+            );
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json(
+                {
+                    data: "",
+                    message: error.message
+                }
+            );
+        }
+    },
+
     updateUser: async(req, res) => {
-        user = await User.findOne({where: {id: req.user.id}})
+        user = await User.findOne({where: {id: req.user.id}});
         console.log(user)
         try {
-            user.nickname = req.body.nickname
+            user.nickname = req.body.nickname;
 
-            await user.save()
+            await user.save();
 
-            return res.status(204).json(
+            return res.status(200).json(
                 {
-                    code: 204,
-                    message: 'USER_INFO_UPDATED'
+                    data: "",
+                    message: ""
                 }
-            )
+            );
         } catch (error) {
             // Unique Error
-            console.log(error)
+            console.log(error);
 
             if (error.message === 'Validation error') {
-                return res.status(400).json(
+                return res.status(409).json(
                     {
-                        code: 400,
-                        message: 'ALERDAY_EXISTS'
+                        data: "",
+                        message: "INVALID"
                     }
                 );
             }
             return res.status(500).json(
                 {
-                    code: 500,
+                    data: "",
                     message: error.message
                 }
             );
@@ -230,24 +276,24 @@ const userInfo = {
 
     deleteUser: async(req, res) => {
         try {
-            await User.destroy({where: {id: req.user.id}})
+            await User.destroy({where: {id: req.user.id}});
 
-            return res.status(204).json(
+            return res.status(200).json(
                 {
-                    code: 204,
-                    message: 'DEL_USER_SUCCESS'
+                    data: "",
+                    message: ""
                 }
-            )
+            );
         } catch (error) {
             // DB ERROR > 존재하지 않는 경우... 왜? 보안을 위해, postman 통한 공격
-            console.log(error)
+            console.log(error);
 
             return res.status(500).json(
                 {
-                    code: 500,
+                    data: "",
                     message: error.message
                 }
-            )
+            );
         }
     }
 }
@@ -276,4 +322,284 @@ const socialAuth = {
     }
 }
 
-module.exports = { emailAuth, userAuth, socialAuth, userInfo };
+const scrapDirectory = {
+    create: async(req, res) => {
+        try{
+            const directories = await Directory.findAll(
+                {
+                    attributes: ['name'],
+                    where: {userId: req.user.id}
+                }
+            );
+            if (directories) {
+                const directoryNames = []
+                for (let idx = 0; idx < directories.length; idx++) {
+                    directoryNames.push(directories[idx].name)
+                }
+                if (directoryNames.includes(req.body.name)) {
+                    throw error
+                }
+            }
+            if (!req.body.name) {
+                throw error
+            }
+            await Directory.create({name: req.body.name, userId: req.user.id});
+
+            return res.status(200).json(
+                {
+                    data: "",
+                    message: ""
+                }
+            )
+        } catch (error) {
+            console.log(error)
+
+            return res.status(409).json(
+                {
+                    data: "",
+                    message: "INVALID"
+                }
+            )
+        }
+    },
+
+    read: async(req, res) => {
+        try{
+            directoryInfo = await Directory.findAll(
+                {
+                    attributes: ['id', 'name'],
+                    where: {userId: req.user.id}
+                }
+            );
+
+            return res.status(200).json(
+                {
+                    data: directoryInfo,
+                    message: ""
+                }
+            );
+        } catch (error) {
+            console.log(error)
+
+            return res.status(500).json(
+                {
+                    data: "",
+                    message: error.message
+                }
+            );
+        }
+    },
+
+    update: async(req, res) => {
+        try{
+            await Directory.update(
+                { name: req.body.name },
+                { where: { id: req.query.id, userId: req.user.id } }
+            );
+
+            return res.status(200).json(
+                {
+                    data: "",
+                    message: ""
+                }
+            );
+        } catch (error) {
+            return res.status(409).json(
+                {
+                    data: "",
+                    message: "INVALID"
+                }
+            );
+        }
+    },
+
+    delete: async(req, res) => {
+        try{
+            if (!req.query.id) {
+                return res.status(422).json(
+                    {
+                        data: "",
+                        message: "QUERY"
+                    }
+                );
+            }
+            await Directory.destroy({where: {id: req.query.id}});
+
+            return res.status(200).json(
+                {
+                    data: "",
+                    message: ""
+                }
+            );
+        } catch (error) {
+            console.log(error)
+
+            return res.status(500).json(
+                {
+                    data: "",
+                    message: error.message
+                }
+            )
+        }
+    }
+}
+
+const postScrap = {
+    create: async(req, res) => {
+        try {
+            if (req.query.directoryId) {
+                var directoryId = req.query.directoryId;
+            } else {
+                directory = await Directory.findOne(
+                    {where: {userId: req.user.id, name: "기타"}}
+                );
+                var directoryId = directory.id
+            }
+
+            if (!req.query.postId) {
+                return res.status(422).json(
+                    {
+                        data: "",
+                        message: "QUERY"
+                    }
+                )
+            }
+            scrap = await Scrap.findOne({where: {postId: req.query.postId}});
+            
+            if (scrap) {
+                return res.status(409).json(
+                    {
+                        data: "",
+                        message: "INVALID"
+                    }
+                )
+            }
+            await Scrap.create({postId: req.query.postId, directoryId: directoryId});
+
+            return res.status(200).json(
+                {
+                    data: "",
+                    message: ""
+                }
+            )
+        } catch (error) {
+            console.log(error)
+            return res.status(500).json(
+                {
+                    data: "",
+                    message: ""
+                }
+            );
+        }
+    },
+
+    read: async(req, res) => {
+        try {
+            if (!req.query.directoryId) {
+
+                return res.status(422).json(
+                    {
+                        data: "",
+                        message: "QUERY"
+                    }
+                )
+            }
+            const scraps = await Scrap.findAll({where: {directoryId: req.query.directoryId}});
+            const scrapInfo = [];
+            for (let idx = 0; idx < scraps.length; idx++) {
+                console.log(scraps[idx].dataValues)
+                post = await Post.findOne({where: {id: scraps[idx].dataValues.postId}});
+                scrapInfo.push(
+                    {
+                        'scrapId': scraps[idx].dataValues.id,
+                        'postId': post.id,
+                        'postTitle': post.title
+                    }
+                )
+            }
+            return res.status(200).json(
+                {
+                    data: scrapInfo,
+                    message: ""
+                }
+            )
+            
+        } catch (error) {
+            console.log(error)
+
+            return res.status(500).json(
+                {
+                    data: "",
+                    message: error.message
+                }
+            );
+        }        
+    },
+
+    update: async(req, res) => {
+        try {
+            if (!req.query.postId || !req.query.directoryId) {
+                return res.status(422).json(
+                    {
+                        data: "",
+                        message: "QUERY"
+                    }
+                )
+            } else {
+                await Scrap.update(
+                    { directoryId: req.query.directoryId },
+                    { where: { postId: req.query.postId }}
+                )
+
+                return res.status(200).json(
+                    {
+                        data: "",
+                        message: ""
+                    }
+                )
+            }
+        } catch (error) {
+            console.log(error)
+
+            return res.status(500).json(
+                {
+                    data: "",
+                    message: error.message
+                }
+            );
+        }
+    },
+
+    delete: async(req, res) => {
+        try {
+            if (!req.query.id) {
+                return res.status(422).json(
+                    {
+                        data: "",
+                        message: "QUERY"
+                    }
+                );
+            }
+            await Scrap.destroy({where: {id: req.query.id}});
+
+            return res.status(200).json(
+                {
+                    data: "",
+                    message: ""
+                }
+            )
+
+        } catch (error) {
+            console.log(error)
+
+            return res.status(500).json(
+                {
+                    data: "",
+                    message: error.message
+                }
+            );
+        }
+    }
+}
+
+module.exports = { emailAuth, userAuth, socialAuth, userInfo, scrapDirectory, postScrap };
