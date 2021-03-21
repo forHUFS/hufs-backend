@@ -30,7 +30,7 @@ exports.addPost = async (req,res,next)=> {
         if (url && url.length) {
             await deleteImg(url);
         }
-        res.status(201).json({
+        res.status(200).json({
             data: "",
             message: ""
         });

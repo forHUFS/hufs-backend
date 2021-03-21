@@ -109,9 +109,9 @@ exports.modifyPost = async(req,res,next)=> {
         });
          console.log(post);
          if (post[0] === 0) {
-             res.status(400).json({
+             res.status(403).json({
                  data: "",
-                 message: "BAD_REQUEST"
+                 message: "FORBIDDEN"
              });
          } else {
              const url = req.body.url;
@@ -168,43 +168,36 @@ exports.readPost = async(req,res,next)=>{
 
 
 }
-exports.deletePost = async(req,res,next)=>{
+exports.deletePost = async(req,res,next)=> {
     try {
         const post = await Post.findOne({
-            where: { id: req.params.id }
+            where: {id: req.params.id}
         });
         console.log(post);
-        if (post) {
-            if (post.userId === req.user.id || req.user.type === 'admin') {
-                let m;
-                let img = [];
-                let reg = /<img[^>]*src=[\"']?([^>\"']+)[\"']?[^>]*>/g
-                while (m = await reg.exec(post.content)) {
-                    img.push(m[1]);
-                }
-                if (img.length) {
-                    await deleteImg(img);
-                }
-
-                await Post.destroy({
-                    where: {id: req.params.id},
-                });
-
-                res.status(200).json({
-                    data: "",
-                    message: ""
-                });
-            } else {
-                res.status(403).json({
-                    data: "",
-                    message: "FORBIDDEN"
-                });
+        if (post.userId === req.user.id || req.user.type === 'admin') {
+            let m;
+            let img = [];
+            let reg = /<img[^>]*src=[\"']?([^>\"']+)[\"']?[^>]*>/g
+            while (m = await reg.exec(post.content)) {
+                img.push(m[1]);
             }
-        } else {
-            res.status(404).json({
+            if (img.length) {
+                await deleteImg(img);
+            }
+
+            await Post.destroy({
+                where: {id: req.params.id},
+            });
+
+            res.status(200).json({
                 data: "",
-                message: "RESOURCE_NOT_FOUND"
-            })
+                message: ""
+            });
+        } else {
+            res.status(403).json({
+                data: "",
+                message: "FORBIDDEN"
+            });
         }
 
     } catch (err){

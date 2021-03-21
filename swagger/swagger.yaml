@@ -426,10 +426,10 @@ paths:
               url:
                 type: array
                 description: 삭제할 이미지 url 배열
-                example: ["https://hufsweb.s3.ap-northeast-2.amazonaws.com/post/1614328320100sasa.jpg","https://hufsweb.s3.ap-northeast-2.amazonaws.com/post/1614328320100xz.jpg"]
+                example: ["https://hufsweb.s3.ap-northeast-2.amazonaws.com/post/1614328320000sasa.jpg","https://hufsweb.s3.ap-northeast-2.amazonaws.com/post/1614328320000xz.jpg"]
                 required: false
       responses:
-        201:
+        200:
           description: 게시글 작성 완료
           content:
             application/json:
@@ -561,7 +561,7 @@ paths:
           type: array
           description: 삭제해야 할 url 배열
           required: true
-          example: ["https://hufsweb.s3.ap-northeast-2.amazonaws.com/post/1614328320100sasa.jpg","https://hufsweb.s3.ap-northeast-2.amazonaws.com/post/1614328320100xz.jpg"]
+          example: ["https://hufsweb.s3.ap-northeast-2.amazonaws.com/post/1614328320000sasa.jpg","https://hufsweb.s3.ap-northeast-2.amazonaws.com/post/1614328320000xz.jpg"]
       responses:
         200:
           description: 이미지 삭제 처리 완료
@@ -580,7 +580,7 @@ paths:
           type: array
           description: 삭제해야 할 url 배열
           required: true
-          example: ["https://hufsweb.s3.ap-northeast-2.amazonaws.com/post/1614328320100sasa.jpg","https://hufsweb.s3.ap-northeast-2.amazonaws.com/post/1614328320100xz.jpg"]
+          example: ["https://hufsweb.s3.ap-northeast-2.amazonaws.com/post/1614328320000sasa.jpg","https://hufsweb.s3.ap-northeast-2.amazonaws.com/post/1614328320000xz.jpg"]
       responses:
         200:
           description: 이미지 삭제 처리 완료
@@ -595,7 +595,7 @@ paths:
       produces: application/json
       parameters:
         - in: body
-          name: file 객체
+          name: img
           description: 업로드할 이미지 파일
           required: true
       responses:
@@ -608,7 +608,7 @@ paths:
                 properties:
                   data:
                     type: array
-                    example: ["https://hufsweb.s3.ap-northeast-2.amazonaws.com/post/1614328320100sasa.jpg","https://hufsweb.s3.ap-northeast-2.amazonaws.com/post/1614328320100xz.jpg"]
+                    example: ["https://hufsweb.s3.ap-northeast-2.amazonaws.com/post/1614328320000sasa.jpg","https://hufsweb.s3.ap-northeast-2.amazonaws.com/post/1614328320000xz.jpg"]
                   message:
                     type: string
                     example: ""
@@ -716,6 +716,15 @@ paths:
                   data:
                     type: object
                     $ref: "#/definitions/PostAndReply"
+                  message:
+                    type: string
+                    example: ""
+        404:
+          description: 조회하려는 게시글이 없음
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/ResourceNotFound-response"
     put:
       summary: 게시글 수정
       consumes: application/json
@@ -744,7 +753,7 @@ paths:
               url:
                 type: array
                 description: 삭제할 이미지 url 배열
-                example: ["https://hufsweb.s3.ap-northeast-2.amazonaws.com/post/1614328320100sasa.jpg","https://hufsweb.s3.ap-northeast-2.amazonaws.com/post/1614328320100xz.jpg"]
+                example: ["https://hufsweb.s3.ap-northeast-2.amazonaws.com/post/1614328320000sasa.jpg","https://hufsweb.s3.ap-northeast-2.amazonaws.com/post/1614328320000xz.jpg"]
                 required: false
       responses:
         200:
@@ -753,12 +762,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
-        400:
-          description: 수정할 게시글이 없거나 본인의 작성하지 않은 게시글을 수정하려 하는 경우 요청 거부
+        403:
+          description: 본인이 작성하지 않은 게시글을 수정하려 하는 경우
           content:
             application/json:
               schema:
-                $ref: "#/definitions/BadRequest-response"
+                $ref: "#/definitions/Forbidden-response"
     delete:
       summary: 게시글 삭제
       consumes: application/json
@@ -781,12 +790,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Forbidden-response"
-        404:
-          description: 존재하지 않는 게시글을 삭제하려 함
-          content:
-            application/json:
-              schema:
-                $ref: "#/definitions/ResourceNotFound-response"
   /reply/add:
     post:
       summary: 댓글 작성
@@ -803,7 +806,7 @@ paths:
           description: 게시글 번호
           example: 1
       responses:
-        201:
+        200:
           description: 댓글 작성 완료
           content:
             application/json:
@@ -830,7 +833,7 @@ paths:
           description: 부모 댓글 번호
           example: 2
       responses:
-        201:
+        200:
           description: 대댓글 작성 완료
           content:
             application/json:
@@ -858,12 +861,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
-        400:
-          description: 수정할 댓글이 없거나 본인의 작성하지 않은 댓글을 수정하려 하는 경우 요청 거부
+        403:
+          description: 본인이 작성하지 않은 댓글을 수정하려 하는 경우 요청 거부
           content:
             application/json:
               schema:
-                $ref: "#/definitions/BadRequest-response"
+                $ref: "#/definitions/Forbidden-response"
     delete:
       summary: 댓글 삭제
       consumes: application/json
@@ -886,12 +889,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Forbidden-response"
-        404:
-          description: 존재하지 않는 댓글을 삭제하려 함
-          content:
-            application/json:
-              schema:
-                $ref: "#/definitions/ResourceNotFound-response"
   /reply/{id}/report:
     post:
       summary: 댓글 신고
@@ -1007,6 +1004,7 @@ paths:
           required: true
       responses:
         200:
+          description: 리뷰 정상 조회
           content:
             application/json:
               schema:
@@ -1019,6 +1017,7 @@ paths:
                     type: string
                     example: ""
         404:
+          description: 조회하려는 리뷰가 없음
           content:
             application/json:
               schema:
@@ -1048,6 +1047,11 @@ paths:
           description: 0.5 단위 평점
           example: 4.5
           required: true
+        - in: body
+          name: img
+          description: 업로드할 이미지 파일
+          example: hufs.png
+          required: false
       responses:
         200:
           description: 리뷰 수정 완료
@@ -1055,12 +1059,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
-        400:
-          description: 수정할 리뷰가 없거나 본인의 작성하지 않은 리뷰를 수정하려 하는 경우 요청 거부
+        403:
+          description: 본인이 작성하지 않은 리뷰를 수정하려 하는 경우 요청 거부
           content:
             application/json:
               schema:
-                $ref: "#/definitions/BadRequest-response"
+                $ref: "#/definitions/Forbidden-response"
     delete:
       summary: 리뷰 삭제
       consumes: application/json
@@ -1084,12 +1088,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Forbidden-response"
-        404:
-          description: 존재하지 않는 리뷰를 삭제하려 함
-          content:
-            application/json:
-              schema:
-                $ref: "#/definitions/ResourceNotFound-response"
   /store/{id}/review:
     post:
       summary: 리뷰 작성
@@ -1116,8 +1114,13 @@ paths:
           description: 0.5 단위 평점
           example: 4.5
           required: true
+        - in: body
+          name: img
+          description: 업로드할 이미지 파일
+          example: hufs.png
+          required: false
       responses:
-        201:
+        200:
           content:
             application/json:
               schema:
@@ -1192,14 +1195,6 @@ definitions:
       message:
         type: string
         example: FORBIDDEN
-  BadRequest-response:
-    type: object
-    properties:
-      data:
-        example: ""
-      message:
-        type: string
-        example: BAD_REQUEST
   ResourceNotFound-response:
     type: object
     properties:

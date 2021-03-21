@@ -34,7 +34,7 @@ exports.addReview = async(req,res,next) => {
             console.log(img);
         }
 
-        res.status(201).json({
+        res.status(200).json({
             data: "",
             message: ""
         });
@@ -118,9 +118,9 @@ exports.modifyReview = async (req,res,next) => {
         });
         if (review[0] === 0) {
 
-            res.status(400).json({
+            res.status(403).json({
                 data: "",
-                message: "BAD_REQUEST"
+                message: "FORBIDDEN"
             });
 
         } else {
@@ -172,42 +172,36 @@ exports.modifyReview = async (req,res,next) => {
 exports.deleteReview = async (req,res,next) => {
     try {
         await sequelize.transaction(async(t)=> {
-        const review = await StoreReview.findOne({
-            where: { id: req.params.id }
-        });
-        if (review) {
-        if (review.userId === req.user.id || req.user.type === 'admin') {
-
-            const img = await ReviewImage.findAll({
-                where: { storeReviewId: review.id }
+            const review = await StoreReview.findOne({
+                where: {id: req.params.id}
             });
-            let url = []
-            img.map(i => {
-                url.push(i.url);
-            })
-            await deleteImg(url);
+            if (review.userId === req.user.id || req.user.type === 'admin') {
 
-            await StoreReview.destroy({
-                where: { id: req.params.id }
-            });
+                const img = await ReviewImage.findAll({
+                    where: {storeReviewId: review.id}
+                });
+                let url = []
+                img.map(i => {
+                    url.push(i.url);
+                })
+                await deleteImg(url);
 
-            res.status(200).json({
-                data: "",
-                message: ""
-            });
+                await StoreReview.destroy({
+                    where: {id: req.params.id}
+                });
 
-        } else {
-            res.status(403).json({
-                data: "",
-                message: "FORBIDDEN"
-            });
-        }
-        } else {
-            res.status(404).json({
-                data: "",
-                message: "RESOURCE_NOT_FOUND"
-            })
-        }
+                res.status(200).json({
+                    data: "",
+                    message: ""
+                });
+
+            } else {
+                res.status(403).json({
+                    data: "",
+                    message: "FORBIDDEN"
+                });
+            }
+
         });
     } catch (err) {
         console.error(err);

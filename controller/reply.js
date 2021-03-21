@@ -14,7 +14,7 @@ exports.addReply = async(req,res,next)=> {
             userId: req.user.id
         });
 
-        res.status(201).json({
+        res.status(200).json({
             data: "",
             message: ""
         });
@@ -33,7 +33,7 @@ exports.addReReply = async(req,res,next)=>{
             postId: req.body.postId,
             userId: req.user.id
         });
-        res.status(201).json({
+        res.status(200).json({
             data: "",
             message: ""
         });
@@ -47,25 +47,19 @@ exports.deleteReply = async(req,res,next) => {
         const reply = await Reply.findOne({
             where: { id: req.params.id }
         });
-        if (reply) {
-            if (reply.userId === req.user.id || req.user.type === 'admin') {
-                await Reply.destroy({
-                    where: {id: req.params.id}
-                });
-                res.status(200).json({
-                    data: "",
-                    message: ""
-                });
-            } else {
-                res.status(403).json({
-                    data: "",
-                    message: "FORBIDDEN"
-                })
-            }
-        } else {
-            res.status(404).json({
+
+        if (reply.userId === req.user.id || req.user.type === 'admin') {
+            await Reply.destroy({
+                where: {id: req.params.id}
+            });
+            res.status(200).json({
                 data: "",
-                message: "RESOURCE_NOT_FOUND"
+                message: ""
+            });
+        } else {
+            res.status(403).json({
+                data: "",
+                message: "FORBIDDEN"
             })
         }
 
@@ -86,9 +80,9 @@ exports.modifyReply = async(req,res,next) => {
 
         });
         if (reply[0]===0) {
-            res.status(400).json({
+            res.status(403).json({
                 data: "",
-                message: "BAD_REQUEST"
+                message: "FORBIDDEN"
             });
         } else {
             res.status(200).json({
