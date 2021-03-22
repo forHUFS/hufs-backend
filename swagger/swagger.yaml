@@ -595,7 +595,7 @@ paths:
       produces: application/json
       parameters:
         - in: body
-          name: file 객체
+          name: img
           description: 업로드할 이미지 파일
           required: true
       responses:
@@ -1047,6 +1047,11 @@ paths:
           description: 0.5 단위 평점
           example: 4.5
           required: true
+        - in: body
+          name: img
+          description: 업로드할 이미지 파일
+          example: hufs.png
+          required: false
       responses:
         200:
           description: 리뷰 수정 완료
@@ -1109,6 +1114,11 @@ paths:
           description: 0.5 단위 평점
           example: 4.5
           required: true
+        - in: body
+          name: img
+          description: 업로드할 이미지 파일
+          example: hufs.png
+          required: false
       responses:
         200:
           content:
