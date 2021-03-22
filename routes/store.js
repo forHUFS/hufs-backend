@@ -11,13 +11,13 @@ router.get('/review', authUtil.isSignedIn, readAllReviews);
 router.get('/review/:id', authUtil.isSignedIn, authUtil.isAuthorized, readReview);
 // 특정 리뷰 조회
 
-router.put('/review/:id', authUtil.isSignedIn, authUtil.isAuthorized, uploadForReview.array('img', 5), modifyReview);
+router.put('/review/:id', authUtil.isSignedIn, authUtil.isAuthorized, modifyReview);
 // 리뷰 수정
 
 router.delete('/review/:id', authUtil.isSignedIn, authUtil.isAuthorized, deleteReview);
 // 리뷰 삭제
 
-router.post('/:id/review', authUtil.isSignedIn, authUtil.isAuthorized, uploadForReview.array('img', 5), addReview);
+router.post('/:id/review', authUtil.isSignedIn, authUtil.isAuthorized, addReview);
 // 특정 상점에 리뷰 작성
 
 router.get('/:id/review', authUtil.isSignedIn, authUtil.isAuthorized, readReviews);
