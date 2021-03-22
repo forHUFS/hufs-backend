@@ -82,7 +82,6 @@ exports.searchPostsInBoard = async (req, res, next)=>{
 
                 var post = await Post.findAll({
                     where: { title: {[Op.and]: key}, boardId: req.params.id },
-                    order: [['createAt', 'DESC']],
                     include: [{model: User, attributes: ['nickname']}]
                 });
 
