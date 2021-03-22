@@ -7,10 +7,10 @@ const authUtil = {
     isSignedIn: async(req, res, next) => {
         const token = req.cookies['user'];
         if (!token) {
-            return res.status(400).json(
+            return res.status(401).json(
                 {
-                    code: 400,
-                    message: "EMPTY_TOKEN"
+                    data: "",
+                    message: "UNAUTHORIZED"
                 }
             );
         }
@@ -20,18 +20,19 @@ const authUtil = {
             return next();
         } catch (error) {
             console.log(error)
+            // Token 유지 기간을 무한으로 줬기 때문에 ExpiredError는 발생할 가능성이 없어 보인다.
             if (error.message === "TokenExpiredError") {
                 return res.status(419).json(
                     {
-                        code: 419,
-                        message: "TOKEN_EXPIRED"
+                        data: "",
+                        message: "EXPIRED"
                     }
                 );
             } else {
                 return res.status(401).json(
                     {
-                        code: 401,
-                        message: "INVALID_TOKEN"
+                        data: "",
+                        message: "UNAUTHORIZED"
                     }
                 );
             }
@@ -42,29 +43,31 @@ const authUtil = {
         try {
             const type = req.user.type;
 
-            if (type === 'admin' || type === 'graduated' || type === 'user') {
+            if (type === 'user' || type === 'graduated' || type === 'admin') {
                 return next();
             } else if (type === 'suspension') {
-                return res.status(401).json(
+                return res.status(403).json(
                     {
-                        code: 401,
-                        message: 'SUSPENDED_USER'
+                        data: "",
+                        message: 'FORBIDDEN_SUSPENSION'
                     }
                 );
             } else if (type === 'before') {
-                return res.status(401).json(
+                return res.status(403).json(
                     {
-                        code: 401,
-                        message: 'UNAUTHORIZED_USER'
+                        data: "",
+                        message: 'FORBIDDEN_BEFORE'
                     }
                 );
+            } else {
+                return res.status(400)
             }
         } catch (error) {
             console.log(error)
 
             return res.status(500).json(
                 {
-                    code: 500,
+                    data: "",
                     message: error.message
                 }
             )
@@ -78,10 +81,10 @@ const authUtil = {
             if (type === 'admin') {
                 return next();
             } else {
-                return res.status(401).json(
+                return res.status(403).json(
                     {
-                        code: 401,
-                        message: 'UNAUTHORIZED_USER'
+                        code: 403,
+                        message: 'FORBIDDEN'
                     }
                 );
             }
@@ -102,10 +105,10 @@ const authUtil = {
             if (type === 'admin' || type === 'graduated') {
                 return next();
             } else {
-                return res.status(401).json(
+                return res.status(403).json(
                     {
-                        code: 401,
-                        message: 'UNAUTHORIZED_USER'
+                        code: 403,
+                        message: 'FORBIDDEN'
                     }
                 );
             }

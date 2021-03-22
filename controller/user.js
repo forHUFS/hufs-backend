@@ -135,7 +135,7 @@ const userAuth = {
                 return res.status(409).json(
                     {
                         data: "",
-                        message: "INVALID"
+                        message: "CONFLICT"
                     }
                 )
             }
@@ -166,15 +166,6 @@ const userAuth = {
         )
 
         if (exUser) {
-            // if (exUser.type === 'suspension') {
-            //     return res.status(401).json(
-            //         {
-            //             code: 401,
-            //             message: "SUSPENDED_USER"
-            //         }
-            //     )
-            // }
-
             req.login(exUser, {session: false}, (error) => {
 
                 const payload = {
@@ -261,7 +252,7 @@ const userInfo = {
                 return res.status(409).json(
                     {
                         data: "",
-                        message: "INVALID"
+                        message: "CONFLICT"
                     }
                 );
             }
@@ -357,7 +348,7 @@ const scrapDirectory = {
             return res.status(409).json(
                 {
                     data: "",
-                    message: "INVALID"
+                    message: "CONFLICT"
                 }
             )
         }
@@ -407,7 +398,7 @@ const scrapDirectory = {
             return res.status(409).json(
                 {
                     data: "",
-                    message: "INVALID"
+                    message: "CONFLICT"
                 }
             );
         }
@@ -470,7 +461,7 @@ const postScrap = {
                 return res.status(409).json(
                     {
                         data: "",
-                        message: "INVALID"
+                        message: "CONFLICT"
                     }
                 )
             }

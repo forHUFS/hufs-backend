@@ -12,7 +12,7 @@ router.put('', authUtil.isSignedIn, userInfo.updateUser);
 router.delete('', authUtil.isSignedIn, userInfo.deleteUser);
 
 router.post('/sign-up', userAuth.signUp);
-router.get('/sign-out', userAuth.signOut); // REST post로 변경 예정, 테스트를 위해 get
+router.post('/sign-out', authUtil.isSignedIn, userAuth.signOut);
 
 router.get('/sign-in/google', socialAuth.google);
 router.get('/google/callback', socialAuth.googleCallBack);
@@ -20,14 +20,14 @@ router.get('/google/callback', socialAuth.googleCallBack);
 router.get('/sign-in/kakao', socialAuth.kakao);
 router.get('/kakao/callback', socialAuth.kakaoCallBack);
 
-router.get('/directory', authUtil.isSignedIn, scrapDirectory.read);
-router.post('/directory', authUtil.isSignedIn, scrapDirectory.create);
-router.put('/directory', authUtil.isSignedIn, scrapDirectory.update);
-router.delete('/directory', authUtil.isSignedIn, scrapDirectory.delete);
+router.get('/directory', authUtil.isSignedIn, authUtil.isAuthorized, scrapDirectory.read);
+router.post('/directory', authUtil.isSignedIn, authUtil.isAuthorized, scrapDirectory.create);
+router.put('/directory', authUtil.isSignedIn, authUtil.isAuthorized, scrapDirectory.update);
+router.delete('/directory', authUtil.isSignedIn, authUtil.isAuthorized, scrapDirectory.delete);
 
-router.get('/scrap', authUtil.isSignedIn, postScrap.read);
-router.post('/scrap', authUtil.isSignedIn, postScrap.create);
-router.put('/scrap', authUtil.isSignedIn, postScrap.update);
-router.delete('/scrap', authUtil.isSignedIn, postScrap.delete);
+router.get('/scrap', authUtil.isSignedIn, authUtil.isAuthorized, postScrap.read);
+router.post('/scrap', authUtil.isSignedIn, authUtil.isAuthorized, postScrap.create);
+router.put('/scrap', authUtil.isSignedIn, authUtil.isAuthorized, postScrap.update);
+router.delete('/scrap', authUtil.isSignedIn, authUtil.isAuthorized, postScrap.delete);
 
 module.exports = router;

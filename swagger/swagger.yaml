@@ -25,7 +25,13 @@ paths:
                     example: { email: 0417taehyun@gmail.com, webMail: dlxogus0417@hufs.ac.kr, nickname: 도비 }
                   message:
                     type: string
-                    example: ""           
+                    example: ""
+        401:
+          description: 로그인하지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Unauthorized-response"           
 
     put:
       summary: 회원 정보 수정
@@ -51,12 +57,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
+        401:
+          description: 로그인하지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Unauthorized-response"
         409:
           description: 이미 존재하는 닉네임
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Invalid-response"
+                $ref: "#/definitions/Conflict-response"
 
     delete:
       summary: 회원 탈퇴
@@ -69,6 +81,13 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
+        401:
+          description: 로그인하지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Unauthorized-response"
+
 
 
   /user/sign-in/google:
@@ -136,7 +155,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Invalid-response"
+                $ref: "#/definitions/Conflict-response"
 
   /user/sign-out:
     post:
@@ -150,6 +169,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
+        401:
+          description: 로그인하지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Unauthorized-response"      
 
   /user/directory:
     get:
@@ -170,7 +195,24 @@ paths:
                   message:
                     type: string
                     example: ""
-
+        401:
+          description: 로그인하지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Unauthorized-response"   
+        403:
+          description: 정지된 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-suspension-response"                 
+        403:
+          description: 이메일 인증이 되지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-before-response"
     post:
       summary: 스크랩을 위해 디렉토리 생성
       consumes: application/json
@@ -189,12 +231,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
+        403:
+          description: 정지된 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-suspension-response"                 
+        403:
+          description: 이메일 인증이 되지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-before-response"                
         409:
           description: 이미 존재하는 디렉토리 이름 
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Invalid-response"
+                $ref: "#/definitions/Conflict-response"
 
     put:
       summary: 스크랩을 위해 생성된 디렉토리 수정
@@ -220,12 +274,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
+        403:
+          description: 정지된 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-suspension-response"                 
+        403:
+          description: 이메일 인증이 되지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-before-response"                
         409:
           description: 이미 존재하는 디렉토리 이름 
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Invalid-response"
+                $ref: "#/definitions/Conflict-response"
 
     delete:
       summary: 스크랩을 위해 생성된 디렉토리 삭제
@@ -245,6 +311,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
+        403:
+          description: 정지된 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-suspension-response"                 
+        403:
+          description: 이메일 인증이 되지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-before-response"                
         422:
           description: 디렉토리 아이디 쿼리 스트링으로 필요 
           content:
@@ -278,6 +356,18 @@ paths:
                   message:
                     type: string
                     example: ""
+        403:
+          description: 정지된 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-suspension-response"                 
+        403:
+          description: 이메일 인증이 되지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-before-response"                    
         422:
           description: 디렉토리 아이디 쿼리 스트링으로 필요 
           content:
@@ -303,12 +393,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
+        403:
+          description: 정지된 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-suspension-response"                 
+        403:
+          description: 이메일 인증이 되지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-before-response"                
         409:
           description: 이미 스크랩한 게시글
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Invalid-response"
+                $ref: "#/definitions/Conflict-response"
         422:
           description: 게시글 아이디 쿼리 스트링으로 필요 
           content:
@@ -340,6 +442,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
+        403:
+          description: 정지된 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-suspension-response"                 
+        403:
+          description: 이메일 인증이 되지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-before-response"                
         422:
           description: 게시글 아이디와 디렉토리 아이디 쿼리 스트링으로 필요 
           content:
@@ -365,6 +479,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
+        403:
+          description: 정지된 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-suspension-response"                 
+        403:
+          description: 이메일 인증이 되지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-before-response"                
         422:
           description: 스크랩 아이디 쿼리 스트링으로 필요 
           content:
@@ -397,6 +523,18 @@ paths:
                   message:
                     type: string
                     example: ""
+        403:
+          description: 정지된 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-suspension-response"                 
+        403:
+          description: 이메일 인증이 되지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-before-response"                    
   /board/{id}/post:
     post:
       summary: 게시글 작성
@@ -435,6 +573,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
+        403:
+          description: 정지된 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-suspension-response"                 
+        403:
+          description: 이메일 인증이 되지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-before-response"                
   /board/{id}/search:
     get:
       summary: 게시판 내 글 검색
@@ -471,25 +621,37 @@ paths:
                   message:
                     type: string
                     example: ""
-        400:
+        403:
+          description: 정지된 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-suspension-response"                 
+        403:
+          description: 이메일 인증이 되지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-before-response"                    
+        422:
           description: 쿼리 스트링 중 하나 누락 (keyword or option)
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Query-response"
-        412:
+                $ref: "#/definitions/Query-response"                
+        422:
           description: keyword가 두 글자 이상이 아님
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Invalid-response"
-        421:
+                $ref: "#/definitions/Query-keyword-response"
+        422:
           description: option이 올바른 형태가 아님
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Invalid-response"
-        204:
+                $ref: "#/definitions/Query-option-response"
+        200:
           description: 검색 결과가 없음
           content:
             application/json:
@@ -526,25 +688,37 @@ paths:
                   message:
                     type: string
                     example: ""
-        400:
+        403:
+          description: 정지된 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-suspension-response"                 
+        403:
+          description: 이메일 인증이 되지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-before-response"                    
+        422:
           description: 쿼리 스트링 중 하나 누락 (keyword or option)
           content:
             application/json:
               schema:
                 $ref: "#/definitions/Query-response"
-        412:
-          description: keyword가 두 글자 이상이 아님
+        422:
+          description: keyword가 두 글자 이상이 아님 QUERY_KEYWORD / QUERY_OPTION
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Invalid-response"
-        421:
+                $ref: "#/definitions/Query-keyword-response"
+        422:
           description: option이 올바른 형태가 아님
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Invalid-response"
-        204:
+                $ref: "#/definitions/Query-option-response"
+        200:
           description: 검색 결과가 없음
           content:
             application/json:
@@ -569,6 +743,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
+        403:
+          description: 정지된 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-suspension-response"                 
+        403:
+          description: 이메일 인증이 되지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-before-response"                
   /post/edit/back:
     post:
       summary: 이미지 업로드 후 글 수정 취소
@@ -588,6 +774,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
+        403:
+          description: 정지된 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-suspension-response"                 
+        403:
+          description: 이메일 인증이 되지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-before-response"                
   /post/img:
     post:
       summary: 이미지 업로드
@@ -612,6 +810,18 @@ paths:
                   message:
                     type: string
                     example: ""
+        403:
+          description: 정지된 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-suspension-response"                 
+        403:
+          description: 이메일 인증이 되지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-before-response"                    
   /post/{id}/addlike:
     get:
       summary: 게시글 좋아요 +1
@@ -630,12 +840,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
-        400:
+        403:
+          description: 정지된 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-suspension-response"                 
+        403:
+          description: 이메일 인증이 되지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-before-response"                 
+        409:
           description: 유저가 이미 좋아요를 누른 게시글에 대한 요청 거부
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Invalid-response"
+                $ref: "#/definitions/Conflict-response"               
   /post/{id}/dellike:
     get:
       summary: 게시글 좋아요 -1
@@ -654,12 +876,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
-        400:
+        403:
+          description: 정지된 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-suspension-response"                 
+        403:
+          description: 이메일 인증이 되지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-before-response" 
+        409:
           description: 유저가 좋아요를 누른 적이 없는 게시글에 대한 요청 거부
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Invalid-response"
+                $ref: "#/definitions/Conflict-response"
   /post/{id}/report:
     post:
       summary: 게시글 신고
@@ -688,12 +922,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
-        400:
+        403:
+          description: 정지된 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-suspension-response"                 
+        403:
+          description: 이메일 인증이 되지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-before-response"  
+        409:
           description: 이미 신고한 게시글
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Invalid-response"
+                $ref: "#/definitions/Conflict-response"
   /post/{id}:
     get:
       summary: 게시글 조회
@@ -719,6 +965,19 @@ paths:
                   message:
                     type: string
                     example: ""
+        403:
+          description: 정지된 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-suspension-response"                 
+        403:
+          description: 이메일 인증이 되지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-before-response"
+        # 조회는 성공하였으나 data가 없는 경우 -> Success, 200, data: "" -> 논의                             
         404:
           description: 조회하려는 게시글이 없음
           content:
@@ -763,6 +1022,18 @@ paths:
               schema:
                 $ref: "#/definitions/Success-response"
         403:
+          description: 정지된 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-suspension-response"                 
+        403:
+          description: 이메일 인증이 되지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-before-response"                 
+        403:
           description: 본인이 작성하지 않은 게시글을 수정하려 하는 경우
           content:
             application/json:
@@ -784,6 +1055,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
+        403:
+          description: 정지된 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-suspension-response"                 
+        403:
+          description: 이메일 인증이 되지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-before-response"                 
         403:
           description: 본인의 게시글이 아닌 게시글을 삭제하려 함 (어드민 허용)
           content:
@@ -812,6 +1095,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
+        403:
+          description: 정지된 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-suspension-response"                 
+        403:
+          description: 이메일 인증이 되지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-before-response"                 
   /reply/add/re:
     post:
       summary: 대댓글 작성
@@ -839,6 +1134,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
+        403:
+          description: 정지된 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-suspension-response"                 
+        403:
+          description: 이메일 인증이 되지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-before-response"                 
   /reply/{id}:
     put:
       summary: 댓글 수정
@@ -862,11 +1169,24 @@ paths:
               schema:
                 $ref: "#/definitions/Success-response"
         403:
+          description: 정지된 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-suspension-response"                 
+        403:
+          description: 이메일 인증이 되지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-before-response"                 
+        403:
           description: 본인이 작성하지 않은 댓글을 수정하려 하는 경우 요청 거부
           content:
             application/json:
               schema:
                 $ref: "#/definitions/Forbidden-response"
+                
     delete:
       summary: 댓글 삭제
       consumes: application/json
@@ -883,6 +1203,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
+        403:
+          description: 정지된 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-suspension-response"                 
+        403:
+          description: 이메일 인증이 되지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-before-response"                 
         403:
           description: 본인의 게시글이 아닌 댓글을 삭제하려 함 (어드민 허용)
           content:
@@ -917,12 +1249,25 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
-        400:
+        403:
+          description: 정지된 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-suspension-response"                 
+        403:
+          description: 이메일 인증이 되지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-before-response" 
+        # 409 conflict                        
+        409:
           description: 이미 신고한 댓글
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Invalid-response"
+                $ref: "#/definitions/Conflict-response"
   /reply/{id}/addlike:
     get:
       summary: 댓글 좋아요 +1
@@ -941,12 +1286,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
-        400:
+        403:
+          description: 정지된 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-suspension-response"                 
+        403:
+          description: 이메일 인증이 되지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-before-response" 
+        409:
           description: 유저가 이미 좋아요를 누른 댓글에 대한 요청 거부
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Invalid-response"
+                $ref: "#/definitions/Conflict-response"
   /reply/{id}/dellike:
     get:
       summary: 댓글 좋아요 -1
@@ -965,12 +1322,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
-        400:
+        403:
+          description: 정지된 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-suspension-response"                 
+        403:
+          description: 이메일 인증이 되지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-before-response" 
+        409:
           description: 유저가 좋아요를 누른 적이 없는 댓글에 대한 요청 거부
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Invalid-response"
+                $ref: "#/definitions/Conflict-response"
   /store/review:
     get:
       summary: 모든 상점의 모든 리뷰 조회
@@ -991,6 +1360,18 @@ paths:
                   message:
                     type: string
                     example: ""
+        403:
+          description: 정지된 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-suspension-response"                 
+        403:
+          description: 이메일 인증이 되지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-before-response"                     
   /store/review/{id}:
     get:
       summary: 특정 리뷰 조회
@@ -1016,6 +1397,18 @@ paths:
                   message:
                     type: string
                     example: ""
+        403:
+          description: 정지된 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-suspension-response"                 
+        403:
+          description: 이메일 인증이 되지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-before-response"                     
         404:
           description: 조회하려는 리뷰가 없음
           content:
@@ -1061,6 +1454,18 @@ paths:
               schema:
                 $ref: "#/definitions/Success-response"
         403:
+          description: 정지된 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-suspension-response"                 
+        403:
+          description: 이메일 인증이 되지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-before-response"                 
+        403:
           description: 본인이 작성하지 않은 리뷰를 수정하려 하는 경우 요청 거부
           content:
             application/json:
@@ -1084,11 +1489,24 @@ paths:
               schema:
                 $ref: "#/definitions/Success-response"
         403:
+          description: 정지된 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-suspension-response"                 
+        403:
+          description: 이메일 인증이 되지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-before-response"                 
+        403:
           description: 본인의 리뷰가 아닌 리뷰를 삭제하려 함 (어드민 허용)
           content:
             application/json:
               schema:
                 $ref: "#/definitions/Forbidden-response"
+
   /store/{id}/review:
     post:
       summary: 리뷰 작성
@@ -1128,6 +1546,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
+        403:
+          description: 정지된 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-suspension-response"                 
+        403:
+          description: 이메일 인증이 되지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-before-response"                 
     get:
       summary: 특정 상점의 리뷰들 조회
       consumes: application/json
@@ -1151,14 +1581,20 @@ paths:
                   message:
                     type: string
                     example: ""
+        403:
+          description: 정지된 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-suspension-response"                 
+        403:
+          description: 이메일 인증이 되지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Forbidden-before-response"                     
 
-
-
-
-
-
-
-
+                
 definitions:
   # 성공
   Success-response:
@@ -1172,14 +1608,14 @@ definitions:
         example: ""
 
   # 이미 존재하는 데이터
-  Invalid-response:
+  Conflict-response:
     type: object
     properties:
       data:
         example: ""
       message:
         type: string
-        example: INVALID
+        example: CONFLICT
 
   # 쿼리 스트링 누락
   Query-response:
@@ -1190,6 +1626,34 @@ definitions:
       message:
         type: string
         example: QUERY
+
+  Query-keyword-response:
+    type: object
+    properties:
+      data:
+        example: ""
+      message:
+        type: string
+        example: QUERY_KEYWORD        
+
+  Query-option-response:
+    type: object
+    properties:
+      data:
+        example: ""
+      message:
+        type: string
+        example: QUERY_OPTION      
+
+  Unauthorized-response:
+    type: object
+    properties:
+      data:
+        example: ""
+      message:
+        type: string
+        example: UNAUTHORIZED
+
   Forbidden-response:
     type: object
     properties:
@@ -1198,6 +1662,27 @@ definitions:
       message:
         type: string
         example: FORBIDDEN
+
+  # 이메일 인증을 하지 않은 사용자가 특정 기능 접근
+  Forbidden-before-response:
+    type: object
+    properties:
+      data:
+        example: ""
+      message:
+        type: string
+        example: FORBIDDEN_BEFORE
+
+  # 정지된 사용자가 특정 기능 접근
+  Forbidden-suspension-response:
+    type: object
+    properties:
+      data:
+        example: ""
+      message:
+        thpe: string
+        eample: FORBIDDEN_SUSPENSION
+
   ResourceNotFound-response:
     type: object
     properties:
