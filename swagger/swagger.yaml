@@ -1048,9 +1048,10 @@ paths:
           example: 4.5
           required: true
         - in: body
-          name: img
-          description: 업로드할 이미지 파일
-          example: hufs.png
+          name: url
+          type: array
+          description: 삭제할 이미지 파일
+          example: [ "https://hufsweb.s3.ap-northeast-2.amazonaws.com/post/1614328320000sasa.jpg","https://hufsweb.s3.ap-northeast-2.amazonaws.com/post/1614328320000xz.jpg" ]
           required: false
       responses:
         200:
@@ -1115,10 +1116,12 @@ paths:
           example: 4.5
           required: true
         - in: body
-          name: img
-          description: 업로드할 이미지 파일
-          example: hufs.png
+          name: url
+          type: array
+          description: 삭제할 이미지 url 배열
+          example: [ "https://hufsweb.s3.ap-northeast-2.amazonaws.com/post/1614328320000sasa.jpg","https://hufsweb.s3.ap-northeast-2.amazonaws.com/post/1614328320000xz.jpg" ]
           required: false
+
       responses:
         200:
           content:
@@ -1443,10 +1446,6 @@ definitions:
         type: integer
         description: 리뷰 작성자 id
         example: 2
-      ReviewImages:
-        type: array
-        items:
-          $ref: "#/definitions/ReviewImage"
       User:
         type: object
         properties:
@@ -1489,10 +1488,6 @@ definitions:
         type: integer
         description: 리뷰 작성자 id
         example: 2
-      ReviewImages:
-        type: array
-        items:
-          $ref: "#/definitions/ReviewImage"
       User:
         type: object
         properties:
@@ -1507,26 +1502,3 @@ definitions:
             type: string
             description: 상점 이름
             example: 맛집
-  ReviewImage:
-    type: object
-    properties:
-      id:
-        type: integer
-        description: 이미지 id
-        example: 2
-      url:
-        type: string
-        description: 이미지 url
-        example: https://hufsweb.s3.ap-northeast-2.amazonaws.com/review/1616250534848sasa.jpg
-      createdAt:
-        type: date
-        description: 이미지 생성 날짜 및 시간
-        example: 2021-03-12T11:44:34.000Z
-      updatedAt:
-        type: date
-        descriptipn: 이미지 업데이트된 날짜 및 시간
-        example: 2021-03-12T11:44:34.000Z
-      storeReviewId:
-        type: integer
-        description: 이미지가 사용된 리뷰글 id
-        example: 3

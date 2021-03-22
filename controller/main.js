@@ -3,7 +3,7 @@ const Board = require('../models/boards');
 const User = require('../models/users');
 const { Op } = require('sequelize');
 
-exports.searchPosts = async (req, res, next)=>{
+exports.searchPosts = async (req, res, next) => {
     try {
         let keyword = req.query.keyword;
         let option = req.query.option;
@@ -62,7 +62,7 @@ exports.searchPosts = async (req, res, next)=>{
             });
             if (user) {
                 var post = await Post.findAll({
-                    where: {userId: user.id, boardId: req.params.id},
+                    where: { userId: user.id, boardId: req.params.id},
                     include: [{model: Board, attributes: ['title']},
                               {model: User, attributes: ['nickname']}]
                 });
