@@ -74,7 +74,6 @@ app.use((err,req,res,next)=>{
         data: "",
         message: message
     });
-
 });
 
 module.exports = app;
