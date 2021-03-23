@@ -120,9 +120,9 @@ exports.addReplyLike = async (req,res,next) => {
                 });
             });
         } else {
-            res.status(400).json({
+            res.status(409).json({
                 data: "",
-                message: "INVALID"
+                message: "CONFLICT"
             });
        }
 
@@ -156,9 +156,9 @@ exports.cancelReplyLike = async (req,res,next)=> {
             });
             });
         } else {
-            res.status(400).json({
+            res.status(409).json({
                 data: "",
-                message: "INVALID"
+                message: "CONFLICT"
             });
         }
 
@@ -212,9 +212,9 @@ exports.report = async(req,res,next) => {
 
             });
         } else {
-            res.status(400).json({
+            res.status(409).json({
                 data: "",
-                message: "INVALID"
+                message: "CONFLICT"
             });
         }
 

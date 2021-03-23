@@ -3,11 +3,11 @@ const Sequelize = require('sequelize');
 module.exports = class Store extends Sequelize.Model{
     static init(sequelize) {
         return super.init({
-            longitude: {
+            long: {
                 type: Sequelize.DOUBLE,
                 allowNull: false,
             },
-            latitude: {
+            lat: {
                 type: Sequelize.DOUBLE,
                 allowNull: false,
             },
@@ -18,14 +18,26 @@ module.exports = class Store extends Sequelize.Model{
             tel: {
                 type: Sequelize.STRING(16),
                 allowNull: true,
+            },
+            numAddress: {
+                type: Sequelize.STRING,
+                allowNull: true
+            },
+            roadAddress: {
+                type: Sequelize.STRING,
+                allowNull: true
+            },
+            campus: {
+                type: Sequelize.TINYINT,
+                allowNull: false
             }
         }, {
             sequelize,
-            timestamps: true,
+            timestamps: false,
             underscored: true,
             modelName: 'Store',
             tableName: 'stores',
-            paranoid: true,
+            paranoid: false,
             charset: 'utf8',
             collate: 'utf8_general_ci',
         });

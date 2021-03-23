@@ -651,12 +651,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Query-option-response"
-        200:
+        404:
           description: 검색 결과가 없음
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Success-response"
+                $ref: "#/definitions/ResourceNotFound-response"
   /search:
     get:
       summary: 전체 게시판 글 검색
@@ -718,12 +718,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Query-option-response"
-        200:
+        404:
           description: 검색 결과가 없음
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Success-response"
+                $ref: "#/definitions/ResourceNotFound-response"
   /post/back:
     post:
       summary: 이미지 업로드 후 글 작성 취소
@@ -1680,8 +1680,8 @@ definitions:
       data:
         example: ""
       message:
-        thpe: string
-        eample: FORBIDDEN_SUSPENSION
+        type: string
+        example: FORBIDDEN_SUSPENSION
 
   ResourceNotFound-response:
     type: object
