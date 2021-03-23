@@ -59,8 +59,6 @@ const authUtil = {
                         message: 'FORBIDDEN_BEFORE'
                     }
                 );
-            } else {
-                return res.status(400)
             }
         } catch (error) {
             console.log(error)
