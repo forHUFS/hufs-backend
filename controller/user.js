@@ -27,7 +27,7 @@ const emailAuth = {
             from: "HUFSpace",
             to: `${toWhom}@hufs.ac.kr`,
             subject: "[ HUFSpace ] 회원가입을 위한 이메일입니다.",
-            text: "인증을 위해 아래 URL을 클릭하여 주세요.\n" + `http://localhost:3000/user?token=${token}`
+            text: "인증을 위해 아래 URL을 클릭하여 주세요.\n" + `http://localhost:3000/email?token=${token}`
         };
 
        await transporter.sendMail(mailOptions, async(error, info) => {
@@ -40,13 +40,20 @@ const emailAuth = {
                 )
             } else {
                 try {
-                    user = await User.findOne({where: {email: req.body.email}});
+                    user = await User.findOne({where: {email: req.email}});
                     date = new Date()
                     Token.create(
                         {
                             emailToken         : token,
                             emailExpirationTime: date,
                             userId             : user.id
+                        }
+                    );
+                    
+                    return res.status(200).json(
+                        {
+                            data: "",
+                            message: "SUCCESS"
                         }
                     );
 
@@ -131,8 +138,7 @@ const emailAuth = {
 }
 
 const userAuth = {
-    signUp: async(req, res) => {
-
+    signUp: async(req, res, next) => {
         try {
             if (req.body.isAggred) {
                 await User.create(
@@ -141,20 +147,13 @@ const userAuth = {
                         name: req.body.name,
                         nickname: req.body.nickname,
                         webMail: req.body.webMail,
-                        mainMajor: req.body.mainMajorId,
-                        doubleMajor: req.body.doubleMajorId,
-                        isAggred: true
+                        mainMajorId: req.body.mainMajorId,
+                        doubleMajorId: req.body.doubleMajorId,
+                        isAggred: req.body.isAggred
                     }
                 );
 
-                await emailAuth.sendEmail(req, res);
-
-                return res.status(200).json(
-                    {
-                        data: "",
-                        message: "SUCCESS"
-                    }
-                );
+                return next();
             } else {
                 return res.status(401).json(
                     {
@@ -260,7 +259,7 @@ const userInfo = {
             'mainMajor'  : mainMajor.name,
             'doubleMajor': doubleMajor.name,
             'myPost'     : posts,
-            'myreplies'  : replies
+            'myReplies'  : replies
         }
         try {
             return res.status(200).json(
@@ -283,8 +282,8 @@ const userInfo = {
     updateUser: async(req, res) => {
         const today       = new Date()
         const user        = await User.findOne({where: {id: req.user.id}});
-        const mainMajor   = await MainMajor.findOne({ where: { id: req.mainMajorId } });
-        const doubleMajor = await DoubleMajor.findOne( { where: { id: req.doubleMajorId } } );
+        const mainMajor   = await MainMajor.findOne({ where: { id: req.body.mainMajorId } });
+        const doubleMajor = await DoubleMajor.findOne( { where: { id: req.body.doubleMajorId } } );
         console.log(user)
         try {
 
@@ -350,7 +349,7 @@ const userInfo = {
                 return res.status(409).json(
                     {
                         data: "",
-                        message: "CONFLICT"
+                        message: "CONFLICT_NICKNAME"
                     }
                 );
             }
