@@ -5,7 +5,7 @@ module.exports = class Token extends Sequelize.Model{
         return super.init({
             emailToken: {
                 type     : Sequelize.STRING(64),
-                allowNull: false,
+                allowNull: true,
                 unique   : true
             },
             isEmailAuthenticated: {
@@ -15,7 +15,7 @@ module.exports = class Token extends Sequelize.Model{
             },
             emailExpirationTime: {
                 type     : Sequelize.DATE,
-                allowNull: false
+                allowNull: true
             },
             accessToken : {
                 type     : Sequelize.STRING(64),
