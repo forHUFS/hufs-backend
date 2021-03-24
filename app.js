@@ -21,7 +21,7 @@ const boardRouter   = require('./routes/board');
 const replyRouter   = require('./routes/reply');
 const storeRouter   = require('./routes/store');
 const userRouter    = require('./routes/user');
-
+const majorRouter   = require('./routes/major');
 
 dotenv.config();
 
@@ -51,6 +51,7 @@ app.use('/board', boardRouter);
 app.use('/reply', replyRouter);
 app.use('/store', storeRouter);
 app.use('/user', userRouter);
+app.use('/major', majorRouter);
 app.use('/', mainRouter);
 
 // API Document by using swagger

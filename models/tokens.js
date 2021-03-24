@@ -5,8 +5,17 @@ module.exports = class Token extends Sequelize.Model{
         return super.init({
             emailToken: {
                 type     : Sequelize.STRING(64),
-                allowNull: true,
+                allowNull: false,
                 unique   : true
+            },
+            isEmailAuthenticated: {
+                type     : Sequelize.BOOLEAN,
+                allowNull: false,
+                defaultValue: false
+            },
+            emailExpirationTime: {
+                type     : Sequelize.DATE,
+                allowNull: false
             },
             accessToken : {
                 type     : Sequelize.STRING(64),
@@ -15,7 +24,7 @@ module.exports = class Token extends Sequelize.Model{
             },
             isMaintained: {
                 type        : Sequelize.BOOLEAN(),
-                allowNull   : false,
+                allowNull   : true,
                 defaultValue: false,
             },
 

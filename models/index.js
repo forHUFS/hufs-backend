@@ -1,5 +1,5 @@
 const Sequelize         = require('sequelize');
-const env               = process.env.NODE_ENV || 'development';
+const env               = process.env.NODE_ENV || 'test';
 const config            = require('../config/database.json')[env];
 const Board             = require('./boards');
 const Category          = require('./categories');
@@ -15,8 +15,10 @@ const StoreCategory     = require('./storeCategories');
 const StoreReview       = require('./storeReviews');
 const Store             = require('./stores');
 const StoreSubCategory  = require('./storeSubCategories');
-const User              = require("./users.js")
-const Token             = require("./tokens.js")
+const User              = require("./users");
+const Token             = require("./tokens");
+const MainMajor         = require('./mainMajors');
+const DoubleMajor       = require('./doubleMajors');
 
 
 const db = {};
@@ -40,6 +42,8 @@ db.Store             = Store;
 db.StoreSubCategory  = StoreSubCategory;
 db.User              = User;
 db.Token             = Token;
+db.MainMajor         = MainMajor;
+db.DoubleMajor       = DoubleMajor;
 
 
 Object.keys(db).forEach(modelName => {
