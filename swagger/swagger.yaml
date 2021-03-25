@@ -202,17 +202,24 @@ paths:
               schema:
                 $ref: "#/definitions/Unauthorized-response"   
         403:
-          description: 정지된 사용자
+          description: 접근 권한 오류
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-suspension-response"                 
-        403:
-          description: 이메일 인증이 되지 않은 사용자
-          content:
-            application/json:
-              schema:
-                $ref: "#/definitions/Forbidden-before-response"
+                oneOf:
+                  - $ref: "#/definitions/Forbidden-suspension-response"
+                  - $ref: "#/definitions/Forbidden-before-response"
+              examples:
+                suspended-user:
+                  summary: 정지된 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_SUSPENSION
+                email-unauthorized-user:
+                  summary: 이메일 인증이 되지 않은 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_BEFORE      
     post:
       summary: 스크랩을 위해 디렉토리 생성
       consumes: application/json
@@ -231,18 +238,31 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
-        403:
-          description: 정지된 사용자
+        401:
+          description: 로그인하지 않은 사용자
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-suspension-response"                 
+                $ref: "#/definitions/Unauthorized-response"            
         403:
-          description: 이메일 인증이 되지 않은 사용자
+          description: 접근 권한 오류
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-before-response"                
+                oneOf:
+                  - $ref: "#/definitions/Forbidden-suspension-response"
+                  - $ref: "#/definitions/Forbidden-before-response"
+              examples:
+                suspended-user:
+                  summary: 정지된 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_SUSPENSION
+                email-unauthorized-user:
+                  summary: 이메일 인증이 되지 않은 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_BEFORE          
         409:
           description: 이미 존재하는 디렉토리 이름 
           content:
@@ -274,18 +294,31 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
-        403:
-          description: 정지된 사용자
+        401:
+          description: 로그인하지 않은 사용자
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-suspension-response"                 
+                $ref: "#/definitions/Unauthorized-response"            
         403:
-          description: 이메일 인증이 되지 않은 사용자
+          description: 접근 권한 오류
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-before-response"                
+                oneOf:
+                  - $ref: "#/definitions/Forbidden-suspension-response"
+                  - $ref: "#/definitions/Forbidden-before-response"
+              examples:
+                suspended-user:
+                  summary: 정지된 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_SUSPENSION
+                email-unauthorized-user:
+                  summary: 이메일 인증이 되지 않은 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_BEFORE                
         409:
           description: 이미 존재하는 디렉토리 이름 
           content:
@@ -311,18 +344,31 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
-        403:
-          description: 정지된 사용자
+        401:
+          description: 로그인하지 않은 사용자
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-suspension-response"                 
+                $ref: "#/definitions/Unauthorized-response"            
         403:
-          description: 이메일 인증이 되지 않은 사용자
+          description: 접근 권한 오류
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-before-response"                
+                oneOf:
+                  - $ref: "#/definitions/Forbidden-suspension-response"
+                  - $ref: "#/definitions/Forbidden-before-response"
+              examples:
+                suspended-user:
+                  summary: 정지된 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_SUSPENSION
+                email-unauthorized-user:
+                  summary: 이메일 인증이 되지 않은 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_BEFORE                
         422:
           description: 디렉토리 아이디 쿼리 스트링으로 필요 
           content:
@@ -356,18 +402,31 @@ paths:
                   message:
                     type: string
                     example: ""
-        403:
-          description: 정지된 사용자
+        401:
+          description: 로그인하지 않은 사용자
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-suspension-response"                 
+                $ref: "#/definitions/Unauthorized-response"            
         403:
-          description: 이메일 인증이 되지 않은 사용자
+          description: 접근 권한 오류
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-before-response"                    
+                oneOf:
+                  - $ref: "#/definitions/Forbidden-suspension-response"
+                  - $ref: "#/definitions/Forbidden-before-response"
+              examples:
+                suspended-user:
+                  summary: 정지된 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_SUSPENSION
+                email-unauthorized-user:
+                  summary: 이메일 인증이 되지 않은 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_BEFORE                 
         422:
           description: 디렉토리 아이디 쿼리 스트링으로 필요 
           content:
@@ -393,18 +452,31 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
-        403:
-          description: 정지된 사용자
+        401:
+          description: 로그인하지 않은 사용자
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-suspension-response"                 
+                $ref: "#/definitions/Unauthorized-response"            
         403:
-          description: 이메일 인증이 되지 않은 사용자
+          description: 접근 권한 오류
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-before-response"                
+                oneOf:
+                  - $ref: "#/definitions/Forbidden-suspension-response"
+                  - $ref: "#/definitions/Forbidden-before-response"
+              examples:
+                suspended-user:
+                  summary: 정지된 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_SUSPENSION
+                email-unauthorized-user:
+                  summary: 이메일 인증이 되지 않은 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_BEFORE              
         409:
           description: 이미 스크랩한 게시글
           content:
@@ -442,17 +514,31 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
-        403:
-          description: 정지된 사용자
+        401:
+          description: 로그인하지 않은 사용자
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-suspension-response"                 
+                $ref: "#/definitions/Unauthorized-response"            
         403:
-          description: 이메일 인증이 되지 않은 사용자
+          description: 접근 권한 오류
           content:
             application/json:
               schema:
+                oneOf:
+                  - $ref: "#/definitions/Forbidden-suspension-response"
+                  - $ref: "#/definitions/Forbidden-before-response"
+              examples:
+                suspended-user:
+                  summary: 정지된 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_SUSPENSION
+                email-unauthorized-user:
+                  summary: 이메일 인증이 되지 않은 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_BEFORE   
                 $ref: "#/definitions/Forbidden-before-response"                
         422:
           description: 게시글 아이디와 디렉토리 아이디 쿼리 스트링으로 필요 
@@ -479,18 +565,31 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
-        403:
-          description: 정지된 사용자
+        401:
+          description: 로그인하지 않은 사용자
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-suspension-response"                 
+                $ref: "#/definitions/Unauthorized-response"            
         403:
-          description: 이메일 인증이 되지 않은 사용자
+          description: 접근 권한 오류
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-before-response"                
+                oneOf:
+                  - $ref: "#/definitions/Forbidden-suspension-response"
+                  - $ref: "#/definitions/Forbidden-before-response"
+              examples:
+                suspended-user:
+                  summary: 정지된 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_SUSPENSION
+                email-unauthorized-user:
+                  summary: 이메일 인증이 되지 않은 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_BEFORE            
         422:
           description: 스크랩 아이디 쿼리 스트링으로 필요 
           content:
@@ -523,18 +622,31 @@ paths:
                   message:
                     type: string
                     example: ""
-        403:
-          description: 정지된 사용자
+        401:
+          description: 로그인하지 않은 사용자
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-suspension-response"                 
+                $ref: "#/definitions/Unauthorized-response"            
         403:
-          description: 이메일 인증이 되지 않은 사용자
+          description: 접근 권한 오류
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-before-response"                    
+                oneOf:
+                  - $ref: "#/definitions/Forbidden-suspension-response"
+                  - $ref: "#/definitions/Forbidden-before-response"
+              examples:
+                suspended-user:
+                  summary: 정지된 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_SUSPENSION
+                email-unauthorized-user:
+                  summary: 이메일 인증이 되지 않은 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_BEFORE                     
   /board/{id}/post:
     post:
       summary: 게시글 작성
@@ -573,18 +685,31 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
-        403:
-          description: 정지된 사용자
+        401:
+          description: 로그인하지 않은 사용자
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-suspension-response"                 
+                $ref: "#/definitions/Unauthorized-response"            
         403:
-          description: 이메일 인증이 되지 않은 사용자
+          description: 접근 권한 오류
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-before-response"                
+                oneOf:
+                  - $ref: "#/definitions/Forbidden-suspension-response"
+                  - $ref: "#/definitions/Forbidden-before-response"
+              examples:
+                suspended-user:
+                  summary: 정지된 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_SUSPENSION
+                email-unauthorized-user:
+                  summary: 이메일 인증이 되지 않은 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_BEFORE                  
   /board/{id}/search:
     get:
       summary: 게시판 내 글 검색
@@ -621,42 +746,62 @@ paths:
                   message:
                     type: string
                     example: ""
+        401:
+          description: 로그인하지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Unauthorized-response"            
         403:
-          description: 정지된 사용자
+          description: 접근 권한 오류
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-suspension-response"                 
-        403:
-          description: 이메일 인증이 되지 않은 사용자
-          content:
-            application/json:
-              schema:
-                $ref: "#/definitions/Forbidden-before-response"                    
+                oneOf:
+                  - $ref: "#/definitions/Forbidden-suspension-response"
+                  - $ref: "#/definitions/Forbidden-before-response"
+              examples:
+                suspended-user:
+                  summary: 정지된 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_SUSPENSION
+                email-unauthorized-user:
+                  summary: 이메일 인증이 되지 않은 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_BEFORE               
         422:
-          description: 쿼리 스트링 중 하나 누락 (keyword or option)
+          description: 쿼리 스트링 관련 오류
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Query-response"                
-        422:
-          description: keyword가 두 글자 이상이 아님
-          content:
-            application/json:
-              schema:
-                $ref: "#/definitions/Query-keyword-response"
-        422:
-          description: option이 올바른 형태가 아님
-          content:
-            application/json:
-              schema:
-                $ref: "#/definitions/Query-option-response"
-        404:
+                oneOf:
+                  - $ref: "#/definitions/Query-response"
+                  - $ref: "#/definitions/Query-keyword-response"
+                  - $ref: "#/definitions/Query-option-response"
+              examples:
+                query-error:
+                  summary: 쿼리 스트링 중 하나 누락
+                  value:
+                    data: ""
+                    message: QUERY
+                keyword-error:
+                  summary: keyword가 두 글자 이상이 아님
+                  value:
+                    data: ""
+                    message: QUERY_KEYWORD
+                option-error:
+                  summary: option이 올바른 형태가 아님
+                  value:
+                    data: ""
+                    message: QUERY_OPTION
+        200:
           description: 검색 결과가 없음
           content:
             application/json:
               schema:
-                $ref: "#/definitions/ResourceNotFound-response"
+                $ref: "#/definitions/Success-response"
   /search:
     get:
       summary: 전체 게시판 글 검색
@@ -688,42 +833,62 @@ paths:
                   message:
                     type: string
                     example: ""
+        401:
+          description: 로그인하지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Unauthorized-response"            
         403:
-          description: 정지된 사용자
+          description: 접근 권한 오류
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-suspension-response"                 
-        403:
-          description: 이메일 인증이 되지 않은 사용자
-          content:
-            application/json:
-              schema:
-                $ref: "#/definitions/Forbidden-before-response"                    
+                oneOf:
+                  - $ref: "#/definitions/Forbidden-suspension-response"
+                  - $ref: "#/definitions/Forbidden-before-response"
+              examples:
+                suspended-user:
+                  summary: 정지된 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_SUSPENSION
+                email-unauthorized-user:
+                  summary: 이메일 인증이 되지 않은 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_BEFORE                      
         422:
-          description: 쿼리 스트링 중 하나 누락 (keyword or option)
+          description: 쿼리 스트링 관련 오류
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Query-response"
-        422:
-          description: keyword가 두 글자 이상이 아님 QUERY_KEYWORD / QUERY_OPTION
-          content:
-            application/json:
-              schema:
-                $ref: "#/definitions/Query-keyword-response"
-        422:
-          description: option이 올바른 형태가 아님
-          content:
-            application/json:
-              schema:
-                $ref: "#/definitions/Query-option-response"
-        404:
+                oneOf:
+                  - $ref: "#/definitions/Query-response"
+                  - $ref: "#/definitions/Query-keyword-response"
+                  - $ref: "#/definitions/Query-option-response"
+              examples:
+                query-error:
+                  summary: 쿼리 스트링 중 하나 누락
+                  value:
+                    data: ""
+                    message: QUERY
+                keyword-error:
+                  summary: keyword가 두 글자 이상이 아님
+                  value:
+                    data: ""
+                    message: QUERY_KEYWORD
+                option-error:
+                  summary: option이 올바른 형태가 아님
+                  value:
+                    data: ""
+                    message: QUERY_OPTION
+        200:
           description: 검색 결과가 없음
           content:
             application/json:
               schema:
-                $ref: "#/definitions/ResourceNotFound-response"
+                $ref: "#/definitions/Success-response"
   /post/back:
     post:
       summary: 이미지 업로드 후 글 작성 취소
@@ -743,18 +908,31 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
-        403:
-          description: 정지된 사용자
+        401:
+          description: 로그인하지 않은 사용자
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-suspension-response"                 
+                $ref: "#/definitions/Unauthorized-response"            
         403:
-          description: 이메일 인증이 되지 않은 사용자
+          description: 접근 권한 오류
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-before-response"                
+                oneOf:
+                  - $ref: "#/definitions/Forbidden-suspension-response"
+                  - $ref: "#/definitions/Forbidden-before-response"
+              examples:
+                suspended-user:
+                  summary: 정지된 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_SUSPENSION
+                email-unauthorized-user:
+                  summary: 이메일 인증이 되지 않은 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_BEFORE                 
   /post/edit/back:
     post:
       summary: 이미지 업로드 후 글 수정 취소
@@ -774,18 +952,31 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
-        403:
-          description: 정지된 사용자
+        401:
+          description: 로그인하지 않은 사용자
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-suspension-response"                 
+                $ref: "#/definitions/Unauthorized-response"            
         403:
-          description: 이메일 인증이 되지 않은 사용자
+          description: 접근 권한 오류
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-before-response"                
+                oneOf:
+                  - $ref: "#/definitions/Forbidden-suspension-response"
+                  - $ref: "#/definitions/Forbidden-before-response"
+              examples:
+                suspended-user:
+                  summary: 정지된 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_SUSPENSION
+                email-unauthorized-user:
+                  summary: 이메일 인증이 되지 않은 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_BEFORE                  
   /post/img:
     post:
       summary: 이미지 업로드
@@ -810,18 +1001,31 @@ paths:
                   message:
                     type: string
                     example: ""
-        403:
-          description: 정지된 사용자
+        401:
+          description: 로그인하지 않은 사용자
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-suspension-response"                 
+                $ref: "#/definitions/Unauthorized-response"            
         403:
-          description: 이메일 인증이 되지 않은 사용자
+          description: 접근 권한 오류
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-before-response"                    
+                oneOf:
+                  - $ref: "#/definitions/Forbidden-suspension-response"
+                  - $ref: "#/definitions/Forbidden-before-response"
+              examples:
+                suspended-user:
+                  summary: 정지된 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_SUSPENSION
+                email-unauthorized-user:
+                  summary: 이메일 인증이 되지 않은 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_BEFORE                      
   /post/{id}/addlike:
     get:
       summary: 게시글 좋아요 +1
@@ -840,18 +1044,31 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
-        403:
-          description: 정지된 사용자
+        401:
+          description: 로그인하지 않은 사용자
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-suspension-response"                 
+                $ref: "#/definitions/Unauthorized-response"            
         403:
-          description: 이메일 인증이 되지 않은 사용자
+          description: 접근 권한 오류
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-before-response"                 
+                oneOf:
+                  - $ref: "#/definitions/Forbidden-suspension-response"
+                  - $ref: "#/definitions/Forbidden-before-response"
+              examples:
+                suspended-user:
+                  summary: 정지된 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_SUSPENSION
+                email-unauthorized-user:
+                  summary: 이메일 인증이 되지 않은 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_BEFORE                   
         409:
           description: 유저가 이미 좋아요를 누른 게시글에 대한 요청 거부
           content:
@@ -876,18 +1093,31 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
-        403:
-          description: 정지된 사용자
+        401:
+          description: 로그인하지 않은 사용자
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-suspension-response"                 
+                $ref: "#/definitions/Unauthorized-response"            
         403:
-          description: 이메일 인증이 되지 않은 사용자
+          description: 접근 권한 오류
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-before-response" 
+                oneOf:
+                  - $ref: "#/definitions/Forbidden-suspension-response"
+                  - $ref: "#/definitions/Forbidden-before-response"
+              examples:
+                suspended-user:
+                  summary: 정지된 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_SUSPENSION
+                email-unauthorized-user:
+                  summary: 이메일 인증이 되지 않은 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_BEFORE   
         409:
           description: 유저가 좋아요를 누른 적이 없는 게시글에 대한 요청 거부
           content:
@@ -922,18 +1152,31 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
-        403:
-          description: 정지된 사용자
+        401:
+          description: 로그인하지 않은 사용자
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-suspension-response"                 
+                $ref: "#/definitions/Unauthorized-response"            
         403:
-          description: 이메일 인증이 되지 않은 사용자
+          description: 접근 권한 오류
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-before-response"  
+                oneOf:
+                  - $ref: "#/definitions/Forbidden-suspension-response"
+                  - $ref: "#/definitions/Forbidden-before-response"
+              examples:
+                suspended-user:
+                  summary: 정지된 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_SUSPENSION
+                email-unauthorized-user:
+                  summary: 이메일 인증이 되지 않은 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_BEFORE    
         409:
           description: 이미 신고한 게시글
           content:
@@ -965,19 +1208,31 @@ paths:
                   message:
                     type: string
                     example: ""
-        403:
-          description: 정지된 사용자
+        401:
+          description: 로그인하지 않은 사용자
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-suspension-response"                 
+                $ref: "#/definitions/Unauthorized-response"            
         403:
-          description: 이메일 인증이 되지 않은 사용자
+          description: 접근 권한 오류
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-before-response"
-        # 조회는 성공하였으나 data가 없는 경우 -> Success, 200, data: "" -> 논의                             
+                oneOf:
+                  - $ref: "#/definitions/Forbidden-suspension-response"
+                  - $ref: "#/definitions/Forbidden-before-response"
+              examples:
+                suspended-user:
+                  summary: 정지된 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_SUSPENSION
+                email-unauthorized-user:
+                  summary: 이메일 인증이 되지 않은 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_BEFORE  
         404:
           description: 조회하려는 게시글이 없음
           content:
@@ -1021,24 +1276,38 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
-        403:
-          description: 정지된 사용자
+        401:
+          description: 로그인하지 않은 사용자
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-suspension-response"                 
+                $ref: "#/definitions/Unauthorized-response"            
         403:
-          description: 이메일 인증이 되지 않은 사용자
+          description: 접근 권한 오류
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-before-response"                 
-        403:
-          description: 본인이 작성하지 않은 게시글을 수정하려 하는 경우
-          content:
-            application/json:
-              schema:
-                $ref: "#/definitions/Forbidden-response"
+                oneOf:
+                  - $ref: "#/definitions/Forbidden-suspension-response"
+                  - $ref: "#/definitions/Forbidden-response"
+                  - $ref: "#/definitions/Forbidden-before-response"
+              examples:
+                suspended-user:
+                  summary: 정지된 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_SUSPENSION
+                unauthorized-user:
+                  summary: 본인이 작성하지 않은 게시글을 수정 시도
+                  value:
+                    data: ""
+                    message: FORBIDDEN
+                email-unauthorized-user:
+                  summary: 이메일 인증이 되지 않은 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_BEFORE                   
+
     delete:
       summary: 게시글 삭제
       consumes: application/json
@@ -1055,24 +1324,37 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
-        403:
-          description: 정지된 사용자
+        401:
+          description: 로그인하지 않은 사용자
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-suspension-response"                 
+                $ref: "#/definitions/Unauthorized-response"            
         403:
-          description: 이메일 인증이 되지 않은 사용자
+          description: 접근 권한 오류
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-before-response"                 
-        403:
-          description: 본인의 게시글이 아닌 게시글을 삭제하려 함 (어드민 허용)
-          content:
-            application/json:
-              schema:
-                $ref: "#/definitions/Forbidden-response"
+                oneOf:
+                  - $ref: "#/definitions/Forbidden-suspension-response"
+                  - $ref: "#/definitions/Forbidden-response"
+                  - $ref: "#/definitions/Forbidden-before-response"
+              examples:
+                suspended-user:
+                  summary: 정지된 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_SUSPENSION
+                unauthorized-user:
+                  summary: 본인이 작성하지 않은 게시글을 삭제 시도 (Admin 계정의 경우 접근 허가)
+                  value:
+                    data: ""
+                    message: FORBIDDEN
+                email-unauthorized-user:
+                  summary: 이메일 인증이 되지 않은 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_BEFORE
   /reply/add:
     post:
       summary: 댓글 작성
@@ -1095,18 +1377,31 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
-        403:
-          description: 정지된 사용자
+        401:
+          description: 로그인하지 않은 사용자
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-suspension-response"                 
+                $ref: "#/definitions/Unauthorized-response"            
         403:
-          description: 이메일 인증이 되지 않은 사용자
+          description: 접근 권한 오류
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-before-response"                 
+                oneOf:
+                  - $ref: "#/definitions/Forbidden-suspension-response"
+                  - $ref: "#/definitions/Forbidden-before-response"
+              examples:
+                suspended-user:
+                  summary: 정지된 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_SUSPENSION
+                email-unauthorized-user:
+                  summary: 이메일 인증이 되지 않은 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_BEFORE                 
   /reply/add/re:
     post:
       summary: 대댓글 작성
@@ -1134,18 +1429,31 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
-        403:
-          description: 정지된 사용자
+        401:
+          description: 로그인하지 않은 사용자
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-suspension-response"                 
+                $ref: "#/definitions/Unauthorized-response"            
         403:
-          description: 이메일 인증이 되지 않은 사용자
+          description: 접근 권한 오류
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-before-response"                 
+                oneOf:
+                  - $ref: "#/definitions/Forbidden-suspension-response"
+                  - $ref: "#/definitions/Forbidden-before-response"
+              examples:
+                suspended-user:
+                  summary: 정지된 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_SUSPENSION
+                email-unauthorized-user:
+                  summary: 이메일 인증이 되지 않은 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_BEFORE                
   /reply/{id}:
     put:
       summary: 댓글 수정
@@ -1168,24 +1476,37 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
-        403:
-          description: 정지된 사용자
+        401:
+          description: 로그인하지 않은 사용자
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-suspension-response"                 
+                $ref: "#/definitions/Unauthorized-response"            
         403:
-          description: 이메일 인증이 되지 않은 사용자
+          description: 접근 권한 오류
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-before-response"                 
-        403:
-          description: 본인이 작성하지 않은 댓글을 수정하려 하는 경우 요청 거부
-          content:
-            application/json:
-              schema:
-                $ref: "#/definitions/Forbidden-response"
+                oneOf:
+                  - $ref: "#/definitions/Forbidden-suspension-response"
+                  - $ref: "#/definitions/Forbidden-response"
+                  - $ref: "#/definitions/Forbidden-before-response"
+              examples:
+                suspended-user:
+                  summary: 정지된 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_SUSPENSION
+                unauthorized-user:
+                  summary: 본인이 작성하지 않은 댓글을 수정 시도
+                  value:
+                    data: ""
+                    message: FORBIDDEN
+                email-unauthorized-user:
+                  summary: 이메일 인증이 되지 않은 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_BEFORE
                 
     delete:
       summary: 댓글 삭제
@@ -1203,24 +1524,37 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
-        403:
-          description: 정지된 사용자
+        401:
+          description: 로그인하지 않은 사용자
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-suspension-response"                 
+                $ref: "#/definitions/Unauthorized-response"            
         403:
-          description: 이메일 인증이 되지 않은 사용자
+          description: 접근 권한 오류
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-before-response"                 
-        403:
-          description: 본인의 게시글이 아닌 댓글을 삭제하려 함 (어드민 허용)
-          content:
-            application/json:
-              schema:
-                $ref: "#/definitions/Forbidden-response"
+                oneOf:
+                  - $ref: "#/definitions/Forbidden-suspension-response"
+                  - $ref: "#/definitions/Forbidden-response"
+                  - $ref: "#/definitions/Forbidden-before-response"
+              examples:
+                suspended-user:
+                  summary: 정지된 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_SUSPENSION
+                unauthorized-user:
+                  summary: 본인이 작성하지 않은 댓글을 삭제 시도 (Admin 계정의 경우 접근 허가)
+                  value:
+                    data: ""
+                    message: FORBIDDEN
+                email-unauthorized-user:
+                  summary: 이메일 인증이 되지 않은 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_BEFORE
   /reply/{id}/report:
     post:
       summary: 댓글 신고
@@ -1249,19 +1583,31 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
-        403:
-          description: 정지된 사용자
+        401:
+          description: 로그인하지 않은 사용자
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-suspension-response"                 
+                $ref: "#/definitions/Unauthorized-response"            
         403:
-          description: 이메일 인증이 되지 않은 사용자
+          description: 접근 권한 오류
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-before-response" 
-        # 409 conflict                        
+                oneOf:
+                  - $ref: "#/definitions/Forbidden-suspension-response"
+                  - $ref: "#/definitions/Forbidden-before-response"
+              examples:
+                suspended-user:
+                  summary: 정지된 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_SUSPENSION
+                email-unauthorized-user:
+                  summary: 이메일 인증이 되지 않은 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_BEFORE 
         409:
           description: 이미 신고한 댓글
           content:
@@ -1286,18 +1632,31 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
-        403:
-          description: 정지된 사용자
+        401:
+          description: 로그인하지 않은 사용자
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-suspension-response"                 
+                $ref: "#/definitions/Unauthorized-response"            
         403:
-          description: 이메일 인증이 되지 않은 사용자
+          description: 접근 권한 오류
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-before-response" 
+                oneOf:
+                  - $ref: "#/definitions/Forbidden-suspension-response"
+                  - $ref: "#/definitions/Forbidden-before-response"
+              examples:
+                suspended-user:
+                  summary: 정지된 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_SUSPENSION
+                email-unauthorized-user:
+                  summary: 이메일 인증이 되지 않은 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_BEFORE 
         409:
           description: 유저가 이미 좋아요를 누른 댓글에 대한 요청 거부
           content:
@@ -1322,18 +1681,31 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
-        403:
-          description: 정지된 사용자
+        401:
+          description: 로그인하지 않은 사용자
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-suspension-response"                 
+                $ref: "#/definitions/Unauthorized-response"            
         403:
-          description: 이메일 인증이 되지 않은 사용자
+          description: 접근 권한 오류
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-before-response" 
+                oneOf:
+                  - $ref: "#/definitions/Forbidden-suspension-response"
+                  - $ref: "#/definitions/Forbidden-before-response"
+              examples:
+                suspended-user:
+                  summary: 정지된 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_SUSPENSION
+                email-unauthorized-user:
+                  summary: 이메일 인증이 되지 않은 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_BEFORE 
         409:
           description: 유저가 좋아요를 누른 적이 없는 댓글에 대한 요청 거부
           content:
@@ -1360,18 +1732,31 @@ paths:
                   message:
                     type: string
                     example: ""
-        403:
-          description: 정지된 사용자
+        401:
+          description: 로그인하지 않은 사용자
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-suspension-response"                 
+                $ref: "#/definitions/Unauthorized-response"            
         403:
-          description: 이메일 인증이 되지 않은 사용자
+          description: 접근 권한 오류
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-before-response"                     
+                oneOf:
+                  - $ref: "#/definitions/Forbidden-suspension-response"
+                  - $ref: "#/definitions/Forbidden-before-response"
+              examples:
+                suspended-user:
+                  summary: 정지된 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_SUSPENSION
+                email-unauthorized-user:
+                  summary: 이메일 인증이 되지 않은 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_BEFORE                     
   /store/review/{id}:
     get:
       summary: 특정 리뷰 조회
@@ -1397,18 +1782,31 @@ paths:
                   message:
                     type: string
                     example: ""
-        403:
-          description: 정지된 사용자
+        401:
+          description: 로그인하지 않은 사용자
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-suspension-response"                 
+                $ref: "#/definitions/Unauthorized-response"            
         403:
-          description: 이메일 인증이 되지 않은 사용자
+          description: 접근 권한 오류
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-before-response"                     
+                oneOf:
+                  - $ref: "#/definitions/Forbidden-suspension-response" 
+                  - $ref: "#/definitions/Forbidden-before-response"
+              examples:
+                suspended-user:
+                  summary: 정지된 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_SUSPENSION
+                email-unauthorized-user:
+                  summary: 이메일 인증이 되지 않은 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_BEFORE                     
         404:
           description: 조회하려는 리뷰가 없음
           content:
@@ -1453,24 +1851,37 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
-        403:
-          description: 정지된 사용자
+        401:
+          description: 로그인하지 않은 사용자
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-suspension-response"                 
+                $ref: "#/definitions/Unauthorized-response"            
         403:
-          description: 이메일 인증이 되지 않은 사용자
+          description: 접근 권한 오류
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-before-response"                 
-        403:
-          description: 본인이 작성하지 않은 리뷰를 수정하려 하는 경우 요청 거부
-          content:
-            application/json:
-              schema:
-                $ref: "#/definitions/Forbidden-response"
+                oneOf:
+                  - $ref: "#/definitions/Forbidden-suspension-response"
+                  - $ref: "#/definitions/Forbidden-response"
+                  - $ref: "#/definitions/Forbidden-before-response"
+              examples:
+                suspended-user:
+                  summary: 정지된 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_SUSPENSION
+                unauthorized-user:
+                  summary: 본인이 작성하지 않은 리뷰를 수정 시도
+                  value:
+                    data: ""
+                    message: FORBIDDEN
+                email-unauthorized-user:
+                  summary: 이메일 인증이 되지 않은 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_BEFORE
     delete:
       summary: 리뷰 삭제
       consumes: application/json
@@ -1488,24 +1899,37 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
-        403:
-          description: 정지된 사용자
+        401:
+          description: 로그인하지 않은 사용자
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-suspension-response"                 
+                $ref: "#/definitions/Unauthorized-response"            
         403:
-          description: 이메일 인증이 되지 않은 사용자
+          description: 접근 권한 오류
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-before-response"                 
-        403:
-          description: 본인의 리뷰가 아닌 리뷰를 삭제하려 함 (어드민 허용)
-          content:
-            application/json:
-              schema:
-                $ref: "#/definitions/Forbidden-response"
+                oneOf:
+                  - $ref: "#/definitions/Forbidden-suspension-response"
+                  - $ref: "#/definitions/Forbidden-response"
+                  - $ref: "#/definitions/Forbidden-before-response"
+              examples:
+                suspended-user:
+                  summary: 정지된 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_SUSPENSION
+                unauthorized-user:
+                  summary: 본인이 작성하지 않은 리뷰를 삭제 시도 (Admin 계정의 경우 접근 허가)
+                  value:
+                    data: ""
+                    message: FORBIDDEN
+                email-unauthorized-user:
+                  summary: 이메일 인증이 되지 않은 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_BEFORE
 
   /store/{id}/review:
     post:
@@ -1546,18 +1970,31 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
-        403:
-          description: 정지된 사용자
+        401:
+          description: 로그인하지 않은 사용자
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-suspension-response"                 
+                $ref: "#/definitions/Unauthorized-response"            
         403:
-          description: 이메일 인증이 되지 않은 사용자
+          description: 접근 권한 오류
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-before-response"                 
+                oneOf:
+                  - $ref: "#/definitions/Forbidden-suspension-response"
+                  - $ref: "#/definitions/Forbidden-before-response"
+              examples:
+                suspended-user:
+                  summary: 정지된 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_SUSPENSION
+                email-unauthorized-user:
+                  summary: 이메일 인증이 되지 않은 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_BEFORE                 
     get:
       summary: 특정 상점의 리뷰들 조회
       consumes: application/json
@@ -1581,18 +2018,31 @@ paths:
                   message:
                     type: string
                     example: ""
-        403:
-          description: 정지된 사용자
+        401:
+          description: 로그인하지 않은 사용자
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-suspension-response"                 
+                $ref: "#/definitions/Unauthorized-response"            
         403:
-          description: 이메일 인증이 되지 않은 사용자
+          description: 접근 권한 오류
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Forbidden-before-response"                     
+                oneOf:
+                  - $ref: "#/definitions/Forbidden-suspension-response"
+                  - $ref: "#/definitions/Forbidden-before-response"
+              examples:
+                suspended-user:
+                  summary: 정지된 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_SUSPENSION
+                email-unauthorized-user:
+                  summary: 이메일 인증이 되지 않은 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_BEFORE                    
 
                 
 definitions:
@@ -1643,7 +2093,7 @@ definitions:
         example: ""
       message:
         type: string
-        example: QUERY_OPTION      
+        example: QUERY_OPTION  
 
   Unauthorized-response:
     type: object
