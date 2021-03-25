@@ -27,7 +27,7 @@ const emailAuth = {
             from: "HUFSpace",
             to: `${toWhom}@hufs.ac.kr`,
             subject: "[ HUFSpace ] 회원가입을 위한 이메일입니다.",
-            text: "인증을 위해 아래 URL을 클릭하여 주세요.\n" + `http://localhost:3000/email?token=${token}`
+            text: "인증을 위해 아래 URL을 클릭하여 주세요.\n" + `http://52.78.2.40:3000/email?token=${token}`
         };
 
        await transporter.sendMail(mailOptions, async(error, info) => {
@@ -77,7 +77,12 @@ const emailAuth = {
     checkEmail: async(req, res, next) => {
         try {
             if (!req.query.token) {
-                return next();
+                return res.status(401).json(
+                    {
+                        data: "",
+                        message: "UNAUTHORIZED"
+                    }
+                )
             } else {
                 const token = await Token.findOne(
                     { where: { emailToken: emailToken } }
@@ -102,7 +107,6 @@ const emailAuth = {
                         { where: { id: token.userId } }
                     );
 
-                    token.emailToken           = null
                     token.isEmailAuthenticated = true
                     token.emailExpirationTime  = null
                     token.save()

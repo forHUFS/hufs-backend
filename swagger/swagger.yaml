@@ -262,13 +262,26 @@ paths:
       summary: 웹메일을 통한 재학생 인증
       consumes: application/json
       produces: application/json
+      parameters:
+        - in: query
+          name: token
+          description: 재학생 웹메일 인증 토큰
+          required: true
+          schema:
+            type: string                
       responses:
         200:
           description: 웹메일 인증 완료
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Success-response"                
+                $ref: "#/definitions/Success-response"
+        401:
+          description: 웹메일 인증 완료
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Unauthorized-response"                                  
         409:
           description: 이미 인증을 한 사용자
           content:
