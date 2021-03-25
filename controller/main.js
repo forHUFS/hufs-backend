@@ -8,16 +8,16 @@ exports.searchPosts = async (req, res, next) => {
         let keyword = req.query.keyword;
         let option = req.query.option;
         if (!keyword || !option) {
-            res.status(400).json({
+            res.status(422).json({
                 data: "",
                 message: "QUERY"
             });
         } else {
         keyword = keyword.trim();
         if (keyword.length < 2) {
-            return res.status(412).json({
+            return res.status(422).json({
                 data: "",
-                message: "INVALID"
+                message: "QUERY_KEYWORD"
             });
         }
         keyword = keyword.replace(/\s\s+/gi, ' ');
@@ -70,7 +70,7 @@ exports.searchPosts = async (req, res, next) => {
         } else {
             res.status(421).json({
                 data: "",
-                message: "INVALID"
+                message: "QUERY_OPTION"
             });
         }
         if (post && post.length) {
@@ -79,9 +79,9 @@ exports.searchPosts = async (req, res, next) => {
                 message: ""
             });
         } else {
-            res.status(204).json({
+            res.status(404).json({
                 data: "",
-                message: ""
+                message: "RESOURCE_NOT_FOUND"
             });
         }
         }

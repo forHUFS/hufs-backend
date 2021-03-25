@@ -1,6 +1,7 @@
 const StoreReview = require('../models/storeReviews');
 const User = require('../models/users');
 const Store = require('../models/stores');
+const StoreSubCategory = require('../models/storeSubCategories');
 const { deleteImg } = require('../uploads/upload');
 const sequelize = require('../models').sequelize;
 
@@ -158,7 +159,8 @@ exports.deleteReview = async (req,res,next) => {
 exports.readStoresOfSeoul = async(req,res,next) => {
     try {
         const store = await Store.findAll({
-            where: { campusId: 1 }
+            where: { campus: 1 },
+            include: [{model: StoreSubCategory, attributes: ['name']}]
         });
         res.status(200).json({
             data: store,
@@ -173,7 +175,8 @@ exports.readStoresOfSeoul = async(req,res,next) => {
 exports.readStoresOfGlobal = async(req,res,next) => {
     try {
         const review = await Store.findAll({
-            where: { campusId: 2 }
+            where: { campus: 2 },
+            include: [{model: StoreSubCategory, attributes: ['name']}]
         });
         res.status(200).json({
             data: review,
