@@ -14,14 +14,16 @@ const swaggerSpec = YAML.load(path.join(__dirname, 'swagger/swagger.yaml'))
 const configurePassport = require('./config/passport');
 
 // routes
-const { sequelize } = require('./models');
-const mainRouter    = require('./routes/main');
-const postRouter    = require('./routes/post');
-const boardRouter   = require('./routes/board');
-const replyRouter   = require('./routes/reply');
-const storeRouter   = require('./routes/store');
-const userRouter    = require('./routes/user');
-const majorRouter   = require('./routes/major');
+const { sequelize }     = require('./models');
+const mainRouter        = require('./routes/main');
+const postRouter        = require('./routes/post');
+const boardRouter       = require('./routes/board');
+const replyRouter       = require('./routes/reply');
+const storeRouter       = require('./routes/store');
+const userRouter        = require('./routes/user');
+const majorRouter       = require('./routes/major');
+const scholarShipRouter = require('./routes/scholarship');
+
 
 dotenv.config();
 
@@ -52,6 +54,7 @@ app.use('/reply', replyRouter);
 app.use('/store', storeRouter);
 app.use('/user', userRouter);
 app.use('/major', majorRouter);
+app.use('/scholarship', scholarShipRouter);
 app.use('/', mainRouter);
 
 // API Document by using swagger
