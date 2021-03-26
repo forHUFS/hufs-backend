@@ -1218,50 +1218,7 @@ paths:
                   value:
                     data: ""
                     message: FORBIDDEN_BEFORE                 
-  /post/edit/back:
-    post:
-      summary: 이미지 업로드 후 글 수정 취소
-      consumes: application/json
-      produces: application/json
-      parameters:
-        - in: body
-          name: url
-          type: array
-          description: 삭제해야 할 url 배열
-          required: true
-          example: ["https://hufsweb.s3.ap-northeast-2.amazonaws.com/post/1614328320000sasa.jpg","https://hufsweb.s3.ap-northeast-2.amazonaws.com/post/1614328320000xz.jpg"]
-      responses:
-        200:
-          description: 이미지 삭제 처리 완료
-          content:
-            application/json:
-              schema:
-                $ref: "#/definitions/Success-response"
-        401:
-          description: 로그인하지 않은 사용자
-          content:
-            application/json:
-              schema:
-                $ref: "#/definitions/Unauthorized-response"            
-        403:
-          description: 접근 권한 오류
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: "#/definitions/Forbidden-suspension-response"
-                  - $ref: "#/definitions/Forbidden-before-response"
-              examples:
-                suspended-user:
-                  summary: 정지된 사용자
-                  value:
-                    data: ""
-                    message: FORBIDDEN_SUSPENSION
-                email-unauthorized-user:
-                  summary: 이메일 인증이 되지 않은 사용자
-                  value:
-                    data: ""
-                    message: FORBIDDEN_BEFORE                  
+
   /post/img:
     post:
       summary: 이미지 업로드
