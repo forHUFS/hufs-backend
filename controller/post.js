@@ -129,20 +129,7 @@ exports.modifyPost = async(req,res,next)=> {
     }
 
 }
-exports.cancelEdit = async (req,res,next)=> {
-    try {
-        const url = req.body.url;
-        await deleteImg(url);
-        res.status(200).json({
-            data: "",
-            message: ""
-        });
 
-    } catch (err) {
-        console.error(err);
-        next(err);
-    }
-}
 exports.readPost = async(req,res,next)=>{
     try {
         const post = await Post.findOne({
