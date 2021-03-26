@@ -5,24 +5,24 @@ const { uploadForReview } = require('../uploads/upload');
 const router = express.Router();
 
 
-router.get('/review', authUtil.isSignedIn, readAllReviews);
+router.get('/review', readAllReviews); // authUtil.isSignedIn, authUtil.isAuthorized
 // 모든 상점의 모든 리뷰들 조회
 // router.get('/seoul', readStoresOfSeoul);
 // router.get('/global', readStoresOfGlobal);
 
-router.get('/review/:id', authUtil.isSignedIn, authUtil.isAuthorized, readReview);
+router.get('/review/:id', readReview); // authUtil.isSignedIn, authUtil.isAuthorized
 // 특정 리뷰 조회
 
-router.put('/review/:id', authUtil.isSignedIn, authUtil.isAuthorized, modifyReview);
+router.put('/review/:id', modifyReview); // authUtil.isSignedIn, authUtil.isAuthorized
 // 리뷰 수정
 
-router.delete('/review/:id', authUtil.isSignedIn, authUtil.isAuthorized, deleteReview);
+router.delete('/review/:id', deleteReview); // authUtil.isSignedIn, authUtil.isAuthorized
 // 리뷰 삭제
 
-router.post('/:id/review', authUtil.isSignedIn, authUtil.isAuthorized, addReview);
+router.post('/:id/review', addReview); // authUtil.isSignedIn, authUtil.isAuthorized
 // 특정 상점에 리뷰 작성
 
-router.get('/:id/review', authUtil.isSignedIn, authUtil.isAuthorized, readReviews);
+router.get('/:id/review', readReviews); // authUtil.isSignedIn, authUtil.isAuthorized
 // 특정 상점의 리뷰들 조회
 
 module.exports = router;

@@ -7,7 +7,7 @@ const { scholarshipController } = require('../controller/scholarship');
 
 const router = express.Router();
 
-router.get('', authUtil.isSignedIn, authUtil.isAuthorized, scholarshipController.getScholarship);
+router.get('', scholarshipController.getScholarship); // authUtil.isSignedIn, authUtil.isAuthorized
 router.get('/date',  scholarshipController.getShoclarshipDate);
 router.get('/option',  scholarshipController.getScholarshipOption);
 router.get('/campus',  scholarshipController.getShoclarshipSchoolOPtion);

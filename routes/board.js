@@ -7,12 +7,12 @@ const router = express.Router();
 
 
 
-router.post('/2/post', authUtil.isSignedIn, authUtil.isGraduated, addPost); // 졸업생 게시판 글쓰기
+router.post('/2/post', addPost); // 졸업생 게시판 글쓰기 // authUtil.isSignedIn, authUtil.isGraduated
 
-router.post('/:id/post', authUtil.isSignedIn, authUtil.isAuthorized, addPost); // 일반 게시판 글쓰기
+router.post('/:id/post', addPost); // 일반 게시판 글쓰기 // authUtil.isSignedIn, authUtil.isAuthorized
 
-router.get('/:id/search', authUtil.isSignedIn, authUtil.isAuthorized, searchPostsInBoard );
+router.get('/:id/search', searchPostsInBoard ); //  authUtil.isSignedIn, authUtil.isAuthorized
 
-router.get('/:id', authUtil.isSignedIn, readPosts );
+router.get('/:id', readPosts );  // authUtil.isSignedIn, authUtil.isAuthorized
 
-module.exports =router;
+module.exports = router;

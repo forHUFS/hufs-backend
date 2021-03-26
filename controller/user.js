@@ -21,13 +21,16 @@ const token = crypto.randomBytes(20).toString('hex');
 
 const emailAuth = {
     sendEmail: async(req, res) => {
+        console.log('email')
         const toWhom = req.body.webMail;
+
+        console.log(toWhom)
 
         const mailOptions = {
             from: "HUFSpace",
             to: `${toWhom}@hufs.ac.kr`,
             subject: "[ HUFSpace ] 회원가입을 위한 이메일입니다.",
-            text: "인증을 위해 아래 URL을 클릭하여 주세요.\n" + `http://52.78.2.40:3000/email?token=${token}`
+            text: "인증을 위해 아래 URL을 클릭하여 주세요.\n" + `http://localhost:8080/user/email?token=${token}`
         };
 
        await transporter.sendMail(mailOptions, async(error, info) => {
@@ -40,7 +43,8 @@ const emailAuth = {
                 )
             } else {
                 try {
-                    user = await User.findOne({where: {email: req.email}});
+                    console.log('here3')
+                    user = await User.findOne({where: {email: req.body.email}});
                     date = new Date()
                     Token.create(
                         {
@@ -85,7 +89,7 @@ const emailAuth = {
                 )
             } else {
                 const token = await Token.findOne(
-                    { where: { emailToken: emailToken } }
+                    { where: { emailToken: req.query.token } }
                 );
 
                 if (token.isEmailAuthenticated) {
@@ -97,15 +101,16 @@ const emailAuth = {
                     );
                 }
 
+                console.log(token)
+
                 const today = new Date()
                 const date  = token.emailExpirationTime
                 const hour  = Math.floor((today - date) % (1000 * 60 * 60 * 24) / (1000 * 60 * 60));
 
                 if (hour < 24) {
-                    await User.update(
-                        { 'type': 'user' },
-                        { where: { id: token.userId } }
-                    );
+                    const user = await User.findOne({ where: { id: token.userId } })
+                    user.type = 'user'
+                    user.save()
 
                     token.isEmailAuthenticated = true
                     token.emailExpirationTime  = null
@@ -144,10 +149,12 @@ const emailAuth = {
 const userAuth = {
     signUp: async(req, res, next) => {
         try {
+            console.log('here')
             if (req.body.isAggred) {
-                await User.create(
+                console.log('here2')
+                const user = await User.create(
                     {
-                        email: req.email,
+                        email: req.body.email,
                         name: req.body.name,
                         nickname: req.body.nickname,
                         webMail: req.body.webMail,
@@ -156,7 +163,7 @@ const userAuth = {
                         isAggred: req.body.isAggred
                     }
                 );
-
+                console.log(user)
                 return next();
             } else {
                 return res.status(401).json(

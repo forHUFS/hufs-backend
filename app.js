@@ -1,5 +1,6 @@
 // package
 const express      = require('express');
+const cors         = require('cors');
 const cookieParser = require('cookie-parser')
 const morgan       = require('morgan');
 const path         = require('path');
@@ -29,11 +30,12 @@ dotenv.config();
 
 const app = express();
 
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.PORT || 8080);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'html');
 
 app.use(morgan('dev'));
+app.use(cors());
 app.use(cookieParser());
 
 configurePassport(app);
