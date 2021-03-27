@@ -21,16 +21,13 @@ const token = crypto.randomBytes(20).toString('hex');
 
 const emailAuth = {
     sendEmail: async(req, res) => {
-        console.log('email')
         const toWhom = req.body.webMail;
-
-        console.log(toWhom)
 
         const mailOptions = {
             from: "HUFSpace",
             to: `${toWhom}@hufs.ac.kr`,
             subject: "[ HUFSpace ] 회원가입을 위한 이메일입니다.",
-            text: "인증을 위해 아래 URL을 클릭하여 주세요.\n" + `http://localhost:8080/user/email?token=${token}`
+            text: "인증을 위해 아래 URL을 클릭하여 주세요.\n" + `http://52.78.2.40/:8080/user/email?token=${token}`
         };
 
        await transporter.sendMail(mailOptions, async(error, info) => {
@@ -43,7 +40,6 @@ const emailAuth = {
                 )
             } else {
                 try {
-                    console.log('here3')
                     user = await User.findOne({where: {email: req.body.email}});
                     date = new Date()
                     Token.create(
@@ -154,8 +150,7 @@ const userAuth = {
                 console.log('here2')
                 const user = await User.create(
                     {
-                        email: req.body.email,
-                        name: req.body.name,
+                        email: req.email,
                         nickname: req.body.nickname,
                         webMail: req.body.webMail,
                         mainMajorId: req.body.mainMajorId,
@@ -163,7 +158,6 @@ const userAuth = {
                         isAggred: req.body.isAggred
                     }
                 );
-                console.log(user)
                 return next();
             } else {
                 return res.status(401).json(

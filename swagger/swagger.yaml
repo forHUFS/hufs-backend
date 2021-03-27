@@ -184,25 +184,17 @@ paths:
       parameters:
         - in: body
           name: body
-          description: 회원 가입에 필요한 데이터 (email의 경우 req에서 받은 정보 입력, webMail의 경우 @hufs.ac.kr 앞 부분까지만 입력)
+          description: 회원 가입에 필요한 데이터 (webMail의 경우 @hufs.ac.kr 앞 부분까지만 입력)
           required: true
           schema:
                 type: object
                 required:
-                  - name
                   - nickname
-                  - webMail
                   - webMail
                   - mainMajorId
                   - doubleMajorId
                   - isAggred
                 properties:
-                  email:
-                    type: string
-                    example: 0417taehyun@gmail.com
-                  name:
-                    type: string
-                    example: 이태현
                   nickname:
                     type: string
                     example: 도비
