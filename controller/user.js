@@ -145,12 +145,10 @@ const emailAuth = {
 const userAuth = {
     signUp: async(req, res, next) => {
         try {
-            console.log('here')
             if (req.body.isAggred) {
-                console.log('here2')
                 const user = await User.create(
                     {
-                        email: req.email,
+                        // email: req.email,
                         nickname: req.body.nickname,
                         webMail: req.body.webMail,
                         mainMajorId: req.body.mainMajorId,
