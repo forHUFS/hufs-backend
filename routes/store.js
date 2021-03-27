@@ -5,7 +5,7 @@ const { uploadForReview } = require('../uploads/upload');
 const router = express.Router();
 
 
-router.get('/review', authUtil.isSignedIn, readAllReviews);
+//router.get('/review', authUtil.isSignedIn, readAllReviews);
 // 모든 상점의 모든 리뷰들 조회
 // router.get('/seoul', readStoresOfSeoul);
 // router.get('/global', readStoresOfGlobal);
