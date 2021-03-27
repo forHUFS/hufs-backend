@@ -24,7 +24,7 @@ exports.addPost = async (req,res,next)=> {
             title: req.body.title,
             content: req.body.content,
             boardId: req.params.id,
-            userId: req.user.id
+            userId: 5 // req.user.id
         });
         const url = req.body.url;
         if (url && url.length) {

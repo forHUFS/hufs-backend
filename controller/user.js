@@ -248,16 +248,19 @@ const userAuth = {
 
 const userInfo = {
     getUser: async(req, res) => {
-        const user        = await User.findOne({ where: { id: req.user.id } });
+        const user        = await User.findOne({ where: { id: 5 } }); // req.user.id 로 변경
         const posts       = await Post.findAll(
             {
-                attributes: ['id', 'name'],
-                where: { id: req.user.id } }
+                attributes: ['id', 'title'],
+                where: { userId: 5 } } // req.user.id 로 변경
         );
         const replies     = await Reply.findAll(
             { 
-                where  : { id: req.user.id },
-                include: [ { model: Post, attributes: ['id', 'title'] } ]
+                attributes: ['id', 'content'],
+                where  : { userId: 5 }, // req.user.id 로 변경
+                include: [ 
+                    { model: Post, attributes: ['id', 'title'] },
+                ]
             },
             
         );
@@ -292,7 +295,7 @@ const userInfo = {
 
     updateUser: async(req, res) => {
         const today       = new Date()
-        const user        = await User.findOne({where: {id: req.user.id}});
+        const user        = await User.findOne({where: {id: 5}}); // req.user.id 로 변경
         const mainMajor   = await MainMajor.findOne({ where: { id: req.body.mainMajorId } });
         const doubleMajor = await DoubleMajor.findOne( { where: { id: req.body.doubleMajorId } } );
         console.log(user)
@@ -375,7 +378,7 @@ const userInfo = {
 
     deleteUser: async(req, res) => {
         try {
-            await User.destroy({where: {id: req.user.id}});
+            await User.destroy({where: {id: 5}}); // req.user.id 로 변경
 
             return res.status(200).json(
                 {
@@ -427,7 +430,7 @@ const scrapDirectory = {
             const directories = await Directory.findAll(
                 {
                     attributes: ['name'],
-                    where: {userId: req.user.id}
+                    where: {userId: 5} // req.user.id 로 변경
                 }
             );
             if (directories) {
@@ -442,7 +445,7 @@ const scrapDirectory = {
             if (!req.body.name) {
                 throw error
             }
-            await Directory.create({name: req.body.name, userId: req.user.id});
+            await Directory.create({name: req.body.name, userId: 5}); // req.user.id 로 변경
 
             return res.status(200).json(
                 {
@@ -467,7 +470,7 @@ const scrapDirectory = {
             directoryInfo = await Directory.findAll(
                 {
                     attributes: ['id', 'name'],
-                    where: {userId: req.user.id}
+                    where: {userId: 5} // req.user.id 로 변경
                 }
             );
 
@@ -493,7 +496,7 @@ const scrapDirectory = {
         try{
             await Directory.update(
                 { name: req.body.name },
-                { where: { id: req.query.id, userId: req.user.id } }
+                { where: { id: req.query.id, userId: 5 } } // req.user.id 로 변경
             );
 
             return res.status(200).json(
@@ -522,7 +525,7 @@ const scrapDirectory = {
                     }
                 );
             }
-            await Directory.destroy({where: {id: req.query.id}});
+            await Directory.destroy({where: {id: 5 }}); // req.user.id 로 변경
 
             return res.status(200).json(
                 {
@@ -550,7 +553,7 @@ const postScrap = {
                 var directoryId = req.query.directoryId;
             } else {
                 directory = await Directory.findOne(
-                    {where: {userId: req.user.id, name: "기타"}}
+                    {where: {userId: 5, name: "기타"}} // req.user.id 로 변경
                 );
                 var directoryId = directory.id
             }
