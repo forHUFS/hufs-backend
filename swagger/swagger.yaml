@@ -896,11 +896,15 @@ paths:
       produces: application/json
       parameters:
         - in: body
-          name: url
-          type: array
-          description: 삭제해야 할 url 배열
+          name: body
+          description: 작성/수정 취소 할 때 삭제해야 할 이미지 url 배열이 있을 때에만 통신하는 앤드포인트
           required: true
-          example: ["https://hufsweb.s3.ap-northeast-2.amazonaws.com/post/1614328320000sasa.jpg","https://hufsweb.s3.ap-northeast-2.amazonaws.com/post/1614328320000xz.jpg"]
+          schema:
+            properties:
+              url:
+                type: array
+                example: ["https://hufsweb.s3.ap-northeast-2.amazonaws.com/post/1614328320000sasa.jpg","https://hufsweb.s3.ap-northeast-2.amazonaws.com/post/1614328320000xz.jpg"]
+                required: true
       responses:
         200:
           description: 이미지 삭제 처리 완료
@@ -1093,15 +1097,22 @@ paths:
           description: 게시글 번호
           example: 1
         - in: body
-          name: content
+          name: body
+          description: 신고하는 내용
           required: true
-          description: 글 신고 사유(객관식)
-          example: 2
-        - in: body
-          name: detail
-          required: false
-          description: 글 신고 상세 사유(주관식)
-          example: 불쾌함
+          schema:
+            type: object
+            properties:
+              content:
+                type: integer
+                example: 1
+                required: true
+                description: 신고 내용(객관식)
+              detail:
+                type: string
+                example: 불쾌함
+                required: false
+                description: 신고 내용(주관식)
       responses:
         200:
           description: 신고 완료
@@ -1319,14 +1330,22 @@ paths:
       produces: application/json
       parameters:
         - in: body
-          name: content
-          description: 댓글 내용
+          name: body
+          description: 댓글 작성할 때 필요한 데이터
           required: true
-        - in: body
-          name: postId
-          required: true
-          description: 게시글 번호
-          example: 1
+          schema:
+            type: object
+            properties:
+              content:
+                type: string
+                example: 댓글
+                required: true
+                description: 댓글 내용
+              postId:
+                type: integer
+                example: 1
+                required: true
+                description: 댓글 달 게시글 번호
       responses:
         200:
           description: 댓글 작성 완료
@@ -1366,19 +1385,27 @@ paths:
       produces: application/json
       parameters:
         - in: body
-          name: content
-          description: 대댓글 내용
+          name: body
+          description: 대댓글 작성할 때 필요한 데이터
           required: true
-        - in: body
-          name: postId
-          required: true
-          description: 게시글 번호
-          example: 1
-        - in: body
-          name: parentId
-          required: true
-          description: 부모 댓글 번호
-          example: 2
+          schema:
+            type: object
+            properties:
+              content:
+                type: string
+                example: 댓글
+                required: true
+                description: 댓글 내용
+              postId:
+                type: integer
+                example: 1
+                required: true
+                description: 대댓글 달 게시글 번호
+              parentId:
+                type: integer
+                example: 2
+                required: true
+                description: 대댓글의 부모 댓글 번호
       responses:
         200:
           description: 대댓글 작성 완료
@@ -1419,13 +1446,21 @@ paths:
       parameters:
         - in: path
           name: id
-          description: 댓글 번호
-          required: true
+          description: 수정할 댓글 id
           example: 1
         - in: body
-          name: content
-          description: 댓글 내용
+          name: body
+          description: 댓글 작성할 때 필요한 데이터
           required: true
+          schema:
+            type: object
+            properties:
+              content:
+                type: string
+                example: 댓글
+                required: true
+                description: 댓글 내용
+
       responses:
         200:
           description: 댓글 수정 완료
@@ -1524,15 +1559,22 @@ paths:
           description: 댓글 번호
           example: 1
         - in: body
-          name: content
+          name: body
+          description: 신고하는 내용
           required: true
-          description: 댓글 신고 사유(객관식)
-          example: 2
-        - in: body
-          name: detail
-          required: false
-          description: 댓글 신고 상세 사유(주관식)
-          example: 불쾌함
+          schema:
+            type: object
+            properties:
+              content:
+                type: integer
+                example: 1
+                required: true
+                description: 신고 내용(객관식)
+              detail:
+                type: string
+                example: 불쾌함
+                required: false
+                description: 신고 내용(주관식)
       responses:
         200:
           description: 신고 완료
@@ -1669,51 +1711,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Conflict-response"
-  /store/review:
-    get:
-      summary: 모든 상점의 모든 리뷰 조회
-      consumes: application/json
-      produces: application/json
-      responses:
-        200:
-          description: 조회 성공
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      $ref: "#/definitions/ReviewAndStoreName"
-                  message:
-                    type: string
-                    example: ""
-        401:
-          description: 로그인하지 않은 사용자
-          content:
-            application/json:
-              schema:
-                $ref: "#/definitions/Unauthorized-response"            
-        403:
-          description: 접근 권한 오류
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: "#/definitions/Forbidden-suspension-response"
-                  - $ref: "#/definitions/Forbidden-before-response"
-              examples:
-                suspended-user:
-                  summary: 정지된 사용자
-                  value:
-                    data: ""
-                    message: FORBIDDEN_SUSPENSION
-                email-unauthorized-user:
-                  summary: 이메일 인증이 되지 않은 사용자
-                  value:
-                    data: ""
-                    message: FORBIDDEN_BEFORE                     
+
   /store/review/{id}:
     get:
       summary: 특정 리뷰 조회
@@ -1781,26 +1779,31 @@ paths:
           example: 1
           required: true
         - in: body
-          name: title
-          description: 리뷰 제목
-          example: 제목
-          required: true
-        - in: body
-          name: content
-          description: 리뷰 내용
-          example: jmt
-          required: true
-        - in: body
-          name: score
-          description: 0.5 단위 평점
-          example: 4.5
-          required: true
-        - in: body
-          name: url
-          type: array
-          description: 삭제할 이미지 파일
-          example: [ "https://hufsweb.s3.ap-northeast-2.amazonaws.com/post/1614328320000sasa.jpg","https://hufsweb.s3.ap-northeast-2.amazonaws.com/post/1614328320000xz.jpg" ]
-          required: false
+          name: body
+          description: 리뷰 수정 시 필요한 데이터 - url은 필수 X
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+                example: 제목
+                required: true
+                description: 리뷰 제목
+              content:
+                type: string
+                example: jmt
+                required: true
+                description: 리뷰 내용
+              score:
+                type: number
+                example: 4.5
+                required: true
+                description: 0.5 단위 평점
+              url:
+                type: array
+                example: [ "https://hufsweb.s3.ap-northeast-2.amazonaws.com/post/1614328320000sasa.jpg","https://hufsweb.s3.ap-northeast-2.amazonaws.com/post/1614328320000xz.jpg" ]
+                description: 삭제할 이미지 url 배열
+                required: false
       responses:
         200:
           description: 리뷰 수정 완료
@@ -1900,26 +1903,31 @@ paths:
           example: 1
           required: true
         - in: body
-          name: title
-          description: 리뷰 제목
-          example: 제목
-          required: true
-        - in: body
-          name: content
-          description: 리뷰 내용
-          example: jmt
-          required: true
-        - in: body
-          name: score
-          description: 0.5 단위 평점
-          example: 4.5
-          required: true
-        - in: body
-          name: url
-          type: array
-          description: 삭제할 이미지 url 배열
-          example: [ "https://hufsweb.s3.ap-northeast-2.amazonaws.com/post/1614328320000sasa.jpg","https://hufsweb.s3.ap-northeast-2.amazonaws.com/post/1614328320000xz.jpg" ]
-          required: false
+          name: body
+          description: 리뷰 작성 시 필요한 데이터 - url은 필수 X
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+                example: 제목
+                required: true
+                description: 리뷰 제목
+              content:
+                type: string
+                example: jmt
+                required: true
+                description: 리뷰 내용
+              score:
+                type: number
+                example: 4.5
+                required: true
+                description: 0.5 단위 평점
+              url:
+                type: array
+                example: [ "https://hufsweb.s3.ap-northeast-2.amazonaws.com/post/1614328320000sasa.jpg","https://hufsweb.s3.ap-northeast-2.amazonaws.com/post/1614328320000xz.jpg" ]
+                description: 삭제할 이미지 url 배열
+                required: false
 
       responses:
         200:
