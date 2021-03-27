@@ -40,7 +40,7 @@ const emailAuth = {
                 )
             } else {
                 try {
-                    user = await User.findOne({where: {email: req.body.email}});
+                    user = await User.findOne({where: {webMail: `${req.body.webMail}@hufs.ac.kr`}});
                     date = new Date()
                     Token.create(
                         {
