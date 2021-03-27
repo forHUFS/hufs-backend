@@ -3,22 +3,61 @@ const DoubleMajor = require('../models/doubleMajors');
 
 
 const majorController = {
-    getMajor: async(req, res) => {
+    getMainMajor: async(req, res) => {
         const mainMajor   = await MainMajor.findAll();
-        const doubleMajor = await DoubleMajor.findAll();
-
-        const major = {
-            'mainMajor'  : mainMajor,
-            'doubleMajor': doubleMajor
-        }
 
         return res.status(200).json(
             {
-                data: major,
-                message: ''
+                data: mainMajor,
+                message: ""
             }
         );
-    }
+    },
+    getDoubleMajor: async(req, res) => {
+        const doubleMajor = await DoubleMajor.findAll();
+
+        return res.status(200).json(
+            {
+                data: doubleMajor,
+                message: ""
+            }
+        )
+    },
+    createMajor: async(req, res) => {
+
+        // for admin user
+        if (req.body.mainMajor) {
+            await MainMajor.create({
+                name: req.body.mainMajor
+            });
+        }
+
+        if (req.body.doubleMajor) {
+            await DoubleMajor.create({
+                name: req.body.doubleMajor
+            })
+        }
+
+        // all majors update
+        // for (let idx = 0; idx < req.body.mainMajors.length; idx++) {
+        //     await MainMajor.create({
+        //         name: req.body.mainMajors[idx]
+        //     });
+        // }
+
+        // for (let idx = 0; idx < req.body.doubleMajors.length; idx++) {
+        //     await DoubleMajor.create({
+        //         name: req.body.doubleMajors[idx]
+        //     })
+        // }
+
+        return res.status(200).json(
+            {
+                data: "",
+                message: ""
+            }
+        )
+    }  
 }
 
 

@@ -21,13 +21,16 @@ const token = crypto.randomBytes(20).toString('hex');
 
 const emailAuth = {
     sendEmail: async(req, res) => {
+        console.log('email')
         const toWhom = req.body.webMail;
+
+        console.log(toWhom)
 
         const mailOptions = {
             from: "HUFSpace",
             to: `${toWhom}@hufs.ac.kr`,
             subject: "[ HUFSpace ] 회원가입을 위한 이메일입니다.",
-            text: "인증을 위해 아래 URL을 클릭하여 주세요.\n" + `http://localhost:3000/user?token=${token}`
+            text: "인증을 위해 아래 URL을 클릭하여 주세요.\n" + `http://localhost:8080/user/email?token=${token}`
         };
 
        await transporter.sendMail(mailOptions, async(error, info) => {
@@ -40,6 +43,7 @@ const emailAuth = {
                 )
             } else {
                 try {
+                    console.log('here3')
                     user = await User.findOne({where: {email: req.body.email}});
                     date = new Date()
                     Token.create(
@@ -47,6 +51,13 @@ const emailAuth = {
                             emailToken         : token,
                             emailExpirationTime: date,
                             userId             : user.id
+                        }
+                    );
+                    
+                    return res.status(200).json(
+                        {
+                            data: "",
+                            message: "SUCCESS"
                         }
                     );
 
@@ -70,10 +81,15 @@ const emailAuth = {
     checkEmail: async(req, res, next) => {
         try {
             if (!req.query.token) {
-                return next();
+                return res.status(401).json(
+                    {
+                        data: "",
+                        message: "UNAUTHORIZED"
+                    }
+                )
             } else {
                 const token = await Token.findOne(
-                    { where: { emailToken: emailToken } }
+                    { where: { emailToken: req.query.token } }
                 );
 
                 if (token.isEmailAuthenticated) {
@@ -85,17 +101,17 @@ const emailAuth = {
                     );
                 }
 
+                console.log(token)
+
                 const today = new Date()
                 const date  = token.emailExpirationTime
                 const hour  = Math.floor((today - date) % (1000 * 60 * 60 * 24) / (1000 * 60 * 60));
 
                 if (hour < 24) {
-                    await User.update(
-                        { 'type': 'user' },
-                        { where: { id: token.userId } }
-                    );
+                    const user = await User.findOne({ where: { id: token.userId } })
+                    user.type = 'user'
+                    user.save()
 
-                    token.emailToken           = null
                     token.isEmailAuthenticated = true
                     token.emailExpirationTime  = null
                     token.save()
@@ -131,30 +147,24 @@ const emailAuth = {
 }
 
 const userAuth = {
-    signUp: async(req, res) => {
-
+    signUp: async(req, res, next) => {
         try {
+            console.log('here')
             if (req.body.isAggred) {
-                await User.create(
+                console.log('here2')
+                const user = await User.create(
                     {
-                        email: req.email,
+                        email: req.body.email,
                         name: req.body.name,
                         nickname: req.body.nickname,
                         webMail: req.body.webMail,
-                        mainMajor: req.body.mainMajorId,
-                        doubleMajor: req.body.doubleMajorId,
-                        isAggred: true
+                        mainMajorId: req.body.mainMajorId,
+                        doubleMajorId: req.body.doubleMajorId,
+                        isAggred: req.body.isAggred
                     }
                 );
-
-                await emailAuth.sendEmail(req, res);
-
-                return res.status(200).json(
-                    {
-                        data: "",
-                        message: "SUCCESS"
-                    }
-                );
+                console.log(user)
+                return next();
             } else {
                 return res.status(401).json(
                     {
@@ -260,7 +270,7 @@ const userInfo = {
             'mainMajor'  : mainMajor.name,
             'doubleMajor': doubleMajor.name,
             'myPost'     : posts,
-            'myreplies'  : replies
+            'myReplies'  : replies
         }
         try {
             return res.status(200).json(
@@ -283,8 +293,8 @@ const userInfo = {
     updateUser: async(req, res) => {
         const today       = new Date()
         const user        = await User.findOne({where: {id: req.user.id}});
-        const mainMajor   = await MainMajor.findOne({ where: { id: req.mainMajorId } });
-        const doubleMajor = await DoubleMajor.findOne( { where: { id: req.doubleMajorId } } );
+        const mainMajor   = await MainMajor.findOne({ where: { id: req.body.mainMajorId } });
+        const doubleMajor = await DoubleMajor.findOne( { where: { id: req.body.doubleMajorId } } );
         console.log(user)
         try {
 
@@ -350,7 +360,7 @@ const userInfo = {
                 return res.status(409).json(
                     {
                         data: "",
-                        message: "CONFLICT"
+                        message: "CONFLICT_NICKNAME"
                     }
                 );
             }

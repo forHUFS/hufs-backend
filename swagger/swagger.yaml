@@ -5,13 +5,14 @@ info:
   description: "한국외국어대학교 웹 페이지 프로젝트 API 문서"
 servers:
   - description: "테스트 서버"
-  - url: "http://52.78.2.40:8000/"
+  - url: "http://52.78.2.40:8080/"
 paths:
   /user:
     get:
       summary: 회원 정보 조회
       consumes: application/json
       produces: application/json
+      parameters:
       responses:
         200:
           description: 회원 정보 정상 조회
@@ -22,7 +23,7 @@ paths:
                 properties:
                   data:
                     type: object
-                    example: { email: 0417taehyun@gmail.com, webMail: dlxogus0417@hufs.ac.kr, nickname: 도비 }
+                    example: { email: 0417taehyun@gmail.com, webMail: dlxogus0417@hufs.ac.kr, nickname: 이태현별명, mainMajor: 스칸디나비아어, doubleMajor: 융복합소프트웨어, myPost: , myReplies }
                   message:
                     type: string
                     example: ""
@@ -46,10 +47,18 @@ paths:
             type: object
             required:
               - nickname
+              - mainMajorId
+              - doubleMajorId
             properties:
               nickname:
                 type: string
-                example: 도비
+                example: 이태현별명
+              mainMajorId:
+                type: integer
+                example: 1
+              doubleMajorId:
+                type: integer
+                example: 1              
       responses:
         200:
           description: 회원 정보 정상 수정
@@ -57,6 +66,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
+        400:
+          description: 닉네임을 변경한지 30일이 지나지 않았을 경우
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    example: ""
+                  message:
+                    type: string
+                    example: INVALID_NICKNAME_TIME                   
         401:
           description: 로그인하지 않은 사용자
           content:
@@ -68,7 +89,45 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Conflict-response"
+                oneOf:
+                  - $ref: "#/definitions/Conflict-nickname-response"
+                  - $ref: "#/definitions/Conflict-main-major-response"
+                  - $ref: "#/definitions/Conflict-double-major-response"
+              examples:
+                nickname-conflict:
+                  summary: 이미 존재하는 닉네임
+                  value:
+                    data: ""
+                    message: "CONFLICT_NICKNAME"
+                main-major-conflict:
+                  summary: 주전공을 이미 한 번 수정한 경우
+                  value:
+                    data: ""
+                    message: "CONFLICT_MAIN_MAJOR"
+                double-major-conflict:
+                  summary: 이중전공을 이미 한 번 수정한 경우
+                  value:
+                    data: ""
+                    message: "CONFLICT_DOBULE_MAJOR"
+        403:
+          description: 접근 권한 오류
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/definitions/Forbidden-suspension-response"
+                  - $ref: "#/definitions/Forbidden-before-response"
+              examples:
+                suspended-user:
+                  summary: 정지된 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_SUSPENSION
+                email-unauthorized-user:
+                  summary: 이메일 인증이 되지 않은 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_BEFORE            
 
     delete:
       summary: 회원 탈퇴
@@ -125,7 +184,7 @@ paths:
       parameters:
         - in: body
           name: body
-          description: 회원 가입에 필요한 데이터 (webMail의 경우 @hufs.ac.kr 앞 부분까지만 입력)
+          description: 회원 가입에 필요한 데이터 (email의 경우 req에서 받은 정보 입력, webMail의 경우 @hufs.ac.kr 앞 부분까지만 입력)
           required: true
           schema:
                 type: object
@@ -133,7 +192,14 @@ paths:
                   - name
                   - nickname
                   - webMail
+                  - webMail
+                  - mainMajorId
+                  - doubleMajorId
+                  - isAggred
                 properties:
+                  email:
+                    type: string
+                    example: 0417taehyun@gmail.com
                   name:
                     type: string
                     example: 이태현
@@ -143,6 +209,15 @@ paths:
                   webMail:
                     type: string
                     example: dlxogus0417
+                  mainMajorId:
+                    type: integer
+                    example: 1
+                  doubleMajorId:
+                    type: integer
+                    example: 2
+                  isAggred:
+                    type: boolean
+                    example: true
       responses:
         200:
           description: 회원 가입 정상 완료
@@ -150,13 +225,19 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
+        401:
+          description: 개인 정보 수집 동의를 하지 않았을 경우
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Unauthorized-response"        
         409:
           description: 이미 존재하는 닉네임
           content:
             application/json:
               schema:
                 $ref: "#/definitions/Conflict-response"
-
+      
   /user/sign-out:
     post:
       summary: 로그아웃
@@ -174,7 +255,69 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Unauthorized-response"      
+                $ref: "#/definitions/Unauthorized-response"
+                
+  /user/email:
+    get:
+      summary: 웹메일을 통한 재학생 인증
+      consumes: application/json
+      produces: application/json
+      parameters:
+        - in: query
+          name: token
+          description: 재학생 웹메일 인증 토큰
+          required: true
+          schema:
+            type: string                
+      responses:
+        200:
+          description: 웹메일 인증 완료
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Success-response"
+        401:
+          description: 웹메일 인증 완료
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Unauthorized-response"                                  
+        409:
+          description: 이미 인증을 한 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Conflict-response"
+        419:
+          description: 인증 시간(24시간)을 만료한 사용자
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    example: ""
+                  message:
+                    type: string
+                    example: "EXPIRED"
+
+    post:
+      summary: 인증을 놓친 사람들을 위한 마이 페이지 재인증
+      consumes: application/json
+      produces: application/json
+      responses:
+        200:
+          description: 웹메일 인증 완료
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Success-response"
+        401:
+          description: 로그인하지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Unauthorized-response"                
 
   /user/directory:
     get:
@@ -539,7 +682,6 @@ paths:
                   value:
                     data: ""
                     message: FORBIDDEN_BEFORE   
-                $ref: "#/definitions/Forbidden-before-response"                
         422:
           description: 게시글 아이디와 디렉토리 아이디 쿼리 스트링으로 필요 
           content:
@@ -596,6 +738,169 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Query-response"
+
+  /major/main-major:
+    get:
+      summary: 주 전공 목록 조회
+      consumes: application/json
+      produces: application/json
+      responses:
+        200:
+          description: 주 전공 목록 정상 조회 완료
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    example:  [{"id":1145,"name":"LD학부"},{"id":1146,"name":"LD전공"},{"id":1147,"name":"LT학부"},{"id":1148,"name":"LT전공"},{"id":1149,"name":"사회과학전공"}]
+                  message:
+                    type: string
+                    example: ""
+
+  /major/double-major:
+    get:
+      summary: 이중 전공 목록 조회
+      consumes: application/json
+      produces: application/json
+      responses:
+        200:
+          description: 이중 전공 목록 정상 조회 완료
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    example:  [{"id":1145,"name":"LD학부"},{"id":1146,"name":"LD전공"},{"id":1147,"name":"LT학부"},{"id":1148,"name":"LT전공"},{"id":1149,"name":"사회과학전공"}]
+                  message:
+                    type: string
+                    example: ""                    
+
+  /scholarship:
+    get:
+      summary: 장학금 정보 목록 조회
+      consumes: application/json
+      produces: application/json
+      parameters:
+      parameters:
+        - in: body
+          name: body
+          description: 장학금 정보 중 일자, 캠퍼스, 유형으로 검색
+          schema:
+            type: object
+            properties:
+              dateId:
+                type: array
+                example: [1, 2]
+              optionId:
+                type: array
+                example: [1]
+              campusId:
+                type: array
+                exmaple: [1, 2]
+      responses:
+        200:
+          description:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    example: [ { "id": 1487, "title": "전라남도 해외유학생 선발 안내", "link": "http://hufs.ac.kr/user/boardList.action?command=view&page=2&boardId=118188197&boardSeq=150497904", "scholarshipDateId": 3, "scholarshipOptionId": 1, "scholarshipSchoolOptionId": 1, "ScholarshipDate": { "date": "2021-03-31T00:00:00.000Z" }, "ScholarshipOption": { "name": "교외" }, "ScholarshipSchoolOption": { "name": "공통" } } ]
+                  message:
+                    type: string
+                    example: ""
+        401:
+          description: 로그인하지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Unauthorized-response"            
+        403:
+          description: 접근 권한 오류
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/definitions/Forbidden-suspension-response"
+                  - $ref: "#/definitions/Forbidden-before-response"
+              examples:
+                suspended-user:
+                  summary: 정지된 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_SUSPENSION
+                email-unauthorized-user:
+                  summary: 이메일 인증이 되지 않은 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_BEFORE
+
+  /scholarship/date:
+    get:
+      summary: 장학금 일자 정보 조회
+      consumes: application/json
+      produces: application/json
+      responses:
+        200:
+          description:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    example: [ { "id": 1, "date": "2021-04-07T00:00:00.000Z" }, { "id": 2, "date": "2021-04-07T00:00:00.000Z" } ]
+                  message:
+                    type: string
+                    example: ""
+
+  /scholarship/option:
+    get:
+      summary: 장학금 유형 정보 조회
+      consumes: application/json
+      produces: application/json
+      responses:
+        200:
+          description:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    example: [ { "id": 44, "name": "기금" }, { "id": 2, "name": "대출" } ]
+                  message:
+                    type: string
+                    example: ""
+
+  /scholarship/campus:
+    get:
+      summary: 장학금 캠퍼스 정보 조회 
+      consumes: application/json
+      produces: application/json
+      responses:
+        200:
+          description:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    example: [ { "id": 1, "name": "공통" }, { "id": 5, "name": "글로벌" } ]
+                  message:
+                    type: string
+                    example: ""
+                
   /board/{id}:
     get:
       summary: 게시판 게시글 목록 조회
@@ -2011,7 +2316,6 @@ paths:
 
                 
 definitions:
-  # 성공
   Success-response:
     type: object
     properties:
@@ -2022,7 +2326,6 @@ definitions:
         type: string
         example: ""
 
-  # 이미 존재하는 데이터
   Conflict-response:
     type: object
     properties:
@@ -2031,8 +2334,34 @@ definitions:
       message:
         type: string
         example: CONFLICT
+  
+  Conflict-nickname-response:
+    type: object
+    properties:
+      data:
+        example: ""
+      message:
+        type: string
+        example: CONFLICT_NICKNAME
 
-  # 쿼리 스트링 누락
+  Conflict-main-major-response:
+    type: object
+    properties:
+      data:
+        example: ""
+      message:
+        type: string
+        example: CONFLICT_MAIN_MAJOR
+
+  Conflict-double-major-response:
+    type: object
+    properties:
+      data:
+        example: ""
+      message:
+        type: string
+        example: CONFLICT_DOBULE_MAJOR        
+
   Query-response:
     type: object
     properties:
@@ -2078,7 +2407,6 @@ definitions:
         type: string
         example: FORBIDDEN
 
-  # 이메일 인증을 하지 않은 사용자가 특정 기능 접근
   Forbidden-before-response:
     type: object
     properties:
@@ -2088,7 +2416,6 @@ definitions:
         type: string
         example: FORBIDDEN_BEFORE
 
-  # 정지된 사용자가 특정 기능 접근
   Forbidden-suspension-response:
     type: object
     properties:
@@ -2107,7 +2434,6 @@ definitions:
         type: string
         example: RESOURCE_NOT_FOUND
 
-  # 디렉토리 Body Request
   Directory:
     type: object
     required:

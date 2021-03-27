@@ -1,5 +1,6 @@
 // package
 const express      = require('express');
+const cors         = require('cors');
 const cookieParser = require('cookie-parser')
 const morgan       = require('morgan');
 const path         = require('path');
@@ -14,24 +15,27 @@ const swaggerSpec = YAML.load(path.join(__dirname, 'swagger/swagger.yaml'))
 const configurePassport = require('./config/passport');
 
 // routes
-const { sequelize } = require('./models');
-const mainRouter    = require('./routes/main');
-const postRouter    = require('./routes/post');
-const boardRouter   = require('./routes/board');
-const replyRouter   = require('./routes/reply');
-const storeRouter   = require('./routes/store');
-const userRouter    = require('./routes/user');
-const majorRouter   = require('./routes/major');
+const { sequelize }     = require('./models');
+const mainRouter        = require('./routes/main');
+const postRouter        = require('./routes/post');
+const boardRouter       = require('./routes/board');
+const replyRouter       = require('./routes/reply');
+const storeRouter       = require('./routes/store');
+const userRouter        = require('./routes/user');
+const majorRouter       = require('./routes/major');
+const scholarShipRouter = require('./routes/scholarship');
+
 
 dotenv.config();
 
 const app = express();
 
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.PORT || 8080);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'html');
 
 app.use(morgan('dev'));
+app.use(cors());
 app.use(cookieParser());
 
 configurePassport(app);
@@ -52,6 +56,7 @@ app.use('/reply', replyRouter);
 app.use('/store', storeRouter);
 app.use('/user', userRouter);
 app.use('/major', majorRouter);
+app.use('/scholarship', scholarShipRouter);
 app.use('/', mainRouter);
 
 // API Document by using swagger
