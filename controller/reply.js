@@ -174,7 +174,7 @@ exports.report = async(req,res,next) => {
         const userId = req.user.id;
         const record = await ReportOfReply.findOne({
             replyId: replyId,
-            userId: req.user.id;
+            userId: req.user.id
         });
         if (!record) {
             await sequelize.transaction(async (t)=> {
