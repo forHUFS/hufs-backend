@@ -1,6 +1,7 @@
 const jwt      = require('jsonwebtoken');
 const crypto   = require('crypto');
 const passport = require('passport');
+const { Op }   = require('sequelize');
 
 const jwtSecretKey    = require('../config/secretKey').jwtSecretKey;
 const jwtOptions      = require('../config/secretKey').jwtOptions;
@@ -22,7 +23,6 @@ const token = crypto.randomBytes(20).toString('hex');
 const emailAuth = {
     sendEmail: async(req, res) => {
         const toWhom = req.body.webMail;
-        console.log(toWhom)
 
         const mailOptions = {
             from: "HUFSpace",
@@ -147,6 +147,20 @@ const emailAuth = {
 const userAuth = {
     signUp: async(req, res, next) => {
         try {
+            if (User.findOne(
+                {where: {
+                    [Op.or] : [
+                        { webMail: req.body.webMail },
+                        { email: req.email }
+                    ]
+                }})) {
+                    return res.status(409).json(
+                        {
+                            data: "",
+                            message: "CONFLICT"
+                        }
+                )
+            }
             if (req.body.isAggred) {
                 await User.create(
                     {
@@ -167,12 +181,11 @@ const userAuth = {
                 );
             }
         } catch (error) {
-            console.log(error)
             if (error.message === "Validation error") {
                 return res.status(409).json(
                     {
                         data: "",
-                        message: "CONFLICT"
+                        message: "CONFLICT_NICKNAME"
                     }
                 )
             }
@@ -224,7 +237,7 @@ const userAuth = {
             })
         } else {
             req.email = userEmail
-            return res.redirect('/user/sign-up');
+            return res.redirect('http://localhost:3000/redirect');
         }
     },
 

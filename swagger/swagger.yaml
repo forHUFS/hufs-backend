@@ -228,7 +228,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Conflict-response"
+                $ref: "#/definitions/Conflict-nickname-response"
+        409:
+          description: 이미 존재하는 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Conflict-response"                
       
   /user/sign-out:
     post:
