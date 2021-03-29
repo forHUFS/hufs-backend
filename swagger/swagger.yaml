@@ -85,7 +85,7 @@ paths:
               schema:
                 $ref: "#/definitions/Unauthorized-response"
         409:
-          description: 이미 존재하는 닉네임
+          description: 정상 수정이 안 되는 경우
           content:
             application/json:
               schema:
@@ -224,18 +224,25 @@ paths:
               schema:
                 $ref: "#/definitions/Unauthorized-response"        
         409:
-          description: 이미 존재하는 닉네임
+          description: 이미 존재하는 데이터
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Conflict-nickname-response"
-        409:
-          description: 이미 존재하는 사용자
-          content:
-            application/json:
-              schema:
-                $ref: "#/definitions/Conflict-response"                
-      
+                oneOf:
+                  - $ref: "#/definitions/Conflict-response"
+                  - $ref: "#/definitions/Conflict-nickname-response"
+              examples:
+                nickname-conflict:
+                  summary: 이미 존재하는 닉네임
+                  value:
+                    data: ""
+                    message: "CONFLICT_NICKNAME"
+                user-onflict:
+                  summary: 이미 가입 된 사용자 (이메일과 웹메일로 판단)
+                  value:
+                    data: ""
+                    message: "CONFLICT"
+
   /user/sign-out:
     post:
       summary: 로그아웃
