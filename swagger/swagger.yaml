@@ -269,7 +269,7 @@ paths:
               schema:
                 $ref: "#/definitions/Success-response"
         401:
-          description: 웹메일 인증 완료
+          description: 로그인하지 않은 사용자
           content:
             application/json:
               schema:

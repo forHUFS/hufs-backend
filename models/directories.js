@@ -6,7 +6,7 @@ module.exports = class Directory extends Sequelize.Model {
             name: {
                 type: Sequelize.STRING(16),
                 allowNull: false,
-                unique: true,
+                unique: false,
                 defaultValue: '기타'
             }
         }, {

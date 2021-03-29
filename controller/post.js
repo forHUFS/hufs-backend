@@ -12,7 +12,7 @@ const sequelize = require('../models').sequelize;
 exports.addLike = async (req,res,next) => {
     try {
         const postId = req.params.id;
-        const userId = 11; // req.user.id
+        const userId = req.user.id;
         if (!await checkLikeRecord(postId, userId)) {
             await sequelize.transaction(async (t)=> {
             await Post.update({
@@ -47,7 +47,7 @@ exports.addLike = async (req,res,next) => {
 exports.delLike = async (req,res,next)=> {
     try {
         const postId = req.params.id;
-        const userId = 11; // req.user.id
+        const userId = req.user.id;
         if (await checkLikeRecord(postId, userId)) {
             await sequelize.transaction(async (t)=> {
                 await Post.update({
@@ -104,7 +104,7 @@ exports.modifyPost = async(req,res,next)=> {
         },{
             where : {
                 id: req.params.id,
-                userId: 11 // req.user.id
+                userId: req.user.id
             }
         });
          console.log(post);
@@ -161,7 +161,7 @@ exports.deletePost = async(req,res,next)=> {
             where: {id: req.params.id}
         });
         console.log(post);
-        if (post.userId === 11) {// req.user.id || req.user.type === 'admin')
+        if (post.userId === req.user.id || req.user.type === 'admin') {
             let m;
             let img = [];
             let reg = /<img[^>]*src=[\"']?([^>\"']+)[\"']?[^>]*>/g
@@ -196,11 +196,11 @@ exports.deletePost = async(req,res,next)=> {
 exports.report = async(req,res,next) => {
     try {
         const postId = req.params.id;
-        const userId = 11; // req.user.id
+        const userId = req.user.id;
         const record = await ReportOfPost.findOne({
             where: {
                 postId: postId,
-                userId: 11 // req.user.id
+                userId: req.user.id
             }
         });
         if (!record) {

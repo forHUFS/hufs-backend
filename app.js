@@ -30,12 +30,13 @@ dotenv.config();
 
 const app = express();
 
+app.use(cors());
+
 app.set('port', process.env.PORT || 8080);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'html');
 
 app.use(morgan('dev'));
-app.use(cors());
 app.use(cookieParser());
 
 configurePassport(app);
@@ -61,6 +62,30 @@ app.use('/', mainRouter);
 
 // API Document by using swagger
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+app.get('/test', (req, res) => {
+    /**
+     * req.user가 있는 경우는 소셜 로그인에 성공한 경우
+     * passport에 의해 user가 주입됨 (deserialize 확인)
+     */
+    if (req.user) {
+      res.send(`
+          <h3>Login Success</h3>
+          <a href="/auth/logout">Logout</a>
+          <p>
+              ${JSON.stringify(req.user, null, 2)}
+          </p>
+        `)
+    } else {
+      res.send(`
+          <h3>Node Passport Social Login</h3>
+          <a href="/user/sign-in/google">Login with Google+</a>
+          <a href="/auth/login/facebook">Login with Facebook</a>
+          <a href="/auth/login/naver">Login with Naver</a>
+          <a href="/auth/login/kakao">Login with Kakao</a>
+      `)
+    }
+  })
 
 
 app.use((req,res,next)=>{

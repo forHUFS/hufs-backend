@@ -12,14 +12,14 @@ router.post('/back', cancelPost);
 router.post('/img', upload.array('img',5), uploadImg);
 
 
-router.get('/:id/addlike', addLike); // authUtil.isSignedIn, authUtil.isAuthorized
-router.get('/:id/dellike', delLike); // authUtil.isSignedIn, authUtil.isAuthorized
+router.get('/:id/addlike', authUtil.isSignedIn, authUtil.isAuthorized, addLike);
+router.get('/:id/dellike', authUtil.isSignedIn, authUtil.isAuthorized, delLike);
 
-router.post('/:id/report', report); // authUtil.isSignedIn, authUtil.isAuthorized
+router.post('/:id/report', authUtil.isSignedIn, authUtil.isAuthorized, report);
 
-router.get('/:id', readPost); // authUtil.isSignedIn, authUtil.isAuthorized
-router.put('/:id', modifyPost); // authUtil.isSignedIn, authUtil.isAuthorized
-router.delete('/:id', deletePost); // authUtil.isSignedIn, authUtil.isAuthorized
+router.get('/:id', authUtil.isSignedIn, authUtil.isAuthorized, readPost);
+router.put('/:id', authUtil.isSignedIn, authUtil.isAuthorized, modifyPost);
+router.delete('/:id', authUtil.isSignedIn, authUtil.isAuthorized, deletePost); 
 
 
 

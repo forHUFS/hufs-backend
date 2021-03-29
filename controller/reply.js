@@ -11,7 +11,7 @@ exports.addReply = async(req,res,next)=> {
         const reply = await Reply.create({
             content: req.body.content,
             postId: req.body.postId,
-            userId: 11 // req.user.id
+            userId: req.user.id
         });
 
         res.status(200).json({
@@ -31,7 +31,7 @@ exports.addReReply = async(req,res,next)=>{
             content: req.body.content,
             parentId: req.body.parentId,
             postId: req.body.postId,
-            userId: 11 // req.user.id
+            userId: req.user.id
         });
         res.status(200).json({
             data: "",
@@ -48,7 +48,7 @@ exports.deleteReply = async(req,res,next) => {
             where: { id: req.params.id }
         });
 
-        if (reply.userId === 11) {// req.user.id || req.user.type === 'admin') {
+        if (reply.userId === req.user.id || req.user.type === 'admin') {
             await Reply.destroy({
                 where: {id: req.params.id}
             });
@@ -75,7 +75,7 @@ exports.modifyReply = async(req,res,next) => {
         }, {
             where: {
                 id: req.params.id,
-                userId: 11 // req.user.id
+                userId: req.user.id
             }
 
         });
@@ -99,7 +99,7 @@ exports.modifyReply = async(req,res,next) => {
 exports.addReplyLike = async (req,res,next) => {
     try {
         const replyId = req.params.id;
-        const userId = 11; // req.user.id
+        const userId = req.user.id;
         if (!await this.checkLikeRecordOfReply(replyId, userId)) {
             await sequelize.transaction(async (t)=> {
                 await Reply.update({
@@ -134,7 +134,7 @@ exports.addReplyLike = async (req,res,next) => {
 exports.cancelReplyLike = async (req,res,next)=> {
     try {
         const replyId = req.params.id;
-        const userId = 11; // req.user.id
+        const userId = req.user.id;
         if (await this.checkLikeRecordOfReply(replyId, userId)) {
             await sequelize.transaction(async (t)=> {
             await Reply.update({
@@ -171,10 +171,10 @@ exports.cancelReplyLike = async (req,res,next)=> {
 exports.report = async(req,res,next) => {
     try {
         const replyId = req.params.id;
-        const userId = 11; // req.user.id
+        const userId = req.user.id;
         const record = await ReportOfReply.findOne({
             replyId: replyId,
-            userId: 11 // req.user.id
+            userId: req.user.id;
         });
         if (!record) {
             await sequelize.transaction(async (t)=> {

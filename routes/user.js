@@ -7,12 +7,12 @@ const { authUtil } = require('../middlewares/auth');
 const router = express.Router();
 
 
-router.get('', userInfo.getUser); // authUtil.isSignedIn
-router.put('', userInfo.updateUser); // authUtil.isSignedIn
-router.delete('', userInfo.deleteUser); // authUtil.isSignedIn
+router.get('', authUtil.isSignedIn, userInfo.getUser);
+router.put('', authUtil.isSignedIn, userInfo.updateUser);
+router.delete('', authUtil.isSignedIn, userInfo.deleteUser);
 
 router.post('/sign-up', userAuth.signUp, emailAuth.sendEmail);
-router.post('/sign-out', userAuth.signOut); // authUtil.isSignedIn
+router.post('/sign-out', authUtil.isSignedIn, userAuth.signOut);
 
 router.get('/sign-in/google', socialAuth.google);
 router.get('/google/callback', socialAuth.googleCallBack);
@@ -23,14 +23,14 @@ router.get('/kakao/callback', socialAuth.kakaoCallBack);
 router.get('/email', emailAuth.checkEmail);
 router.post('/email', emailAuth.sendEmail);
 
-router.get('/directory', scrapDirectory.read); // authUtil.isSignedIn, authUtil.isAuthorized
-router.post('/directory', scrapDirectory.create); // authUtil.isSignedIn, authUtil.isAuthorized
-router.put('/directory', scrapDirectory.update); // authUtil.isSignedIn, authUtil.isAuthorized
-router.delete('/directory', scrapDirectory.delete); // authUtil.isSignedIn, authUtil.isAuthorized
+router.get('/directory', authUtil.isSignedIn, authUtil.isAuthorized, scrapDirectory.read);
+router.post('/directory', authUtil.isSignedIn, authUtil.isAuthorized, scrapDirectory.create);
+router.put('/directory', authUtil.isSignedIn, authUtil.isAuthorized, scrapDirectory.update);
+router.delete('/directory', authUtil.isSignedIn, authUtil.isAuthorized, scrapDirectory.delete);
 
-router.get('/scrap', postScrap.read); // authUtil.isSignedIn, authUtil.isAuthorized
-router.post('/scrap', postScrap.create); // authUtil.isSignedIn, authUtil.isAuthorized
-router.put('/scrap', postScrap.update); // authUtil.isSignedIn, authUtil.isAuthorized
-router.delete('/scrap', postScrap.delete); // authUtil.isSignedIn, authUtil.isAuthorized
+router.get('/scrap', authUtil.isSignedIn, authUtil.isAuthorized, postScrap.read);
+router.post('/scrap', authUtil.isSignedIn, authUtil.isAuthorized, postScrap.create);
+router.put('/scrap', authUtil.isSignedIn, authUtil.isAuthorized, postScrap.update);
+router.delete('/scrap', authUtil.isSignedIn, authUtil.isAuthorized, postScrap.delete);
 
 module.exports = router;
