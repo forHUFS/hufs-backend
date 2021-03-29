@@ -161,6 +161,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
+        404:
+          description: 회원 가입을 해야 하는 사용자
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    example: ""
+                  message:
+                    type: string
+                    example: RESOURCE_NOT_FOUND              
 
   /user/sign-in/kakao:
     get:
@@ -174,6 +186,18 @@ paths:
             appplication/json:
               schema:
                 $ref: "#/definitions/Success-response"
+        404:
+          description: 회원 가입을 해야 하는 사용자
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    example: ""
+                  message:
+                    type: string
+                    example: RESOURCE_NOT_FOUND                
 
 
   /user/sign-up:
@@ -222,7 +246,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Unauthorized-response"        
+                $ref: "#/definitions/Unauthorized-response"                
         409:
           description: 이미 존재하는 데이터
           content:
@@ -1341,7 +1365,7 @@ paths:
                     data: ""
                     message: FORBIDDEN_BEFORE                   
         409:
-          description: 유저가 이미 좋아요를 누른 게시글에 대한 요청 거부
+          description: 사용자가 이미 좋아요를 누른 게시글에 대한 요청 거부
           content:
             application/json:
               schema:
@@ -1390,7 +1414,7 @@ paths:
                     data: ""
                     message: FORBIDDEN_BEFORE   
         409:
-          description: 유저가 좋아요를 누른 적이 없는 게시글에 대한 요청 거부
+          description: 사용자가 좋아요를 누른 적이 없는 게시글에 대한 요청 거부
           content:
             application/json:
               schema:
@@ -1967,7 +1991,7 @@ paths:
                     data: ""
                     message: FORBIDDEN_BEFORE 
         409:
-          description: 유저가 이미 좋아요를 누른 댓글에 대한 요청 거부
+          description: 사용자가 이미 좋아요를 누른 댓글에 대한 요청 거부
           content:
             application/json:
               schema:
@@ -2016,7 +2040,7 @@ paths:
                     data: ""
                     message: FORBIDDEN_BEFORE 
         409:
-          description: 유저가 좋아요를 누른 적이 없는 댓글에 대한 요청 거부
+          description: 사용자가 좋아요를 누른 적이 없는 댓글에 대한 요청 거부
           content:
             application/json:
               schema:
@@ -2484,14 +2508,14 @@ definitions:
         example: 1
       userId:
         type: integer
-        description: 글 작성한 유저의 아이디
+        description: 글 작성한 사용자의 아이디
         example: 1
       User:
         type: object
         properties:
           nickname:
             type: string
-            description: 글 작성한 유저의 닉네임
+            description: 글 작성한 사용자의 닉네임
             example: 하연
   PostAndBoard:
     type: object
@@ -2530,7 +2554,7 @@ definitions:
         example: 1
       userId:
         type: integer
-        description: 글 작성한 유저의 아이디
+        description: 글 작성한 사용자의 아이디
         example: 1
       Board:
         type: object
@@ -2544,7 +2568,7 @@ definitions:
         properties:
           nickname:
             type: string
-            description: 글 작성한 유저의 닉네임
+            description: 글 작성한 사용자의 닉네임
             example: 하연
   PostAndReply:
     type: object
@@ -2583,7 +2607,7 @@ definitions:
         example: 1
       userId:
         type: integer
-        description: 글 작성한 유저의 아이디
+        description: 글 작성한 사용자의 아이디
         example: 1
       Replies:
         type: array
@@ -2594,7 +2618,7 @@ definitions:
         properties:
           nickname:
             type: string
-            description: 글 작성한 유저의 닉네임
+            description: 글 작성한 사용자의 닉네임
             example: 하연
   Reply:
     type: object

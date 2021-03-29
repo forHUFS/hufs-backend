@@ -145,15 +145,9 @@ const emailAuth = {
 }
 
 const userAuth = {
-    signUp: async(req, res, next) => {
+    signUp: async(req, res) => {
         try {
-            if (User.findOne(
-                {where: {
-                    [Op.or] : [
-                        { webMail: req.body.webMail },
-                        { email: req.email }
-                    ]
-                }})) {
+            if (User.findOne( {where: { webMail: req.body.webMail }})) {
                     return res.status(409).json(
                         {
                             data: "",
@@ -164,7 +158,7 @@ const userAuth = {
             if (req.body.isAggred) {
                 await User.create(
                     {
-                        email: req.email,
+                        email: req.body.email,
                         nickname: req.body.nickname,
                         webMail: req.body.webMail,
                         mainMajorId: req.body.mainMajorId,
@@ -204,12 +198,13 @@ const userAuth = {
 
         if (!userEmail) {
             // return to main page
+            // 에러 헨들링 따로 필요
             return res.redirect('/');
         }
 
         const exUser = await User.findOne(
             {
-                where: {email: userEmail }
+                where: {email: userEmail}
             }
         )
 
@@ -223,7 +218,6 @@ const userAuth = {
                 };
 
                 accessToken = jwt.sign(payload, jwtSecretKey, jwtOptions);
-                console.log(accessToken)
                 return res.cookie(
                     'user',
                     accessToken,
@@ -236,8 +230,12 @@ const userAuth = {
                 );
             })
         } else {
-            req.email = userEmail
-            return res.redirect('http://localhost:3000/redirect');
+            return res.status(404).json(
+                {
+                    data: userEmail,
+                    message: "RESOURCE_NOT_FOUND"
+                }
+            )
         }
     },
 
@@ -255,6 +253,7 @@ const userInfo = {
     getUser: async(req, res) => {
         // 이메일 인증 여부 데이터에 포함해서 보내줄 것 
         const user        = await User.findOne({ where: { id: req.user.id } });
+        const token       = await Token.findOne({ where: { userId: user.id } });
         const posts       = await Post.findAll(
             {
                 attributes: ['id', 'title'],
@@ -279,7 +278,8 @@ const userInfo = {
             'mainMajor'  : mainMajor.name,
             'doubleMajor': doubleMajor.name,
             'myPost'     : posts,
-            'myReplies'  : replies
+            'myReplies'  : replies,
+            'isAuthenticated': token.isEmailAuthenticated
         }
         try {
             return res.status(200).json(
