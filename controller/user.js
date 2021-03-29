@@ -168,7 +168,7 @@ const userAuth = {
                         nickname: req.body.nickname,
                         webMail: req.body.webMail,
                         mainMajorId: req.body.mainMajorId,
-                        isAggred: req.body.isAggred
+                        isAgreed: req.body.isAggred
                     }
                 );
                 return next();

@@ -193,7 +193,7 @@ paths:
                   - webMail
                   - mainMajorId
                   - doubleMajorId
-                  - isAggred
+                  - isAgreed
                 properties:
                   nickname:
                     type: string
