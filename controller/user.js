@@ -187,6 +187,7 @@ const userAuth = {
     },
 
     signIn: async(req, res, error, userEmail) => {
+        
         if (error) {
             return res.status(500).json(
                 {
