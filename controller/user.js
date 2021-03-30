@@ -23,7 +23,7 @@ const token = crypto.randomBytes(20).toString('hex');
 const emailAuth = {
     sendEmail: async(req, res) => {
         const toWhom = req.body.webMail;
-
+        console.log('here')
         const mailOptions = {
             from: "HUFSpace",
             to: `${toWhom}@hufs.ac.kr`,
@@ -53,21 +53,28 @@ const emailAuth = {
                         }
                     );
                     
-                    const payload = {
-                        id      : user.id,
-                        email   : user.email,
-                        type    : user.type
-                    };
+                    // const payload = {
+                    //     id      : user.id,
+                    //     email   : user.email,
+                    //     type    : user.type
+                    // };
     
-                    accessToken = jwt.sign(payload, jwtSecretKey, jwtOptions);
+                    // accessToken = jwt.sign(payload, jwtSecretKey, jwtOptions);
 
-                    console.log(accessToken)
+                    // console.log(accessToken)
 
-                    return res.cookie(
-                        'user',
-                        accessToken,
-                        cookieOptions
-                    ).redirect('http://localhost:3000/')
+                    // return res.cookie(
+                    //     'user',
+                    //     accessToken,
+                    //     cookieOptions
+                    // ).redirect('http://localhost:3000/')
+
+                    return res.status(200).json(
+                        {
+                            data: "",
+                            message: ""
+                        }
+                    )
 
                 } catch (error) {
                     console.log(error);
@@ -167,15 +174,18 @@ const userAuth = {
                 );
             }
             if (req.body.isAgreed) {
+                console.log(req.body)
                 u = await User.create(
                     {
                         email: req.body.email,
                         nickname: req.body.nickname,
                         webMail: req.body.webMail,
                         mainMajorId: req.body.mainMajorId,
+                        doubleMajorId: req.body.doubleMajorId,
                         isAgreed: req.body.isAgreed
                     }
                 );
+                console.log('u')
                 req.u = u.dataValues
                 return next();
             } else {
@@ -231,22 +241,28 @@ const userAuth = {
                 };
 
                 accessToken = jwt.sign(payload, jwtSecretKey, jwtOptions);
-                return res.cookie(
-                    'user',
-                    accessToken,
-                    cookieOptions
-                ).redirect('http://localhost:3000/')
+                // return res.cookie(
+                //     'user',
+                //     accessToken,
+                //     cookieOptions
+                // ).redirect('http://localhost:3000/')
+                return res.status(200).json(
+                    {
+                        data: "",
+                        message: ""
+                    }
+                )
             })
         } else {
             console.log(userEmail)
             // 실제 배포 때는 cookie에 담아서 주기.
-            return res.redirect(`http://localhost:3000/register?email=${userEmail}`)
-            // return res.status(404).json(
-            //     {
-            //         data: userEmail,
-            //         message: "RESOURCE_NOT_FOUND"
-            //     }
-            // )
+            // return res.redirect(`http://localhost:3000/register?email=${userEmail}`)
+            return res.status(404).json(
+                {
+                    data: userEmail,
+                    message: "RESOURCE_NOT_FOUND"
+                }
+            )
         }
     },
 

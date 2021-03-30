@@ -10,7 +10,7 @@ module.exports = class User extends Sequelize.Model{
             },
             webMail: {
                 type     : Sequelize.STRING(64),
-                allowNull: true,
+                allowNull: false,
                 unique   : true
             },
             nickname: {
