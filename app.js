@@ -36,7 +36,7 @@ app.set('view engine', 'html');
 
 app.use(morgan('dev'));
 app.use(cookieParser());
-app.use(cors({origin: 'http://localhost:3000/'}));
+app.use(cors()); // {origin: 'http://localhost:3000/'}
 
 configurePassport(app);
 
