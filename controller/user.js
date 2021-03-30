@@ -193,7 +193,6 @@ const userAuth = {
             }
         } catch (error) {
             if (error.message === "Validation error") {
-                console.log('YASYD')
                 return res.status(409).json(
                     {
                         data: "",
