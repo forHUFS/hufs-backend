@@ -1,5 +1,5 @@
-const express  = require('express');
-const passport = require('passport');
+const express = require('express');
+const cors    = require('cors')
 
 const { emailAuth, userAuth, socialAuth, userInfo, scrapDirectory, postScrap } = require('../controller/user');
 const { authUtil } = require('../middlewares/auth');

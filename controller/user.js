@@ -147,22 +147,23 @@ const emailAuth = {
 const userAuth = {
     signUp: async(req, res) => {
         try {
-            if (User.findOne( {where: { webMail: req.body.webMail }})) {
+            const user = await User.findOne({where: {webMail: req.body.webMail}})
+            if (user) {
                     return res.status(409).json(
                         {
                             data: "",
                             message: "CONFLICT"
                         }
-                )
+                );
             }
-            if (req.body.isAggred) {
+            if (req.body.isAgreed) {
                 await User.create(
                     {
                         email: req.body.email,
                         nickname: req.body.nickname,
                         webMail: req.body.webMail,
                         mainMajorId: req.body.mainMajorId,
-                        isAgreed: req.body.isAggred
+                        isAgreed: req.body.isAgreed
                     }
                 );
                 return next();
@@ -176,6 +177,7 @@ const userAuth = {
             }
         } catch (error) {
             if (error.message === "Validation error") {
+                console.log('YASYD')
                 return res.status(409).json(
                     {
                         data: "",
@@ -187,7 +189,7 @@ const userAuth = {
     },
 
     signIn: async(req, res, error, userEmail) => {
-        
+        console.log(error)
         if (error) {
             return res.status(500).json(
                 {
@@ -231,12 +233,13 @@ const userAuth = {
                 );
             })
         } else {
-            return res.status(404).json(
-                {
-                    data: userEmail,
-                    message: "RESOURCE_NOT_FOUND"
-                }
-            )
+            return res.cookie('email', userEmail, cookieOptions).redirect(`http://localhost:3000/register`)
+            // return res.status(404).json(
+            //     {
+            //         data: userEmail,
+            //         message: "RESOURCE_NOT_FOUND"
+            //     }
+            // )
         }
     },
 

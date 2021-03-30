@@ -32,7 +32,7 @@ module.exports = class User extends Sequelize.Model{
                 allowNull: false,
                 defaultValue: 'before',
             },
-            isAggred: {
+            isAgreed: {
                 type: Sequelize.BOOLEAN,
                 allowNull: false,
                 defaultValue: false
