@@ -36,7 +36,7 @@ app.set('view engine', 'html');
 
 app.use(morgan('dev'));
 app.use(cookieParser());
-app.use(cors({origin: 'http://localhost:3000/', credentials: true, methods: 'GET, HEAD, PUT, PATCH, POST, DELETE', preflightContinue: false}));
+app.use(cors({origin: 'http://192.168.0.15:3000/', credentials: true, methods: 'GET, HEAD, PUT, PATCH, POST, DELETE', preflightContinue: false}));
 
 configurePassport(app);
 
