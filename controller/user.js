@@ -67,12 +67,7 @@ const emailAuth = {
                         'user',
                         accessToken,
                         cookieOptions
-                    ).status(200).json(
-                        {
-                            data: "",
-                            message: ""
-                        }
-                    );
+                    ).redirect('http://localhost:3000/')
 
                 } catch (error) {
                     console.log(error);
@@ -240,12 +235,7 @@ const userAuth = {
                     'user',
                     accessToken,
                     cookieOptions
-                ).status(200).json(
-                    {
-                        data: "",
-                        message: ""
-                    }
-                );
+                ).redirect('http://localhost:3000/')
             })
         } else {
             console.log(userEmail)
