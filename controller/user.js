@@ -23,16 +23,14 @@ const token = crypto.randomBytes(20).toString('hex');
 const emailAuth = {
     sendEmail: async(req, res) => {
         const toWhom = req.body.webMail;
-        console.log(toWhom)
 
         const mailOptions = {
             from: "HUFSpace",
             to: `${toWhom}@hufs.ac.kr`,
             subject: "[ HUFSpace ] 회원가입을 위한 이메일입니다.",
-            text: "인증을 위해 아래 URL을 클릭하여 주세요.\n" + `http://52.78.2.40:5000/user/email?token=${token}`
+            text: "인증을 위해 아래 URL을 클릭하여 주세요.\n" + `http://localhost:3000/user/email?token=${token}`
         };
 
-        console.log('here')
         await transporter.sendMail(mailOptions, async(error, info) => {
             if (error) {
                 console.log(error)
@@ -44,7 +42,7 @@ const emailAuth = {
                 )
             } else {
                 try {
-                    console.log('YES')
+                    console.log(req.u)
                     user = await User.findOne({where: {webMail: toWhom}});
                     date = new Date()
                     Token.create(
@@ -55,10 +53,24 @@ const emailAuth = {
                         }
                     );
                     
-                    return res.status(200).json(
+                    const payload = {
+                        id      : exUser.id,
+                        email   : exUser.email,
+                        type    : exUser.type
+                    };
+    
+                    accessToken = jwt.sign(payload, jwtSecretKey, jwtOptions);
+
+                    console.log(accessToken)
+
+                    return res.cookie(
+                        'user',
+                        accessToken,
+                        cookieOptions
+                    ).status(200).json(
                         {
                             data: "",
-                            message: "SUCCESS"
+                            message: ""
                         }
                     );
 
@@ -160,7 +172,7 @@ const userAuth = {
                 );
             }
             if (req.body.isAgreed) {
-                await User.create(
+                u = await User.create(
                     {
                         email: req.body.email,
                         nickname: req.body.nickname,
@@ -169,6 +181,8 @@ const userAuth = {
                         isAgreed: req.body.isAgreed
                     }
                 );
+                console.log(u)
+                req.u = u
                 return next();
             } else {
                 return res.status(401).json(
