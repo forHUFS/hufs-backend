@@ -23,17 +23,19 @@ const token = crypto.randomBytes(20).toString('hex');
 const emailAuth = {
     sendEmail: async(req, res) => {
         const toWhom = req.body.webMail;
+        console.log(toWhom)
 
         const mailOptions = {
             from: "HUFSpace",
             to: `${toWhom}@hufs.ac.kr`,
             subject: "[ HUFSpace ] 회원가입을 위한 이메일입니다.",
-            text: "인증을 위해 아래 URL을 클릭하여 주세요.\n" + `http://52.78.2.40:8080/user/email?token=${token}`
+            text: "인증을 위해 아래 URL을 클릭하여 주세요.\n" + `http://52.78.2.40:5000/user/email?token=${token}`
         };
 
         console.log('here')
         await transporter.sendMail(mailOptions, async(error, info) => {
             if (error) {
+                console.log(error)
                 return res.status(error.responseCode).json(
                     {
                         code: error.responseCode,
@@ -42,6 +44,7 @@ const emailAuth = {
                 )
             } else {
                 try {
+                    console.log('YES')
                     user = await User.findOne({where: {webMail: toWhom}});
                     date = new Date()
                     Token.create(
@@ -145,7 +148,7 @@ const emailAuth = {
 }
 
 const userAuth = {
-    signUp: async(req, res) => {
+    signUp: async(req, res, next) => {
         try {
             const user = await User.findOne({where: {webMail: req.body.webMail}})
             if (user) {
@@ -235,7 +238,7 @@ const userAuth = {
         } else {
             console.log(userEmail)
             // 실제 배포 때는 cookie에 담아서 주기.
-            return res.redirect(`http://localhost:3000/register?${userEmail}`)
+            return res.redirect(`http://localhost:3000/register?email=${userEmail}`)
             // return res.status(404).json(
             //     {
             //         data: userEmail,
