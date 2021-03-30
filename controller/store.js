@@ -7,12 +7,13 @@ const sequelize = require('../models').sequelize;
 
 exports.addReview = async(req,res,next) => {
     try {
+        console.log(req.body)
         await StoreReview.create({
             title: req.body.title,
             content: req.body.content,
             score: req.body.score,
             storeId: req.params.id,
-            userId: 11 // req.user.id
+            userId: 27 // req.user.id
         });
         const url = req.body.url;
         if (url && url.length) {
@@ -92,7 +93,7 @@ exports.modifyReview = async (req,res,next) => {
         },{
             where : {
                 id: req.params.id,
-                userId: 11 // req.user.id
+                userId: 27 // req.user.id
             }
         });
         console.log(review);
@@ -124,7 +125,7 @@ exports.deleteReview = async (req,res,next) => {
             where: {id: req.params.id}
         });
         console.log(review);
-        if (review.userId == 11) {// req.user.id || req.user.type === 'admin') {
+        if (review.userId == 27) {// req.user.id || req.user.type === 'admin') {
             let m;
             let img = [];
             let reg = /<img[^>]*src=[\"']?([^>\"']+)[\"']?[^>]*>/g

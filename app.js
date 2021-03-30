@@ -34,7 +34,7 @@ app.set('port', process.env.PORT || 5000);
 
 app.use(morgan('dev'));
 app.use(cookieParser());
-app.use(cors());
+app.use(cors()); // cors 설정 차후 필요
 
 configurePassport(app);
 
