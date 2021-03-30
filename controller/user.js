@@ -233,6 +233,7 @@ const userAuth = {
                 );
             })
         } else {
+            console.log(userEmail)
             return res.cookie('email', userEmail, cookieOptions).redirect(`http://localhost:3000/register`)
             // return res.status(404).json(
             //     {
