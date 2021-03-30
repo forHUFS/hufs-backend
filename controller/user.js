@@ -234,7 +234,8 @@ const userAuth = {
             })
         } else {
             console.log(userEmail)
-            return res.cookie('email', userEmail, cookieOptions).redirect(`http://localhost:3000/register`)
+            // 실제 배포 때는 cookie에 담아서 주기.
+            return res.redirect(`http://localhost:3000/register?${userEmail}`)
             // return res.status(404).json(
             //     {
             //         data: userEmail,
