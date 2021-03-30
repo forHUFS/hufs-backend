@@ -54,9 +54,9 @@ const emailAuth = {
                     );
                     
                     const payload = {
-                        id      : exUser.id,
-                        email   : exUser.email,
-                        type    : exUser.type
+                        id      : user.id,
+                        email   : user.email,
+                        type    : user.type
                     };
     
                     accessToken = jwt.sign(payload, jwtSecretKey, jwtOptions);
@@ -181,8 +181,7 @@ const userAuth = {
                         isAgreed: req.body.isAgreed
                     }
                 );
-                console.log(u)
-                req.u = u
+                req.u = u.dataValues
                 return next();
             } else {
                 return res.status(401).json(
