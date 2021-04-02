@@ -814,7 +814,6 @@ paths:
       consumes: application/json
       produces: application/json
       parameters:
-      parameters:
         - in: body
           name: body
           description: 장학금 정보 중 일자, 캠퍼스, 유형으로 검색
@@ -2494,6 +2493,10 @@ definitions:
         type: integer
         description: 신고 개수 / 5회 이상일 경우 숨김 처리
         example: 2
+      admin:
+        type: boolean
+        description: 작성자가 admin이면 true, 아니면 false
+        example: false
       createdAt:
         type: date
         description: 글 생성 날짜 및 시간
@@ -2540,6 +2543,10 @@ definitions:
         type: integer
         description: 신고 개수 / 5회 이상일 경우 숨김 처리
         example: 2
+      admin:
+        type: boolean
+        description: 작성자가 admin이면 true, 아니면 false
+        example: false
       createdAt:
         type: date
         description: 글 생성 날짜 및 시간
@@ -2593,6 +2600,10 @@ definitions:
         type: integer
         description: 신고 개수 / 5회 이상일 경우 숨김 처리
         example: 2
+      admin:
+        type: boolean
+        description: 작성자가 admin이면 true, 아니면 false
+        example: false
       createdAt:
         type: date
         description: 글 생성 날짜 및 시간

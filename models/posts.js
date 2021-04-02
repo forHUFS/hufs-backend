@@ -23,6 +23,11 @@ module.exports = class Post extends Sequelize.Model{
                 allowNull: false,
                 defaultValue: 0,
             },
+            admin: {
+                type: Sequelize.BOOLEAN,
+                allowNull: false,
+                defaultValue: false
+            }
 
         }, {
             sequelize,
