@@ -20,12 +20,22 @@ exports.readPosts = async (req,res,next)=>{
 }
 exports.addPost = async (req,res,next)=> {
     try {
-        await Post.create({
-            title: req.body.title,
-            content: req.body.content,
-            boardId: req.params.id,
-            userId: req.user.id
-        });
+        if (req.user.type === 'user') {
+            await Post.create({
+                title: req.body.title,
+                content: req.body.content,
+                boardId: req.params.id,
+                userId: req.user.id
+            });
+        } else if (req.user.type === 'admin') {
+            await Post.create({
+                title: req.body.title,
+                content: req.body.content,
+                boardId: req.params.id,
+                userId: req.user.id,
+                admin: true
+            });
+        }
         const url = req.body.url;
         if (url && url.length) {
             await deleteImg(url);
