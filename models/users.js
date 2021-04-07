@@ -3,11 +3,6 @@ const Sequelize = require('sequelize');
 module.exports = class User extends Sequelize.Model{
     static init(sequelize) {
         return super.init({
-            email: {
-                type    : Sequelize.STRING(64),
-                allowNull: false,
-                unique   : true,
-            },
             webMail: {
                 type     : Sequelize.STRING(64),
                 allowNull: false,
@@ -72,6 +67,7 @@ module.exports = class User extends Sequelize.Model{
     }
     static associate(db){
         db.User.hasOne(db.Token, { foreignKey: 'userId', sourceKey: 'id'});
+        db.User.hasMany(db.Provider, { foreignKey: "userId", sourceKey: "id" })
         db.User.hasMany(db.Directory, { foreignKey: "userId", sourceKey: "id" });
         db.User.hasMany(db.Post, { foreignKey: "userId", sourceKey: "id" });
         db.User.hasMany(db.Reply, { foreignKey: "userId", sourceKey: "id" });
