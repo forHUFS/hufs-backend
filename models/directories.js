@@ -19,10 +19,9 @@ module.exports = class Directory extends Sequelize.Model {
             charset: 'utf8',
             collate: 'utf8_general_ci',
         });
-
-
     }
 
     static associate(db) {
+        db.Directory.hasMany(db.Scrap, { foreignKey: "directoryId", sourceKey: "id" });
     }
 }

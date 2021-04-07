@@ -9,6 +9,7 @@ const cookieOptions   = require('../config/secretKey').cookieOptions;
 const { transporter } = require('../config/email');
 
 const User        = require('../models/users');
+const Provider    = require('../models/providers');
 const Post        = require('../models/posts');
 const Reply       = require('../models/replies');
 const Token       = require('../models/tokens');
@@ -23,12 +24,11 @@ const token = crypto.randomBytes(20).toString('hex');
 const emailAuth = {
     sendEmail: async(req, res) => {
         const toWhom = req.body.webMail;
-        console.log('here')
         const mailOptions = {
             from: "HUFSpace",
             to: `${toWhom}@hufs.ac.kr`,
             subject: "[ HUFSpace ] 회원가입을 위한 이메일입니다.",
-            text: "인증을 위해 아래 URL을 클릭하여 주세요.\n" + `http://localhost:3000/user/email?token=${token}`
+            text: "인증을 위해 아래 URL을 클릭하여 주세요.\n" + `https://www.hufspace.com/email?token=${token}`
         };
 
         await transporter.sendMail(mailOptions, async(error, info) => {
@@ -42,39 +42,40 @@ const emailAuth = {
                 )
             } else {
                 try {
-                    console.log(req.u)
-                    user = await User.findOne({where: {webMail: toWhom}});
                     date = new Date()
                     Token.create(
                         {
                             emailToken         : token,
                             emailExpirationTime: date,
-                            userId             : user.id
+                            userId             : req.user.id
                         }
                     );
                     
-                    // const payload = {
-                    //     id      : user.id,
-                    //     email   : user.email,
-                    //     type    : user.type
-                    // };
-    
-                    // accessToken = jwt.sign(payload, jwtSecretKey, jwtOptions);
-
-                    // console.log(accessToken)
-
-                    // return res.cookie(
-                    //     'user',
-                    //     accessToken,
-                    //     cookieOptions
-                    // ).redirect('http://localhost:3000/')
-
-                    return res.status(200).json(
+                    const payload = {
+                        id      : req.user.id,
+                        email   : req.provider.email,
+                        type    : req.user.type
+                    };
+                    console.log(payload)
+                    accessToken = jwt.sign(payload, jwtSecretKey, jwtOptions);
+                    console.log(accessToken)
+                    return res.cookie(
+                        'user',
+                        accessToken,
+                        cookieOptions
+                    ).status(200).json(
                         {
                             data: "",
                             message: ""
                         }
-                    )
+                    );
+
+                    // return res.cookie().status(200).json(
+                    //     {
+                    //         data: "",
+                    //         message: ""
+                    //     }
+                    // )
 
                 } catch (error) {
                     console.log(error);
@@ -164,6 +165,7 @@ const emailAuth = {
 const userAuth = {
     signUp: async(req, res, next) => {
         try {
+            console.log('hi')
             const user = await User.findOne({where: {webMail: req.body.webMail}})
             if (user) {
                     return res.status(409).json(
@@ -174,10 +176,8 @@ const userAuth = {
                 );
             }
             if (req.body.isAgreed) {
-                console.log(req.body)
-                u = await User.create(
+                const user = await User.create(
                     {
-                        email: req.body.email,
                         nickname: req.body.nickname,
                         webMail: req.body.webMail,
                         mainMajorId: req.body.mainMajorId,
@@ -185,8 +185,15 @@ const userAuth = {
                         isAgreed: req.body.isAgreed
                     }
                 );
-                console.log('u')
-                req.u = u.dataValues
+                const provider = await Provider.create(
+                    {
+                        name: req.body.provider,
+                        email: req.body.email,
+                        userId: user.id
+                    }
+                )
+                req.user     = user
+                req.provider = provider
                 return next();
             } else {
                 return res.status(401).json(
@@ -208,61 +215,72 @@ const userAuth = {
         }
     },
 
-    signIn: async(req, res, error, userEmail) => {
-        console.log(error)
-        if (error) {
+    signIn: async(req, res) => {
+        console.log(req.body.email)
+
+        if (!req.body.email) {
             return res.status(500).json(
                 {
                     data: "",
-                    message: error.message
+                    message: "EMPTY_EMAIL"
                 }
             );
         }
-
-        if (!userEmail) {
-            // return to main page
-            // 에러 헨들링 따로 필요
-            return res.redirect('/');
-        }
-
-        const exUser = await User.findOne(
+        const exUser = await Provider.findOne(
             {
-                where: {email: userEmail}
+                where: {email: req.body.email, name: req.body.provider},
+                include: { model: User, attributes: ['id', 'type'] }
             }
         )
 
         if (exUser) {
-            req.login(exUser, {session: false}, (error) => {
+            const payload = {
+                id      : exUser.User.id,
+                email   : exUser.email,
+                type    : exUser.User.type
+            };
+            console.log(payload)
+            accessToken = jwt.sign(payload, jwtSecretKey, jwtOptions);
+            console.log(accessToken)
+            return res.cookie(
+                'user',
+                accessToken,
+                cookieOptions
+            ).status(200).json(
+                {
+                    data: "",
+                    message: ""
+                }
+            );
+            // req.login(exUser, {session: false}, (error) => {
 
-                const payload = {
-                    id      : exUser.id,
-                    email   : exUser.email,
-                    type    : exUser.type
-                };
+            //     const payload = {
+            //         id      : exUser.id,
+            //         email   : exUser.email,
+            //         type    : exUser.type
+            //     };
 
-                accessToken = jwt.sign(payload, jwtSecretKey, jwtOptions);
-                // return res.cookie(
-                //     'user',
-                //     accessToken,
-                //     cookieOptions
-                // ).redirect('http://localhost:3000/')
-                return res.status(200).json(
-                    {
-                        data: "",
-                        message: ""
-                    }
-                )
-            })
+            //     accessToken = jwt.sign(payload, jwtSecretKey, jwtOptions);
+            //     console.log(accessToken)
+            //     return res.cookie(
+            //         'user',
+            //         accessToken,
+            //         cookieOptions
+            //     ).status(200).json(
+            //         {
+            //             data: "",
+            //             message: ""
+            //         }
+            //     );
+            // })
         } else {
-            console.log(userEmail)
-            // 실제 배포 때는 cookie에 담아서 주기.
-            // return res.redirect(`http://localhost:3000/register?email=${userEmail}`)
+            const userInfo = {'email': req.body.email, 'provider': req.body.provider}
             return res.status(404).json(
                 {
-                    data: userEmail,
+                    data: userInfo,
                     message: "RESOURCE_NOT_FOUND"
                 }
-            )
+            );
         }
     },
 
@@ -279,39 +297,76 @@ const userAuth = {
 const userInfo = {
     getUser: async(req, res) => {
         // 이메일 인증 여부 데이터에 포함해서 보내줄 것 
-        const user        = await User.findOne({ where: { id: req.user.id } });
-        const token       = await Token.findOne({ where: { userId: user.id } });
-        const posts       = await Post.findAll(
+        const user = await User.findOne(
             {
-                attributes: ['id', 'title'],
-                where: { userId: req.user.id } }
-        );
-        const replies     = await Reply.findAll(
-            { 
-                attributes: ['id', 'content'],
-                where  : { userId: req.user.id },
-                include: [ 
-                    { model: Post, attributes: ['id', 'title'] },
+                attributes: [
+                    'id',
+                    'webMail',
+                    'nickName',
+                    'phone',
+                    'birth',
+                ],
+                where: { id: req.user.id },
+                include: [
+                    {
+                        model: Provider,
+                        attributes: ['name', 'email']
+                    },
+                    {
+                        model: Token,
+                        attributes: ['isEmailAuthenticated']
+                    },
+                    {
+                        model: MainMajor
+                    },
+                    {
+                        model: DoubleMajor
+                    },
+                    { 
+                        model: Post,
+                        attributes: ['id', 'title']
+                    },
+                    { 
+                        model: Reply,
+                        attributes: ['id', 'content'],
+                        include: [{model: Post, attributes: ['id', 'title']}]
+                    }
                 ]
             },
-            
         );
-        const mainMajor   = await MainMajor.findOne({ where: { id: user.mainMajorId } });
-        const doubleMajor = await MainMajor.findOne({ where: { id: user.doubleMajorId } });
-        const userInfo = {
-            'email'      : user.email,
-            'webMail'    : `${user.webMail}@hufs.ac.kr`,
-            'nickname'   : user.nickname,
-            'mainMajor'  : mainMajor.name,
-            'doubleMajor': doubleMajor.name,
-            'myPost'     : posts,
-            'myReplies'  : replies,
-            'isAuthenticated': token.isEmailAuthenticated
-        }
+        // const token       = await Token.findOne({ where: { userId: user.id } });
+        // const posts       = await Post.findAll(
+        //     {
+        //         attributes: ['id', 'title'],
+        //         where: { userId: req.user.id } }
+        // );
+        // const replies     = await Reply.findAll(
+        //     { 
+        //         attributes: ['id', 'content'],
+        //         where  : { userId: req.user.id },
+        //         include: [ 
+        //             { model: Post, attributes: ['id', 'title'] },
+        //         ]
+        //     },
+            
+        // );
+        // const mainMajor   = await MainMajor.findOne({ where: { id: user.mainMajorId } });
+        // const doubleMajor = await MainMajor.findOne({ where: { id: user.doubleMajorId } });
+        // const userInfo = {
+        //     'email'      : user.email,
+        //     'webMail'    : `${user.webMail}@hufs.ac.kr`,
+        //     'nickname'   : user.nickname,
+        //     'mainMajor'  : mainMajor.name,
+        //     'doubleMajor': doubleMajor.name,
+        //     'myPost'     : posts,
+        //     'myReplies'  : replies,
+        //     'isAuthenticated': token.isEmailAuthenticated
+        // }
+
         try {
             return res.status(200).json(
                 {
-                    data: userInfo,
+                    data: user,
                     message: ""
                 }
             );
@@ -433,29 +488,29 @@ const userInfo = {
     }
 }
 
-const socialAuth = {
-    google: async(req, res) => {
-        passport.authenticate('google', {scope: ['profile', 'email']})(req, res);
-    },
+// const socialAuth = {
+//     google: async(req, res) => {
+//         passport.authenticate('google', {scope: ['profile', 'email']})(req, res);
+//     },
 
-    googleCallBack: async(req, res) => {
-        passport.authenticate('google', (error, user) => {
-                userAuth.signIn(req, res, error, user);
-            }
-        )(req, res);
-    },
+//     googleCallBack: async(req, res) => {
+//         passport.authenticate('google', (error, user) => {
+//                 userAuth.signIn(req, res, error, user);
+//             }
+//         )(req, res);
+//     },
 
-    kakao: async(req, res) => {
-        passport.authenticate('kakao')(req, res);
-    },
+//     kakao: async(req, res) => {
+//         passport.authenticate('kakao')(req, res);
+//     },
 
-    kakaoCallBack: async(req, res) => {
-        passport.authenticate('kakao', (error, user) => {
-                userAuth.signIn(req, res, error, user);
-            }
-        )(req, res);
-    }
-}
+//     kakaoCallBack: async(req, res) => {
+//         passport.authenticate('kakao', (error, user) => {
+//                 userAuth.signIn(req, res, error, user);
+//             }
+//         )(req, res);
+//     }
+// }
 
 const scrapDirectory = {
     create: async(req, res) => {
@@ -599,7 +654,17 @@ const postScrap = {
                     }
                 )
             }
-            scrap = await Scrap.findOne({where: {postId: req.query.postId}});
+            const post = await Post.findOne({where: {id: req.query.postId}})
+            if (!post) {
+                return res.status(404).json(
+                    {
+                        data: "",
+                        message: "RESOURCE_NOT_FOUND"
+                    }
+                )
+            }
+
+            const scrap = await Scrap.findOne({where: {postId: post.id}});
             
             if (scrap) {
                 return res.status(409).json(
@@ -630,31 +695,43 @@ const postScrap = {
 
     read: async(req, res) => {
         try {
-            if (!req.query.directoryId) {
+            // if (!req.query.directoryId) {
 
-                return res.status(422).json(
-                    {
-                        data: "",
-                        message: "QUERY"
-                    }
-                )
-            }
-            const scraps = await Scrap.findAll({where: {directoryId: req.query.directoryId}});
-            const scrapInfo = [];
-            for (let idx = 0; idx < scraps.length; idx++) {
-                console.log(scraps[idx].dataValues)
-                post = await Post.findOne({where: {id: scraps[idx].dataValues.postId}});
-                scrapInfo.push(
-                    {
-                        'scrapId': scraps[idx].dataValues.id,
-                        'postId': post.id,
-                        'postTitle': post.title
-                    }
-                )
-            }
+            //     return res.status(422).json(
+            //         {
+            //             data: "",
+            //             message: "QUERY"
+            //         }
+            //     )
+            // }
+            // const scraps = await Scrap.findAll({where: {directoryId: req.query.directoryId}});
+            const scraps = await Directory.findOne(
+                {
+                    where: { userId: req.user.id },
+                    include: [
+                        {
+                            model: Scrap,
+                            attributes: ['id'],
+                            include: {model: Post, attributes: ['id', 'title']}
+                        }
+                    ]
+                }
+            )
+            // const scrapInfo = [];
+            // for (let idx = 0; idx < scraps.length; idx++) {
+            //     console.log(scraps[idx].dataValues)
+            //     post = await Post.findOne({where: {id: scraps[idx].dataValues.postId}});
+            //     scrapInfo.push(
+            //         {
+            //             'scrapId': scraps[idx].dataValues.id,
+            //             'postId': post.id,
+            //             'postTitle': post.title
+            //         }
+            //     )
+            // }
             return res.status(200).json(
                 {
-                    data: scrapInfo,
+                    data: scraps.Scraps,
                     message: ""
                 }
             )
@@ -737,4 +814,4 @@ const postScrap = {
     }
 }
 
-module.exports = { emailAuth, userAuth, socialAuth, userInfo, scrapDirectory, postScrap };
+module.exports = { emailAuth, userAuth, userInfo, scrapDirectory, postScrap };

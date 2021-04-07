@@ -30,7 +30,7 @@ dotenv.config();
 
 const app = express();
 
-app.set('port', process.env.PORT || 5000);
+app.set('port', process.env.PORT || 80);
 
 app.use(morgan('dev'));
 app.use(cookieParser());
@@ -58,7 +58,7 @@ app.use('/scholarship', scholarShipRouter);
 app.use('/', mainRouter);
 
 // API Document by using swagger
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use((req,res,next)=>{
     const error = new Error(`${req.method} ${req.url} 라우터가 없음`);
