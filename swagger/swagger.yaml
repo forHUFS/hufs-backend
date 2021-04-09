@@ -148,7 +148,7 @@ paths:
                 $ref: "#/definitions/Unauthorized-response"
 
   /user/sign-in:
-    get:
+    post:
       summary: 소셜 로그인
       consumes: application/json
       produces: application/json
@@ -213,7 +213,7 @@ paths:
                 properties:
                   email:
                     type: string
-                    exmaple: 0417taehyun@gmail.com
+                    example: 0417taehyun@gmail.com
                   provider:
                     type: string
                     example: google
@@ -229,7 +229,7 @@ paths:
                   doubleMajorId:
                     type: integer
                     example: 2
-                  isAggred:
+                  isAgreed:
                     type: boolean
                     example: true
       responses:

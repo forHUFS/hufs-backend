@@ -166,6 +166,7 @@ const userAuth = {
     signUp: async(req, res, next) => {
         try {
             console.log('hi')
+            console.log(req.body)
             const user = await User.findOne({where: {webMail: req.body.webMail}})
             if (user) {
                     return res.status(409).json(
@@ -216,71 +217,91 @@ const userAuth = {
     },
 
     signIn: async(req, res) => {
-        console.log(req.body.email)
+        try {
+            console.log(req.body)
+            if (!req.body.email) {
+                return res.status(499).json(
+                    {
+                        data: req.body,
+                        message: "EMAIL_EMPTY"
+                    }
+                );
+            }
 
-        if (!req.body.email) {
+            if (!req.body.provider) {
+                return res.status(499).json(
+                    {
+                        data: req.body,
+                        message: "PROVIDER_EMPTY"
+                    }
+                )
+            }
+            const exUser = await Provider.findOne(
+                {
+                    where: {email: req.body.email, name: req.body.provider},
+                    include: { model: User, attributes: ['id', 'type'] }
+                }
+            )
+            console.log(exUser)
+            if (exUser) {
+                console.log('herehere')
+                const payload = {
+                    id      : exUser.User.id,
+                    email   : exUser.email,
+                    type    : exUser.User.type
+                };
+                console.log(payload)
+                accessToken = jwt.sign(payload, jwtSecretKey, jwtOptions);
+                console.log(accessToken)
+                return res.cookie(
+                    'user',
+                    accessToken,
+                    cookieOptions
+                ).status(200).json(
+                    {
+                        data: "",
+                        message: ""
+                    }
+                );
+                // req.login(exUser, {session: false}, (error) => {
+
+                //     const payload = {
+                //         id      : exUser.id,
+                //         email   : exUser.email,
+                //         type    : exUser.type
+                //     };
+
+                //     accessToken = jwt.sign(payload, jwtSecretKey, jwtOptions);
+                //     console.log(accessToken)
+                //     return res.cookie(
+                //         'user',
+                //         accessToken,
+                //         cookieOptions
+                //     ).status(200).json(
+                //         {
+                //             data: "",
+                //             message: ""
+                //         }
+                //     );
+                // })
+            } else {
+                const userInfo = {'email': req.body.email, 'provider': req.body.provider}
+                console.log(userInfo)
+                return res.status(404).json(
+                    {
+                        data: userInfo,
+                        message: "RESOURCE_NOT_FOUND"
+                    }
+                );
+            }
+        } catch (error) {
+            console.log(error)
             return res.status(500).json(
                 {
                     data: "",
-                    message: "EMPTY_EMAIL"
+                    message: error.messagae
                 }
-            );
-        }
-        const exUser = await Provider.findOne(
-            {
-                where: {email: req.body.email, name: req.body.provider},
-                include: { model: User, attributes: ['id', 'type'] }
-            }
-        )
-
-        if (exUser) {
-            const payload = {
-                id      : exUser.User.id,
-                email   : exUser.email,
-                type    : exUser.User.type
-            };
-            console.log(payload)
-            accessToken = jwt.sign(payload, jwtSecretKey, jwtOptions);
-            console.log(accessToken)
-            return res.cookie(
-                'user',
-                accessToken,
-                cookieOptions
-            ).status(200).json(
-                {
-                    data: "",
-                    message: ""
-                }
-            );
-            // req.login(exUser, {session: false}, (error) => {
-
-            //     const payload = {
-            //         id      : exUser.id,
-            //         email   : exUser.email,
-            //         type    : exUser.type
-            //     };
-
-            //     accessToken = jwt.sign(payload, jwtSecretKey, jwtOptions);
-            //     console.log(accessToken)
-            //     return res.cookie(
-            //         'user',
-            //         accessToken,
-            //         cookieOptions
-            //     ).status(200).json(
-            //         {
-            //             data: "",
-            //             message: ""
-            //         }
-            //     );
-            // })
-        } else {
-            const userInfo = {'email': req.body.email, 'provider': req.body.provider}
-            return res.status(404).json(
-                {
-                    data: userInfo,
-                    message: "RESOURCE_NOT_FOUND"
-                }
-            );
+            )
         }
     },
 
@@ -488,29 +509,29 @@ const userInfo = {
     }
 }
 
-// const socialAuth = {
-//     google: async(req, res) => {
-//         passport.authenticate('google', {scope: ['profile', 'email']})(req, res);
-//     },
+const socialAuth = {
+    google: async(req, res) => {
+        passport.authenticate('google', {scope: ['profile', 'email']})(req, res);
+    },
 
-//     googleCallBack: async(req, res) => {
-//         passport.authenticate('google', (error, user) => {
-//                 userAuth.signIn(req, res, error, user);
-//             }
-//         )(req, res);
-//     },
+    googleCallBack: async(req, res) => {
+        passport.authenticate('google', (error, user) => {
+                userAuth.signIn(req, res, error, user);
+            }
+        )(req, res);
+    },
 
-//     kakao: async(req, res) => {
-//         passport.authenticate('kakao')(req, res);
-//     },
+    kakao: async(req, res) => {
+        passport.authenticate('kakao')(req, res);
+    },
 
-//     kakaoCallBack: async(req, res) => {
-//         passport.authenticate('kakao', (error, user) => {
-//                 userAuth.signIn(req, res, error, user);
-//             }
-//         )(req, res);
-//     }
-// }
+    kakaoCallBack: async(req, res) => {
+        passport.authenticate('kakao', (error, user) => {
+                userAuth.signIn(req, res, error, user);
+            }
+        )(req, res);
+    }
+}
 
 const scrapDirectory = {
     create: async(req, res) => {
@@ -814,4 +835,4 @@ const postScrap = {
     }
 }
 
-module.exports = { emailAuth, userAuth, userInfo, scrapDirectory, postScrap };
+module.exports = { emailAuth, socialAuth, userAuth, userInfo, scrapDirectory, postScrap };
