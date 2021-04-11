@@ -52,19 +52,6 @@ sequelize.sync({force:false})
         console.error(err);
     });
 
-app.use (function (req, res, next) {
-    if (req.secure) {
-        console.log(req.secure)
-        // request was via https, so do no special handling
-        next();
-    } else {
-        console.log(req.headers.host)
-        console.log(req.url)
-        // request was via http, so redirect to https
-        res.redirect('https://' + req.headers.host + req.url);
-    }
-});
-
 app.use(express.json());
 app.use(express.urlencoded({extended:false}));
 app.use('/post', postRouter);
