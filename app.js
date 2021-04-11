@@ -26,6 +26,7 @@ const storeRouter       = require('./routes/store');
 const userRouter        = require('./routes/user');
 const majorRouter       = require('./routes/major');
 const scholarShipRouter = require('./routes/scholarship');
+const { ConfigurationServicePlaceholders } = require('aws-sdk/lib/config_service_placeholders');
 
 
 dotenv.config();
@@ -40,7 +41,7 @@ app.set('port', process.env.PORT || 80);
 
 app.use(morgan('dev'));
 app.use(cookieParser());
-app.use(session({cookieOptions}));
+app.use(session(cookieOptions));
 app.use(cors()); // corsOptions
 
 configurePassport(app);
