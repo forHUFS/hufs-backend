@@ -38,7 +38,7 @@ app.set('port', process.env.PORT || 80);
 
 app.use(morgan('dev'));
 app.use(cookieParser());
-app.use(cors(corsOptions));
+app.use(cors()); // corsOptions
 
 configurePassport(app);
 
