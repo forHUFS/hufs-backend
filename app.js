@@ -26,8 +26,6 @@ const storeRouter       = require('./routes/store');
 const userRouter        = require('./routes/user');
 const majorRouter       = require('./routes/major');
 const scholarShipRouter = require('./routes/scholarship');
-const { ConfigurationServicePlaceholders } = require('aws-sdk/lib/config_service_placeholders');
-
 
 dotenv.config();
 
@@ -75,6 +73,7 @@ app.use((req,res,next)=>{
 });
 
 app.use((err,req,res,next)=>{
+    console.log(cookieOptions);
     const message = err.message;
     const error = process.env.NODE_ENV !== 'production'? err:{};
     res.status(500).json({
