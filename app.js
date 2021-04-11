@@ -1,5 +1,6 @@
 // package
 const express      = require('express');
+const session      = require('express-session');
 const cors         = require('cors');
 const cookieParser = require('cookie-parser')
 const morgan       = require('morgan');
@@ -12,6 +13,7 @@ const swaggerUi   = require('swagger-ui-express');
 const swaggerSpec = YAML.load(path.join(__dirname, 'swagger/swagger.yaml'))
 
 // config
+const cookieOptions     = require('./config/secretKey');
 const configurePassport = require('./config/passport');
 
 // routes
@@ -38,6 +40,7 @@ app.set('port', process.env.PORT || 80);
 
 app.use(morgan('dev'));
 app.use(cookieParser());
+app.use(session({cookieOptions}));
 app.use(cors()); // corsOptions
 
 configurePassport(app);
