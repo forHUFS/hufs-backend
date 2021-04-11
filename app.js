@@ -13,7 +13,7 @@ const swaggerUi   = require('swagger-ui-express');
 const swaggerSpec = YAML.load(path.join(__dirname, 'swagger/swagger.yaml'))
 
 // config
-const cookieOptions     = require('./config/secretKey');
+const cookieOptions     = require('./config/secretKey').cookieOptions;
 const configurePassport = require('./config/passport');
 
 // routes
