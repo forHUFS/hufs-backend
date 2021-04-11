@@ -5,7 +5,7 @@ const { Op }   = require('sequelize');
 
 const jwtSecretKey    = require('../config/secretKey').jwtSecretKey;
 const jwtOptions      = require('../config/secretKey').jwtOptions;
-const cookieOptions   = require('../config/secretKey').cookieOptions;
+const sessionOptions   = require('../config/secretKey').sessionOptions;
 const { transporter } = require('../config/email');
 
 const User        = require('../models/users');
@@ -59,7 +59,7 @@ const emailAuth = {
                     return res.cookie(
                         'user',
                         accessToken,
-                        cookieOptions
+                        sessionOptions
                     ).status(200).json(
                         {
                             data: "",
@@ -202,6 +202,7 @@ const userAuth = {
 
     signIn: async(req, res) => {
         try {
+            console.log(req.session)
             if (!req.body.email) {
                 return res.status(499).json(
                     {
@@ -235,7 +236,7 @@ const userAuth = {
                 return res.cookie(
                     'user',
                     accessToken,
-                    cookieOptions
+                    sessionOptions
                 ).status(200).json(
                     {
                         data: "",

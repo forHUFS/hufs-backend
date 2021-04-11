@@ -1,6 +1,5 @@
 // package
 const express      = require('express');
-const session      = require('express-session');
 const cors         = require('cors');
 const cookieParser = require('cookie-parser')
 const morgan       = require('morgan');
@@ -13,7 +12,7 @@ const swaggerUi   = require('swagger-ui-express');
 const swaggerSpec = YAML.load(path.join(__dirname, 'swagger/swagger.yaml'))
 
 // config
-const cookieOptions     = require('./config/secretKey').cookieOptions;
+const sessionOptions     = require('./config/secretKey').sessionOptions;
 const configurePassport = require('./config/passport');
 
 // routes
@@ -29,7 +28,7 @@ const scholarShipRouter = require('./routes/scholarship');
 
 dotenv.config();
 
-const app = express();
+const app          = express();
 const corsOptions = {
     origin: "https://hufspace.com",
     credentials: true
@@ -39,7 +38,7 @@ app.set('port', process.env.PORT || 80);
 
 app.use(morgan('dev'));
 app.use(cookieParser());
-app.use(session(cookieOptions));
+app.use(session(sessionOptions));
 app.use(cors()); // corsOptions
 
 configurePassport(app);
@@ -73,7 +72,6 @@ app.use((req,res,next)=>{
 });
 
 app.use((err,req,res,next)=>{
-    console.log(cookieOptions);
     const message = err.message;
     const error = process.env.NODE_ENV !== 'production'? err:{};
     res.status(500).json({
