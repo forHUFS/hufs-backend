@@ -5,9 +5,7 @@ const jwtSecretKey = require('../config/secretKey').jwtSecretKey;
 
 const authUtil = {
     isSignedIn: async(req, res, next) => {
-        // const token = req.cookies['user'];
-        console.log(req.session.token)
-        const token = req.session.token
+        const token = req.cookies['user'];
         if (!token) {
             return res.status(401).json(
                 {

@@ -5,7 +5,7 @@ const { Op }   = require('sequelize');
 
 const jwtSecretKey    = require('../config/secretKey').jwtSecretKey;
 const jwtOptions      = require('../config/secretKey').jwtOptions;
-const sessionOptions   = require('../config/secretKey').sessionOptions;
+const cookieOptions   = require('../config/secretKey').cookieOptions;
 const { transporter } = require('../config/email');
 
 const User        = require('../models/users');
@@ -55,12 +55,11 @@ const emailAuth = {
                         email   : req.provider.email,
                         type    : req.user.type
                     };
-                    accessToken       = jwt.sign(payload, jwtSecretKey, jwtOptions);
-                    req.session.token = accessToken
+                    accessToken = jwt.sign(payload, jwtSecretKey, jwtOptions);
                     return res.cookie(
                         'user',
                         accessToken,
-                        sessionOptions
+                        cookieOptions
                     ).status(200).json(
                         {
                             data: "",
@@ -232,12 +231,11 @@ const userAuth = {
                     email   : exUser.email,
                     type    : exUser.User.type
                 };
-                accessToken       = jwt.sign(payload, jwtSecretKey, jwtOptions);
-                req.session.token = accessToken
+                accessToken = jwt.sign(payload, jwtSecretKey, jwtOptions);
                 return res.cookie(
                     'user',
                     accessToken,
-                    sessionOptions
+                    cookieOptions
                 ).status(200).json(
                     {
                         data: "",
