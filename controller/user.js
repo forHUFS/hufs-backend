@@ -33,7 +33,6 @@ const emailAuth = {
 
         await transporter.sendMail(mailOptions, async(error, info) => {
             if (error) {
-                console.log(error)
                 return res.status(error.responseCode).json(
                     {
                         code: error.responseCode,
@@ -56,9 +55,7 @@ const emailAuth = {
                         email   : req.provider.email,
                         type    : req.user.type
                     };
-                    console.log(payload)
                     accessToken = jwt.sign(payload, jwtSecretKey, jwtOptions);
-                    console.log(accessToken)
                     return res.cookie(
                         'user',
                         accessToken,
@@ -69,16 +66,7 @@ const emailAuth = {
                             message: ""
                         }
                     );
-
-                    // return res.cookie().status(200).json(
-                    //     {
-                    //         data: "",
-                    //         message: ""
-                    //     }
-                    // )
-
                 } catch (error) {
-                    console.log(error);
                     return res.status(500).json(
                         {
                             data: "",
@@ -116,8 +104,6 @@ const emailAuth = {
                         }
                     );
                 }
-
-                console.log(token)
 
                 const today = new Date()
                 const date  = token.emailExpirationTime
@@ -165,8 +151,6 @@ const emailAuth = {
 const userAuth = {
     signUp: async(req, res, next) => {
         try {
-            console.log('hi')
-            console.log(req.body)
             const user = await User.findOne({where: {webMail: req.body.webMail}})
             if (user) {
                     return res.status(409).json(
@@ -218,7 +202,6 @@ const userAuth = {
 
     signIn: async(req, res) => {
         try {
-            console.log(req.body)
             if (!req.body.email) {
                 return res.status(499).json(
                     {
@@ -242,17 +225,13 @@ const userAuth = {
                     include: { model: User, attributes: ['id', 'type'] }
                 }
             )
-            console.log(exUser)
             if (exUser) {
-                console.log('herehere')
                 const payload = {
                     id      : exUser.User.id,
                     email   : exUser.email,
                     type    : exUser.User.type
                 };
-                console.log(payload)
                 accessToken = jwt.sign(payload, jwtSecretKey, jwtOptions);
-                console.log(accessToken)
                 return res.cookie(
                     'user',
                     accessToken,
@@ -286,7 +265,6 @@ const userAuth = {
                 // })
             } else {
                 const userInfo = {'email': req.body.email, 'provider': req.body.provider}
-                console.log(userInfo)
                 return res.status(404).json(
                     {
                         data: userInfo,
@@ -407,7 +385,6 @@ const userInfo = {
         const user        = await User.findOne( { where: { id: req.user.id } } );
         const mainMajor   = await MainMajor.findOne({ where: { id: req.body.mainMajorId } });
         const doubleMajor = await DoubleMajor.findOne( { where: { id: req.body.doubleMajorId } } );
-        console.log(user)
         try {
 
             if (user.isMainMajorUpdated) {

@@ -29,12 +29,16 @@ const scholarShipRouter = require('./routes/scholarship');
 dotenv.config();
 
 const app = express();
+const corsOptions = {
+    origin: "https://hufspace.com",
+    credentials: true
+}
 
 app.set('port', process.env.PORT || 80);
 
 app.use(morgan('dev'));
 app.use(cookieParser());
-app.use(cors()); // cors 설정 차후 필요
+app.use(cors(corsOptions));
 
 configurePassport(app);
 
