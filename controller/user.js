@@ -201,6 +201,7 @@ const userAuth = {
     },
 
     signIn: async(req, res) => {
+        console.log(req.session)
         try {
             console.log(req.session)
             if (!req.body.email) {
