@@ -55,7 +55,8 @@ const emailAuth = {
                         email   : req.provider.email,
                         type    : req.user.type
                     };
-                    accessToken = jwt.sign(payload, jwtSecretKey, jwtOptions);
+                    accessToken       = jwt.sign(payload, jwtSecretKey, jwtOptions);
+                    req.session.token = accessToken
                     return res.cookie(
                         'user',
                         accessToken,
@@ -201,9 +202,7 @@ const userAuth = {
     },
 
     signIn: async(req, res) => {
-        console.log(req.session)
         try {
-            console.log(req.session)
             if (!req.body.email) {
                 return res.status(499).json(
                     {
@@ -233,7 +232,8 @@ const userAuth = {
                     email   : exUser.email,
                     type    : exUser.User.type
                 };
-                accessToken = jwt.sign(payload, jwtSecretKey, jwtOptions);
+                accessToken       = jwt.sign(payload, jwtSecretKey, jwtOptions);
+                req.session.token = accessToken
                 return res.cookie(
                     'user',
                     accessToken,
