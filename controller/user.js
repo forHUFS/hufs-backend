@@ -28,7 +28,7 @@ const emailAuth = {
             from: "HUFSpace",
             to: `${toWhom}@hufs.ac.kr`,
             subject: "[ HUFSpace ] 회원가입을 위한 이메일입니다.",
-            text: "인증을 위해 아래 URL을 클릭하여 주세요.\n" + `https://www.hufspace.com/email?token=${token}`
+            text: "인증을 위해 아래 URL을 클릭하여 주세요.\n" + `https://hufspace.com/email?token=${token}`
         };
 
         await transporter.sendMail(mailOptions, async(error, info) => {
@@ -284,8 +284,8 @@ const userAuth = {
     },
 
     signOut: async(req, res) => {
-        console.log(req.cookies)
-        return res.clearCookie('user').status(200).json(
+        console.log(req.cookies['user'])
+        return res.clearCookie('user', cookieOptions).status(200).json(
             {
                 data: "",
                 message: ""
