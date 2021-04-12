@@ -84,6 +84,7 @@ const emailAuth = {
 
     checkEmail: async(req, res, next) => {
         try {
+            console.log(req.query)
             if (!req.query.token) {
                 return res.status(401).json(
                     {
