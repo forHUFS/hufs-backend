@@ -6,6 +6,7 @@ const jwtSecretKey = require('../config/secretKey').jwtSecretKey;
 const authUtil = {
     isSignedIn: async(req, res, next) => {
         const token = req.cookies['user'];
+        console.log(req.cookies)
         if (!token) {
             return res.status(401).json(
                 {
@@ -17,6 +18,7 @@ const authUtil = {
 
         try {
             req.user = jwt.verify(token, jwtSecretKey);
+            console.log(req.user)
             return next();
         } catch (error) {
             console.log(error)

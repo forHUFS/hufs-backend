@@ -284,6 +284,7 @@ const userAuth = {
     },
 
     signOut: async(req, res) => {
+        console.log(req.cookies)
         return res.clearCookie('user').status(200).json(
             {
                 data: "",
