@@ -42,7 +42,7 @@ const emailAuth = {
             } else {
                 try {
                     date = new Date()
-                    Token.create(
+                    const t = Token.create( 
                         {
                             emailToken         : token,
                             emailExpirationTime: date,
@@ -50,6 +50,8 @@ const emailAuth = {
                         }
                     );
                     
+                    console.log(t);
+
                     const payload = {
                         id      : req.user.id,
                         email   : req.provider.email,
@@ -466,6 +468,7 @@ const userInfo = {
 
     deleteUser: async(req, res) => {
         try {
+            await Provider.destroy( { where: { userId: req.user.id }, force: true } );
             await User.destroy( { where: { id: req.user.id }, force: true } );
 
             return res.status(200).json(
