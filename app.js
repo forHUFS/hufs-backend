@@ -31,7 +31,7 @@ dotenv.config();
 
 const app          = express();
 const corsOptions = {
-    origin: "https://hufspace.com",
+    origin: true,
     credentials: true
 }
 
