@@ -44,7 +44,7 @@ const authUtil = {
     isAuthorized: async(req, res, next) => {
         try {
             const type = req.user.type;
-
+            console.log(type);
             if (type === 'user' || type === 'graduated' || type === 'admin') {
                 return next();
             } else if (type === 'suspension') {

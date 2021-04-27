@@ -123,7 +123,11 @@ const emailAuth = {
 
                     await Directory.create({userId: user.id})
 
-                    return res.status(200).json(
+                    return res.cookie(
+                        'user',
+                        token.emailToken,
+                        cookieOptions
+                        ).status(200).json(
                         {
                             data: "",
                             message: ""
