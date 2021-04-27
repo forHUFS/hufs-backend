@@ -485,7 +485,7 @@ const userInfo = {
             // DB ERROR > 존재하지 않는 경우... 왜? 보안을 위해, postman 통한 공격
             console.log(error);
 
-            return res.status(500).json(
+            return res.clearCookie('user', cookieOptions).status(500).json(
                 {
                     data: "",
                     message: error.message
