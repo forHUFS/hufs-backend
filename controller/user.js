@@ -50,8 +50,6 @@ const emailAuth = {
                         }
                     );
                     
-                    console.log(t);
-
                     const payload = {
                         id      : req.user.id,
                         email   : req.provider.email,
@@ -113,7 +111,9 @@ const emailAuth = {
                 const hour  = Math.floor((today - date) % (1000 * 60 * 60 * 24) / (1000 * 60 * 60));
 
                 if (hour < 24) {
-                    const user = await User.findOne({ where: { id: token.userId } })
+                    const user     = await User.findOne({where: {id: token.userId}});
+                    const provider = await Provider.findOne({where: {userId: user.id}});
+                    
                     user.type = 'user'
                     user.save()
 
@@ -123,11 +123,18 @@ const emailAuth = {
 
                     await Directory.create({userId: user.id})
 
+                    const payload = {
+                        id      : user.id,
+                        email   : provider.email,
+                        type    : user.type
+                    };
+                    accessToken = jwt.sign(payload, jwtSecretKey, jwtOptions);
+
                     return res.cookie(
                         'user',
-                        token.emailToken,
+                        accessToken,
                         cookieOptions
-                        ).status(200).json(
+                    ).status(200).json(
                         {
                             data: "",
                             message: ""
