@@ -42,7 +42,7 @@ const emailAuth = {
             } else {
                 try {
                     date = new Date()
-                    const t = Token.create( 
+                    await Token.create( 
                         {
                             emailToken         : token,
                             emailExpirationTime: date,
@@ -113,7 +113,7 @@ const emailAuth = {
                 if (hour < 24) {
                     const user     = await User.findOne({where: {id: token.userId}});
                     const provider = await Provider.findOne({where: {userId: user.id}});
-                    
+
                     user.type = 'user'
                     user.save()
 
