@@ -475,7 +475,7 @@ const userInfo = {
             await Provider.destroy( { where: { userId: req.user.id }, force: true } );
             await User.destroy( { where: { id: req.user.id }, force: true } );
 
-            return res.status(200).json(
+            return res.clearCookie('user', cookieOptions).status(200).json(
                 {
                     data: "",
                     message: ""
@@ -485,7 +485,7 @@ const userInfo = {
             // DB ERROR > 존재하지 않는 경우... 왜? 보안을 위해, postman 통한 공격
             console.log(error);
 
-            return res.clearCookie('user', cookieOptions).status(500).json(
+            return res.status(500).json(
                 {
                     data: "",
                     message: error.message
