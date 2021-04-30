@@ -1,7 +1,7 @@
-const jwt      = require('jsonwebtoken');
-const crypto   = require('crypto');
-const passport = require('passport');
-const { Op }   = require('sequelize');
+const jwt                       =  require('jsonwebtoken');
+const crypto                    = require('crypto');
+const passport                  = require('passport');
+const { Sequelize, QueryTypes } = require('sequelize');
 
 const jwtSecretKey    = require('../config/secretKey').jwtSecretKey;
 const jwtOptions      = require('../config/secretKey').jwtOptions;
@@ -41,7 +41,7 @@ const emailAuth = {
                 )
             } else {
                 try {
-                    date = new Date()
+                    date = new Date();
                     await Token.create( 
                         {
                             emailToken         : token,
@@ -52,7 +52,7 @@ const emailAuth = {
                     
                     const payload = {
                         id      : req.user.id,
-                        email   : req.provider.email,
+                        webMail : req.user.webMail,
                         type    : req.user.type
                     };
                     accessToken = jwt.sign(payload, jwtSecretKey, jwtOptions);
@@ -75,9 +75,6 @@ const emailAuth = {
                     )
                 }
             }
-            // ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client at ServerResponse.setHeader 해결 필요
-            // 실수로 두 번 호출되거나 body 전송 이후 호출되는 문제 찾아볼 것
-            // 정상적으로 메일은 발송 된다.
             transporter.close()
         });
     },
@@ -111,8 +108,7 @@ const emailAuth = {
                 const hour  = Math.floor((today - date) % (1000 * 60 * 60 * 24) / (1000 * 60 * 60));
 
                 if (hour < 24) {
-                    const user     = await User.findOne({where: {id: token.userId}});
-                    const provider = await Provider.findOne({where: {userId: user.id}});
+                    const user = await User.findOne({where: {id: token.userId}});
 
                     user.type = 'user'
                     user.save()
@@ -125,7 +121,7 @@ const emailAuth = {
 
                     const payload = {
                         id      : user.id,
-                        email   : provider.email,
+                        email   : user.webMail,
                         type    : user.type
                     };
                     accessToken = jwt.sign(payload, jwtSecretKey, jwtOptions);
@@ -192,7 +188,6 @@ const userAuth = {
                     }
                 )
                 req.user     = user
-                req.provider = provider
                 return next();
             } else {
                 return res.status(401).json(
@@ -233,17 +228,22 @@ const userAuth = {
                     }
                 )
             }
-            const exUser = await Provider.findOne(
-                {
-                    where: {email: req.body.email, name: req.body.provider},
-                    include: { model: User, attributes: ['id', 'type'] }
-                }
-            )
+            const [webMail, address] = req.body.email.split('@');
+            const [ exUser ] = await User.sequelize.query(
+                `
+                    SELECT users.id AS id, web_mail as webMail, type
+                    FROM users 
+                    LEFT JOIN providers ON users.id = providers.user_id
+                    WHERE web_mail = '${webMail}' or (email = '${req.body.email}' and name = '${req.body.provider}')
+                `,
+                {type: QueryTypes.SELECT}
+            );
+            console.log(exUser)
             if (exUser) {
                 const payload = {
-                    id      : exUser.User.id,
-                    email   : exUser.email,
-                    type    : exUser.User.type
+                    id      : exUser.id,
+                    webMail : exUser.webMail,
+                    type    : exUser.type
                 };
                 accessToken = jwt.sign(payload, jwtSecretKey, jwtOptions);
                 return res.cookie(
@@ -256,27 +256,6 @@ const userAuth = {
                         message: ""
                     }
                 );
-                // req.login(exUser, {session: false}, (error) => {
-
-                //     const payload = {
-                //         id      : exUser.id,
-                //         email   : exUser.email,
-                //         type    : exUser.type
-                //     };
-
-                //     accessToken = jwt.sign(payload, jwtSecretKey, jwtOptions);
-                //     console.log(accessToken)
-                //     return res.cookie(
-                //         'user',
-                //         accessToken,
-                //         cookieOptions
-                //     ).status(200).json(
-                //         {
-                //             data: "",
-                //             message: ""
-                //         }
-                //     );
-                // })
             } else {
                 const userInfo = {'email': req.body.email, 'provider': req.body.provider}
                 return res.status(404).json(
@@ -310,7 +289,6 @@ const userAuth = {
 
 const userInfo = {
     getUser: async(req, res) => {
-        // 이메일 인증 여부 데이터에 포함해서 보내줄 것 
         const user = await User.findOne(
             {
                 attributes: [
@@ -348,35 +326,6 @@ const userInfo = {
                 ]
             },
         );
-        // const token       = await Token.findOne({ where: { userId: user.id } });
-        // const posts       = await Post.findAll(
-        //     {
-        //         attributes: ['id', 'title'],
-        //         where: { userId: req.user.id } }
-        // );
-        // const replies     = await Reply.findAll(
-        //     { 
-        //         attributes: ['id', 'content'],
-        //         where  : { userId: req.user.id },
-        //         include: [ 
-        //             { model: Post, attributes: ['id', 'title'] },
-        //         ]
-        //     },
-            
-        // );
-        // const mainMajor   = await MainMajor.findOne({ where: { id: user.mainMajorId } });
-        // const doubleMajor = await MainMajor.findOne({ where: { id: user.doubleMajorId } });
-        // const userInfo = {
-        //     'email'      : user.email,
-        //     'webMail'    : `${user.webMail}@hufs.ac.kr`,
-        //     'nickname'   : user.nickname,
-        //     'mainMajor'  : mainMajor.name,
-        //     'doubleMajor': doubleMajor.name,
-        //     'myPost'     : posts,
-        //     'myReplies'  : replies,
-        //     'isAuthenticated': token.isEmailAuthenticated
-        // }
-
         try {
             return res.status(200).json(
                 {
@@ -457,7 +406,6 @@ const userInfo = {
                 }
             );
         } catch (error) {
-            // Unique Error
             console.log(error);
 
             if (error.message === 'Validation error') {
@@ -489,7 +437,6 @@ const userInfo = {
                 }
             );
         } catch (error) {
-            // DB ERROR > 존재하지 않는 경우... 왜? 보안을 위해, postman 통한 공격
             console.log(error);
 
             return res.status(500).json(
@@ -499,30 +446,6 @@ const userInfo = {
                 }
             );
         }
-    }
-}
-
-const socialAuth = {
-    google: async(req, res) => {
-        passport.authenticate('google', {scope: ['profile', 'email']})(req, res);
-    },
-
-    googleCallBack: async(req, res) => {
-        passport.authenticate('google', (error, user) => {
-                userAuth.signIn(req, res, error, user);
-            }
-        )(req, res);
-    },
-
-    kakao: async(req, res) => {
-        passport.authenticate('kakao')(req, res);
-    },
-
-    kakaoCallBack: async(req, res) => {
-        passport.authenticate('kakao', (error, user) => {
-                userAuth.signIn(req, res, error, user);
-            }
-        )(req, res);
     }
 }
 
@@ -718,7 +641,6 @@ const postScrap = {
             //         }
             //     )
             // }
-            // const scraps = await Scrap.findAll({where: {directoryId: req.query.directoryId}});
             const scraps = await Directory.findOne(
                 {
                     where: { userId: req.user.id },
@@ -731,25 +653,12 @@ const postScrap = {
                     ]
                 }
             )
-            // const scrapInfo = [];
-            // for (let idx = 0; idx < scraps.length; idx++) {
-            //     console.log(scraps[idx].dataValues)
-            //     post = await Post.findOne({where: {id: scraps[idx].dataValues.postId}});
-            //     scrapInfo.push(
-            //         {
-            //             'scrapId': scraps[idx].dataValues.id,
-            //             'postId': post.id,
-            //             'postTitle': post.title
-            //         }
-            //     )
-            // }
             return res.status(200).json(
                 {
                     data: scraps.Scraps,
                     message: ""
                 }
             )
-            
         } catch (error) {
             console.log(error)
 
@@ -828,4 +737,4 @@ const postScrap = {
     }
 }
 
-module.exports = { emailAuth, socialAuth, userAuth, userInfo, scrapDirectory, postScrap };
+module.exports = { emailAuth, userAuth, userInfo, scrapDirectory, postScrap };
