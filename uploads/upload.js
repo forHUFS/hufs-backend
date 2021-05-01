@@ -20,7 +20,7 @@ exports.upload = upload({
             cb(null, `post/${Date.now()}${path.basename(file.originalname)}`);
         }
     }),
-    limits: { fileSize: 5*1024*1024 }
+   // limits: { fileSize: 5*1024*1024 }
 });
 exports.uploadForReview = upload({
     storage: multerS3({

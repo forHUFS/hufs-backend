@@ -1,5 +1,7 @@
 const Post = require('../models/posts');
 const User = require('../models/users');
+const Reply = require('../models/replies');
+const { sequelize } = require('../models/index');
 const { deleteImg } = require('../uploads/upload');
 const { Op } = require('sequelize');
 
@@ -7,7 +9,7 @@ exports.readPosts = async (req,res,next)=>{
     try {
         const post = await Post.findAll({
             where: { boardId: req.params.id },
-            include: [{model: User, attributes: ['nickname'] }]
+            include: [{model: User, attributes: ['nickname'] }, {model: Reply, attributes: ['id']}],
         });
         res.status(200).json({
             data: post,
