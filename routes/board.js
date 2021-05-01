@@ -7,7 +7,7 @@ const router = express.Router();
 
 
 
-router.post('/2/post', authUtil.isSignedIn, authUtil.isGraduated, addPost); // 졸업생 게시판 글쓰기
+router.post('/4/post', authUtil.isSignedIn, authUtil.isGraduated, addPost); // 졸업생 게시판 글쓰기
 
 router.post('/:id/post', authUtil.isSignedIn, authUtil.isAuthorized, addPost); // 일반 게시판 글쓰기
 
