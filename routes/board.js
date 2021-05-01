@@ -13,6 +13,6 @@ router.post('/:id/post', authUtil.isSignedIn, authUtil.isAuthorized, addPost); /
 
 router.get('/:id/search', authUtil.isSignedIn, authUtil.isAuthorized, searchPostsInBoard );
 
-router.get('/:id',  readPosts ); //authUtil.isSignedIn, authUtil.isAuthorized,
+router.get('/:id', authUtil.isSignedIn, authUtil.isAuthorized,  readPosts );
 
 module.exports = router;
