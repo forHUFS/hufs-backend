@@ -9,7 +9,7 @@ const router = express.Router();
 
 router.post('/back', cancelPost);
 
-router.post('/img', upload.array('img',5), uploadImg);
+router.post('/img', upload.array('img',10), uploadImg);
 
 
 router.get('/:id/addlike', authUtil.isSignedIn, authUtil.isAuthorized, addLike);
