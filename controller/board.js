@@ -1,10 +1,9 @@
 const sequelize = require('sequelize');
-
 const Post = require('../models/posts');
 const User = require('../models/users');
 const Reply = require('../models/replies');
-const { deleteImg } = require('../uploads/upload');
-const { Op, where } = require('sequelize');
+const { deleteImg } = require('../middlewares/upload');
+const { Op } = require('sequelize');
 
 exports.readPosts = async (req,res,next)=>{
     try {

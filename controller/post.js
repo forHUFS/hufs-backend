@@ -3,7 +3,7 @@ const Reply = require('../models/replies');
 const ReportOfPost = require('../models/reportOfPost');
 const User = require('../models/users');
 const LikeRecordOfPost = require('../models/likeRecordOfPost');
-const { deleteImg } = require('../uploads/upload');
+const { deleteImg } = require('../middlewares/upload');
 const { userReport } = require('../middlewares/reports');
 const { Op } = require('sequelize');
 

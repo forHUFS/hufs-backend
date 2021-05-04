@@ -1,7 +1,7 @@
 const express = require('express');
 const { authUtil } = require('../middlewares/auth');
 const { addReview, readReview, readReviews, readAllReviews, modifyReview, deleteReview, readStoresOfSeoul, readStoresOfGlobal } = require('../controller/store');
-const { uploadForReview } = require('../uploads/upload');
+const { uploadForReview } = require('../middlewares/upload');
 const router = express.Router();
 
 

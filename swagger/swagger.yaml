@@ -955,7 +955,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: "#/definitions/Post"
+                      $ref: "#/definitions/PostAndReplyCount"
                   message:
                     type: string
                     example: ""
@@ -2772,3 +2772,57 @@ definitions:
             type: string
             description: 상점 이름
             example: 맛집
+  PostAndReplyCount:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 글 번호
+        example: 1
+      title:
+        type: string
+        description: 글 제목
+        example: 제목
+      content:
+        type: string
+        description: 글 내용
+        example: <p>안녕</p>
+      like:
+        type: integer
+        description: 좋아요 개수
+        exapmle: 32
+      report:
+        type: integer
+        description: 신고 개수 / 5회 이상일 경우 숨김 처리
+        example: 2
+      admin:
+        type: boolean
+        description: 작성자가 admin이면 true, 아니면 false
+        example: false
+      createdAt:
+        type: date
+        description: 글 생성 날짜 및 시간
+        example: 2021-03-14T06:21:29.000Z
+      updatedAt:
+        type: date
+        description: 글 마지막으로 업데이트된 시간
+        example: 2021-03-14T06:21:29.000Z
+      boardId:
+        type: integer
+        description: 게시판 아이디
+        example: 1
+      userId:
+        type: integer
+        description: 글 작성한 사용자의 아이디
+        example: 1
+      User:
+        type: object
+        properties:
+          nickname:
+            type: string
+            description: 글 작성한 사용자의 닉네임
+            example: 하연
+      Replies:
+        type: array
+        example: [{ "count": 3 }]
+        description: 댓글 개수, 댓글 0개일 경우 빈 배열
