@@ -1,4 +1,4 @@
-const jwt                       =  require('jsonwebtoken');
+const jwt                       = require('jsonwebtoken');
 const crypto                    = require('crypto');
 const passport                  = require('passport');
 const { Sequelize, QueryTypes } = require('sequelize');
@@ -19,10 +19,9 @@ const MainMajor   = require('../models/mainMajors');
 const DoubleMajor = require('../models/doubleMajors');
 
 
-const token = crypto.randomBytes(20).toString('hex');
-
 const emailAuth = {
     sendEmail: async(req, res) => {
+        const token  = crypto.randomBytes(20).toString('hex');
         const toWhom = req.body.webMail;
         const mailOptions = {
             from: "HUFSpace",
@@ -42,30 +41,52 @@ const emailAuth = {
             } else {
                 try {
                     date = new Date();
-                    await Token.create( 
-                        {
-                            emailToken         : token,
-                            emailExpirationTime: date,
-                            userId             : req.user.id
-                        }
-                    );
-                    
-                    const payload = {
-                        id      : req.user.id,
-                        webMail : req.user.webMail,
-                        type    : req.user.type
-                    };
-                    accessToken = jwt.sign(payload, jwtSecretKey, jwtOptions);
-                    return res.cookie(
-                        'user',
-                        accessToken,
-                        cookieOptions
-                    ).status(200).json(
-                        {
-                            data: "",
-                            message: ""
-                        }
-                    );
+                    const jwtToken = req.cookies['user'];
+                    console.log(jwtToken)
+                    if (jwtToken) {
+                        req.user = jwt.verify(jwtToken, jwtSecretKey);
+                        console.log(req.user)
+                        await Token.update(
+                            {
+                                emailToken: token,
+                                emailExpirationTime: date
+                            },
+                            {
+                                where: {userId: req.user.id}
+                            }
+                        )
+                        return res.status(200).json(
+                            {
+                                data: "",
+                                message: ""
+                            }
+                        )
+                    } else {
+                        await Token.create( 
+                            {
+                                emailToken         : token,
+                                emailExpirationTime: date,
+                                userId             : req.user.id
+                            }
+                        );
+                        
+                        const payload = {
+                            id      : req.user.id,
+                            webMail : req.user.webMail,
+                            type    : req.user.type
+                        };
+                        accessToken = jwt.sign(payload, jwtSecretKey, jwtOptions);
+                        return res.cookie(
+                            'user',
+                            accessToken,
+                            cookieOptions
+                        ).status(200).json(
+                            {
+                                data: "",
+                                message: ""
+                            }
+                        );
+                    }
                 } catch (error) {
                     return res.status(500).json(
                         {
