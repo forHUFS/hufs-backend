@@ -22,9 +22,10 @@ const DoubleMajor = require('../models/doubleMajors');
 const emailAuth = {
     sendEmail: async(req, res) => {
         const token  = crypto.randomBytes(20).toString('hex');
-        
+        const jwtToken = req.cookies['user'];
         let toWhom;
-        if (req.cookies['user']) {
+        if (jwtToken) {
+            req.user = jwt.verify(jwtToken, jwtSecretKey);
             toWhom = req.user.webMail;
         } else {
             toWhom = req.body.webMail;
@@ -48,9 +49,7 @@ const emailAuth = {
             } else {
                 try {
                     date = new Date();
-                    const jwtToken = req.cookies['user'];
                     if (jwtToken) {
-                        req.user = jwt.verify(jwtToken, jwtSecretKey);
                         await Token.update(
                             {
                                 emailToken: token,
