@@ -48,15 +48,11 @@ const emailAuth = {
                         console.log("Token Here!")
                         req.user = jwt.verify(jwtToken, jwtSecretKey);
                         console.log(req.user)
-                        await Token.update(
-                            {
-                                emailToken: token,
-                                emailExpirationTime: date
-                            },
-                            {
-                                where: {userId: req.user.id}
-                            }
-                        )
+                        const tokenTable = await Token.findOne({where: {userId: req.user.id}});
+                        console.log(tokenTable);
+                        tokenTable.emailToken = token;
+                        tokenTable.emailExpirationTime = date;
+                        tokenTable.save();
                         return res.status(200).json(
                             {
                                 data: "",
