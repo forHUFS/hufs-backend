@@ -13,6 +13,7 @@ const majorController = {
             }
         );
     },
+    
     getDoubleMajor: async(req, res) => {
         const doubleMajor = await DoubleMajor.findAll();
 
@@ -23,8 +24,8 @@ const majorController = {
             }
         )
     },
-    createMajor: async(req, res) => {
 
+    createMajor: async(req, res) => {
         // for admin user
         if (req.body.mainMajor) {
             await MainMajor.create({
@@ -37,19 +38,6 @@ const majorController = {
                 name: req.body.doubleMajor
             })
         }
-
-        // all majors update
-        // for (let idx = 0; idx < req.body.mainMajors.length; idx++) {
-        //     await MainMajor.create({
-        //         name: req.body.mainMajors[idx]
-        //     });
-        // }
-
-        // for (let idx = 0; idx < req.body.doubleMajors.length; idx++) {
-        //     await DoubleMajor.create({
-        //         name: req.body.doubleMajors[idx]
-        //     })
-        // }
 
         return res.status(200).json(
             {

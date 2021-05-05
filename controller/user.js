@@ -21,9 +21,15 @@ const DoubleMajor = require('../models/doubleMajors');
 
 const emailAuth = {
     sendEmail: async(req, res) => {
-        console.log("send email")
         const token  = crypto.randomBytes(20).toString('hex');
-        const toWhom = req.body.webMail;
+        
+        let toWhom;
+        if (req.cookies['user']) {
+            toWhom = req.user.webMail;
+        } else {
+            toWhom = req.body.webMail;
+        }
+        
         const mailOptions = {
             from: "HUFSpace",
             to: `${toWhom}@hufs.ac.kr`,
@@ -43,16 +49,17 @@ const emailAuth = {
                 try {
                     date = new Date();
                     const jwtToken = req.cookies['user'];
-                    console.log(jwtToken)
                     if (jwtToken) {
-                        console.log("Token Here!")
                         req.user = jwt.verify(jwtToken, jwtSecretKey);
-                        console.log(req.user)
-                        const tokenTable = await Token.findOne({where: {userId: req.user.id}});
-                        console.log(tokenTable);
-                        tokenTable.emailToken = token;
-                        tokenTable.emailExpirationTime = date;
-                        tokenTable.save();
+                        await Token.update(
+                            {
+                                emailToken: token,
+                                emailExpirationTime: date
+                            },
+                            {
+                                where: {userId: req.user.id}
+                            }
+                        )
                         return res.status(200).json(
                             {
                                 data: "",
@@ -60,7 +67,6 @@ const emailAuth = {
                             }
                         )
                     } else {
-                        console.log("No Token, Just Sign-up")
                         await Token.create( 
                             {
                                 emailToken         : token,
