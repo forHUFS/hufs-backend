@@ -125,7 +125,7 @@ exports.deleteReview = async (req,res,next) => {
             where: {id: req.params.id}
         });
         console.log(review);
-        if (req.user.id || req.user.type === 'admin') {
+        if (req.user.id === review.userId || req.user.type === 'admin') {
             let m;
             let img = [];
             let reg = /<img[^>]*src=[\"']?([^>\"']+)[\"']?[^>]*>/g
