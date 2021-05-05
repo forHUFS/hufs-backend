@@ -21,6 +21,7 @@ const DoubleMajor = require('../models/doubleMajors');
 
 const emailAuth = {
     sendEmail: async(req, res) => {
+        console.log("send email")
         const token  = crypto.randomBytes(20).toString('hex');
         const toWhom = req.body.webMail;
         const mailOptions = {
@@ -44,6 +45,7 @@ const emailAuth = {
                     const jwtToken = req.cookies['user'];
                     console.log(jwtToken)
                     if (jwtToken) {
+                        console.log("Token Here!")
                         req.user = jwt.verify(jwtToken, jwtSecretKey);
                         console.log(req.user)
                         await Token.update(
@@ -62,6 +64,7 @@ const emailAuth = {
                             }
                         )
                     } else {
+                        console.log("No Token, Just Sign-up")
                         await Token.create( 
                             {
                                 emailToken         : token,
@@ -208,7 +211,9 @@ const userAuth = {
                         userId: user.id
                     }
                 )
-                req.user     = user
+                console.log(user)
+                console.log(provider)
+                req.user = user
                 return next();
             } else {
                 return res.status(401).json(
