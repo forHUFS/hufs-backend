@@ -22,15 +22,7 @@ exports.upload = upload({
     }),
    // limits: { fileSize: 5*1024*1024 }
 });
-exports.uploadForReview = upload({
-    storage: multerS3({
-        s3: this.s3,
-        bucket: 'hufsweb',
-        key(req, file, cb){
-            cb(null, `review/${Date.now()}${path.basename(file.originalname)}`);
-        }
-    })
-});
+
 
 exports.uploadImg = (req,res)=>{
     console.log(req.files);

@@ -2,7 +2,7 @@ const StoreReview = require('../models/storeReviews');
 const User = require('../models/users');
 const Store = require('../models/stores');
 const StoreSubCategory = require('../models/storeSubCategories');
-const { deleteImg } = require('../uploads/upload');
+const { deleteImg } = require('../middlewares/upload');
 const sequelize = require('../models').sequelize;
 
 exports.addReview = async(req,res,next) => {
@@ -13,7 +13,7 @@ exports.addReview = async(req,res,next) => {
             content: req.body.content,
             score: req.body.score,
             storeId: req.params.id,
-            userId: 46 // req.user.id
+            userId: req.user.id
         });
         const url = req.body.url;
         if (url && url.length) {
@@ -93,7 +93,7 @@ exports.modifyReview = async (req,res,next) => {
         },{
             where : {
                 id: req.params.id,
-                userId: 46 // req.user.id
+                userId: req.user.id
             }
         });
         console.log(review);
@@ -125,7 +125,7 @@ exports.deleteReview = async (req,res,next) => {
             where: {id: req.params.id}
         });
         console.log(review);
-        if (review.userId == 46) {// req.user.id || req.user.type === 'admin') {
+        if (req.user.id === review.userId || req.user.type === 'admin') {
             let m;
             let img = [];
             let reg = /<img[^>]*src=[\"']?([^>\"']+)[\"']?[^>]*>/g

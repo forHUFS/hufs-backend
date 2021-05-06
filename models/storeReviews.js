@@ -4,7 +4,7 @@ module.exports = class StoreReview extends Sequelize.Model{
     static init(sequelize) {
         return super.init({
             title: {
-                type: Sequelize.STRING(50),
+                type: Sequelize.STRING(32),
                 allowNull: false,
             },
             content: {
