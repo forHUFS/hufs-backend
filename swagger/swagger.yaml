@@ -2819,10 +2819,6 @@ definitions:
         type: string
         description: 글 제목
         example: 제목
-      content:
-        type: string
-        description: 글 내용
-        example: <p>안녕</p>
       like:
         type: integer
         description: 좋아요 개수
@@ -2849,16 +2845,13 @@ definitions:
         example: 1
       userId:
         type: integer
-        description: 글 작성한 사용자의 아이디
+        description: 글 작성한 사용자의 아이디(PK)
         example: 1
-      User:
-        type: object
-        properties:
-          nickname:
-            type: string
-            description: 글 작성한 사용자의 닉네임
-            example: 하연
-      Replies:
-        type: array
-        example: [{ "count": 3 }]
-        description: 댓글 개수, 댓글 0개일 경우 빈 배열
+      userNickname:
+        type: string
+        description: 글 작성한 사용자의 닉네임
+        example: 후니
+      repliesCount:
+        type: integer
+        description: 댓글 갯수
+        example: 0

@@ -3,22 +3,35 @@ const Post = require('../models/posts');
 const User = require('../models/users');
 const Reply = require('../models/replies');
 const { deleteImg } = require('../middlewares/upload');
-const { Op } = require('sequelize');
+const { Op, QueryTypes } = require('sequelize');
+
 
 exports.readPosts = async (req,res,next)=>{
     try {
-        const post = await Post.findAll({
-            where: { boardId: req.params.id },
-            include: [
-                {model: User, attributes: ['nickname'] },
-                {model: Reply, attributes: [
-                    [sequelize.fn('COUNT', 'id'), 'count']
-                ]}
-            ],
-            group: ['id']
-        });
+        const posts = await Post.sequelize.query(
+            `
+                SELECT posts.id AS "id",
+                posts.title AS "title",
+                posts.like AS "like",
+                posts.report AS "report",
+                posts.admin AS "admin",
+                posts.created_at AS "createdAt",
+                posts.updated_at AS "updatedAt",
+                posts.board_id AS "boardId",
+                users.id AS "userId",
+                users.nickname AS "userNickname",
+                replies.post_id AS "postId",
+                COUNT(CASE WHEN 0 THEN 0 ELSE replies.id END) AS "repliesCount"
+                FROM posts
+                LEFT OUTER JOIN users ON posts.user_id = users.id
+                LEFT OUTER JOIN replies ON posts.id = replies.post_id
+                WHERE posts.board_id = ${req.params.id}
+                GROUP BY posts.id
+            `,
+            {type: QueryTypes.SELECT}
+        );
         res.status(200).json({
-            data: post,
+            data: posts,
             message: ""
         });
     } catch (err) {
