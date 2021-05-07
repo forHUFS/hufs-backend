@@ -1,6 +1,5 @@
 // package
 const express      = require('express');
-// const session      = require('express-session');
 const cors         = require('cors');
 const cookieParser = require('cookie-parser')
 const morgan       = require('morgan');
@@ -13,7 +12,6 @@ const swaggerUi   = require('swagger-ui-express');
 const swaggerSpec = YAML.load(path.join(__dirname, 'swagger/swagger.yaml'))
 
 // config
-// const sessionOptions     = require('./config/secretKey').sessionOptions;
 const configurePassport = require('./config/passport');
 
 // routes
@@ -24,12 +22,13 @@ const boardRouter       = require('./routes/board');
 const replyRouter       = require('./routes/reply');
 const storeRouter       = require('./routes/store');
 const userRouter        = require('./routes/user');
+const campusRouter      = require('./routes/campus');
 const majorRouter       = require('./routes/major');
 const scholarShipRouter = require('./routes/scholarship');
 
 dotenv.config();
 
-const app          = express();
+const app         = express();
 const corsOptions = {
     origin: true,
     credentials: true
@@ -39,8 +38,7 @@ app.set('port', process.env.PORT || 80);
 
 app.use(morgan('dev'));
 app.use(cookieParser());
-// app.use(session(sessionOptions));
-app.use(cors(corsOptions)); // corsOptions
+app.use(cors(corsOptions));
 
 configurePassport(app);
 
@@ -59,6 +57,7 @@ app.use('/board', boardRouter);
 app.use('/reply', replyRouter);
 app.use('/store', storeRouter);
 app.use('/user', userRouter);
+app.use('/campus', campusRouter);
 app.use('/major', majorRouter);
 app.use('/scholarship', scholarShipRouter);
 app.use('/', mainRouter);

@@ -1,28 +1,51 @@
+const { Op }      = require('sequelize');
+
 const MainMajor   = require('../models/mainMajors');
 const DoubleMajor = require('../models/doubleMajors');
 
 
 const majorController = {
     getMainMajor: async(req, res) => {
-        const mainMajor   = await MainMajor.findAll();
+        try {
+            const mainMajor = await MainMajor.findAll({where: {[Op.or]: [{campusId: req.query.campusId}, {campusId: 3}]}});
 
-        return res.status(200).json(
-            {
-                data: mainMajor,
-                message: ""
-            }
-        );
+            return res.status(200).json(
+                {
+                    data: mainMajor,
+                    message: ""
+                }
+            );
+        } catch (error) {
+            console.log(error);
+
+            return res.status(500).json(
+                {
+                    data: "",
+                    message: error
+                }
+            );
+        }
     },
     
     getDoubleMajor: async(req, res) => {
-        const doubleMajor = await DoubleMajor.findAll();
+        try {
+            const doubleMajor = await DoubleMajor.findAll({where: {[Op.or]: [{campusId: req.query.campusId}, {campusId: 3}]}});
+            return res.status(200).json(
+                {
+                    data: doubleMajor,
+                    message: ""
+                }
+            )
+        } catch (error) {
+            console.log(error);
 
-        return res.status(200).json(
-            {
-                data: doubleMajor,
-                message: ""
-            }
-        )
+            return res.status(500).json(
+                {
+                    data: "",
+                    message: error
+                }
+            );
+        }
     },
 
     createMajor: async(req, res) => {

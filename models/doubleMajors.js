@@ -23,5 +23,6 @@ module.exports = class DoubleMajor extends Sequelize.Model{
     }
     static associate(db){
         db.DoubleMajor.hasMany(db.User, { foreignKey: 'doubleMajorId', sourceKey: 'id'});
+        db.MainMajor.belongsTo(db.Campus, { foreignKey: 'campusId', targetKey: 'id' });
     }
 }

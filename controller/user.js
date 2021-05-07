@@ -377,7 +377,6 @@ const userInfo = {
         const mainMajor   = await MainMajor.findOne({ where: { id: req.body.mainMajorId } });
         const doubleMajor = await DoubleMajor.findOne( { where: { id: req.body.doubleMajorId } } );
         try {
-
             if (user.isMainMajorUpdated) {
                 return res.status(409).json(
                     {
