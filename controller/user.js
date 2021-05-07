@@ -32,7 +32,7 @@ const emailAuth = {
         }
         
         const mailOptions = {
-            from: "HUFSpace",
+            from: "hufs.web@gmail.com",
             to: `${toWhom}@hufs.ac.kr`,
             subject: "[ HUFSpace ] 회원가입을 위한 이메일입니다.",
             text: "인증을 위해 아래 URL을 클릭하여 주세요.\n" + `https://hufspace.com/email?token=${token}`
@@ -372,11 +372,15 @@ const userInfo = {
     },
 
     updateUser: async(req, res) => {
-        const today       = new Date()
-        const user        = await User.findOne( { where: { id: req.user.id } } );
-        const mainMajor   = await MainMajor.findOne({ where: { id: req.body.mainMajorId } });
-        const doubleMajor = await DoubleMajor.findOne( { where: { id: req.body.doubleMajorId } } );
         try {
+<<<<<<< HEAD
+=======
+            const today       = new Date()
+            const user        = await User.findOne( { where: { id: req.user.id } } );
+            const mainMajor   = await MainMajor.findOne({ where: { id: req.body.mainMajorId } });
+            const doubleMajor = await DoubleMajor.findOne( { where: { id: req.body.doubleMajorId } } );
+
+>>>>>>> dd683ec... [ 이태현 ] 기능 수정: 사용자 개인정보 수정 관련 엔드포인트 수정 및 웹 메일 스팸 분류 문제 해결
             if (user.isMainMajorUpdated) {
                 return res.status(409).json(
                     {
