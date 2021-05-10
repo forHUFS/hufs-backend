@@ -17,24 +17,13 @@ module.exports = class Token extends Sequelize.Model{
                 type     : Sequelize.DATE,
                 allowNull: true
             },
-            accessToken : {
-                type     : Sequelize.STRING(64),
-                allowNull: true,
-                unique   : true
-            },
-            isMaintained: {
-                type        : Sequelize.BOOLEAN(),
-                allowNull   : true,
-                defaultValue: false,
-            },
-
         }, {
             sequelize,
-            timestamps: true,
+            timestamps: false,
             underscored: true,
             modelName: 'Token',
             tableName: 'tokens',
-            paranoid: true,
+            paranoid: false,
             charset: 'utf8mb4',
             collate: 'utf8mb4_general_ci',
         });

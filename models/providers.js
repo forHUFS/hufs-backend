@@ -16,7 +16,8 @@ module.exports = class Provider extends Sequelize.Model{
             timestamps: false,
             underscored: true,
             modelName: 'Provider',
-            paranoid: true,
+            tableName: 'providers',
+            paranoid: false,
             charset: 'utf8',
             collate: 'utf8_general_ci',
         });
