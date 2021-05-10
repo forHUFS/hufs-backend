@@ -771,6 +771,125 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Query-response"
+
+  /auth/signed-in:
+    get:
+      summary: 로그인 여부 인증 엔드포인트
+      consumes: application/json
+      produces: application/json
+      responses:
+        200:
+          content:
+             application/json:
+              schema:
+                $ref: "#/definitions/Success-response" 
+        401:
+          description: 로그인하지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Unauthorized-response"           
+  
+  /auth/authorized:
+    get:
+      summary: 사용자 이용 정지 여부 인증 엔드포인트
+      consumes: application/json
+      produces: application/json
+      responses:
+        200:
+          content:
+             application/json:
+              schema:
+                $ref: "#/definitions/Success-response" 
+        401:
+          description: 로그인하지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Unauthorized-response"
+        403:
+          description: 접근 권한 오류
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/definitions/Forbidden-suspension-response"
+                  - $ref: "#/definitions/Forbidden-before-response"
+              examples:
+                suspended-user:
+                  summary: 정지된 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_SUSPENSION
+                email-unauthorized-user:
+                  summary: 이메일 인증이 되지 않은 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_BEFORE                      
+
+  /auth/admin:
+    get:
+      summary: 관리자 여부 인증 엔드포인트
+      consumes: application/json
+      produces: application/json
+      responses:
+        200:
+          content:
+             application/json:
+              schema:
+                $ref: "#/definitions/Success-response" 
+        401:
+          description: 로그인하지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Unauthorized-response"
+        403:
+          description: 접근 권한 오류
+          content:
+            application/json:
+              schema:
+                type:
+                properties:
+                  data:
+                    type: string
+                    example: ""
+                  message:
+                    type: string
+                    example: "FORBIDDEN"                           
+                
+  /auth/graduated:
+    get:
+      summary: 졸업생 여부 인증 엔드포인트
+      consumes: application/json
+      produces: application/json
+      responses:
+        200:
+          content:
+             application/json:
+              schema:
+                $ref: "#/definitions/Success-response" 
+        401:
+          description: 로그인하지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Unauthorized-response"        
+        403:
+          description: 접근 권한 오류
+          content:
+            application/json:
+              schema:
+                type:
+                properties:
+                  data:
+                    type: string
+                    example: ""
+                  message:
+                    type: string
+                    example: "FORBIDDEN"                                     
+
+
   /campus:
     get:
       summary: 장학금 및 전공 / 이중전공 캠퍼스 목록 조회
