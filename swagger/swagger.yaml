@@ -1401,62 +1401,8 @@ paths:
                   summary: 이메일 인증이 되지 않은 사용자
                   value:
                     data: ""
-                    message: FORBIDDEN_BEFORE                   
-        409:
-          description: 사용자가 이미 좋아요를 누른 게시글에 대한 요청 거부
-          content:
-            application/json:
-              schema:
-                $ref: "#/definitions/Conflict-response"               
-  /post/{id}/dellike:
-    get:
-      summary: 게시글 좋아요 -1
-      consumes: application/json
-      produces: application/json
-      parameters:
-        - in: path
-          name: id
-          required: true
-          description: 게시글 번호
-          example: 1
-      responses:
-        200:
-          description: 좋아요 -1 완료
-          content:
-            application/json:
-              schema:
-                $ref: "#/definitions/Success-response"
-        401:
-          description: 로그인하지 않은 사용자
-          content:
-            application/json:
-              schema:
-                $ref: "#/definitions/Unauthorized-response"            
-        403:
-          description: 접근 권한 오류
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: "#/definitions/Forbidden-suspension-response"
-                  - $ref: "#/definitions/Forbidden-before-response"
-              examples:
-                suspended-user:
-                  summary: 정지된 사용자
-                  value:
-                    data: ""
-                    message: FORBIDDEN_SUSPENSION
-                email-unauthorized-user:
-                  summary: 이메일 인증이 되지 않은 사용자
-                  value:
-                    data: ""
-                    message: FORBIDDEN_BEFORE   
-        409:
-          description: 사용자가 좋아요를 누른 적이 없는 게시글에 대한 요청 거부
-          content:
-            application/json:
-              schema:
-                $ref: "#/definitions/Conflict-response"
+                    message: FORBIDDEN_BEFORE
+
   /post/{id}/report:
     post:
       summary: 게시글 신고
