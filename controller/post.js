@@ -67,8 +67,9 @@ exports.delLike = async (req,res,next)=> {
                     transaction: t
                 });
                 await LikeRecordOfPost.destroy({
-                    postId: postId,
-                    userId: userId,
+                    where: { postId: postId,
+                             userId: userId
+                    },
                     transaction: t
                 });
                 res.status(200).json({
