@@ -1082,98 +1082,7 @@ paths:
                   value:
                     data: ""
                     message: FORBIDDEN_BEFORE                  
-  /board/{id}/search:
-    get:
-      summary: 게시판 내 글 검색
-      consumes: application/json
-      produces: application/json
-      parameters:
-        - in: path
-          name: id
-          description: 게시판 번호
-          required: true
-          example: 1
-        - in: query
-          name: keyword
-          description: 검색 키워드
-          required: true
-          example: 검색할 내용
-        - in: query
-          name: option
-          description: titleAndContent, title, content, nick 중 하나
-          required: true
-          example: titleAndContent
-      responses:
-        200:
-          description: 게시글 검색 완료
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      $ref: "#/definitions/Post"
-                  message:
-                    type: string
-                    example: ""
-        401:
-          description: 로그인하지 않은 사용자
-          content:
-            application/json:
-              schema:
-                $ref: "#/definitions/Unauthorized-response"            
-        403:
-          description: 접근 권한 오류
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: "#/definitions/Forbidden-suspension-response"
-                  - $ref: "#/definitions/Forbidden-before-response"
-              examples:
-                suspended-user:
-                  summary: 정지된 사용자
-                  value:
-                    data: ""
-                    message: FORBIDDEN_SUSPENSION
-                email-unauthorized-user:
-                  summary: 이메일 인증이 되지 않은 사용자
-                  value:
-                    data: ""
-                    message: FORBIDDEN_BEFORE               
-        422:
-          description: 쿼리 스트링 관련 오류
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: "#/definitions/Query-response"
-                  - $ref: "#/definitions/Query-keyword-response"
-                  - $ref: "#/definitions/Query-option-response"
-              examples:
-                query-error:
-                  summary: 쿼리 스트링 중 하나 누락
-                  value:
-                    data: ""
-                    message: QUERY
-                keyword-error:
-                  summary: keyword가 두 글자 이상이 아님
-                  value:
-                    data: ""
-                    message: QUERY_KEYWORD
-                option-error:
-                  summary: option이 올바른 형태가 아님
-                  value:
-                    data: ""
-                    message: QUERY_OPTION
-        404:
-          description: 검색 결과가 없음
-          content:
-            application/json:
-              schema:
-                $ref: "#/definitions/ResourceNotFound-response"
+
   /search:
     get:
       summary: 전체 게시판 글 검색
@@ -1190,6 +1099,11 @@ paths:
           description: titleAndContent, title, content, nick 중 하나
           required: true
           example: titleAndContent
+        - in: query
+          name: board
+          description: 전체 게시판 검색일 경우 필요 X, 세부 게시판 검색 = 1 이상
+          required: false
+          example: 1
       responses:
         200:
           description: 게시글 검색 완료
@@ -1401,62 +1315,8 @@ paths:
                   summary: 이메일 인증이 되지 않은 사용자
                   value:
                     data: ""
-                    message: FORBIDDEN_BEFORE                   
-        409:
-          description: 사용자가 이미 좋아요를 누른 게시글에 대한 요청 거부
-          content:
-            application/json:
-              schema:
-                $ref: "#/definitions/Conflict-response"               
-  /post/{id}/dellike:
-    get:
-      summary: 게시글 좋아요 -1
-      consumes: application/json
-      produces: application/json
-      parameters:
-        - in: path
-          name: id
-          required: true
-          description: 게시글 번호
-          example: 1
-      responses:
-        200:
-          description: 좋아요 -1 완료
-          content:
-            application/json:
-              schema:
-                $ref: "#/definitions/Success-response"
-        401:
-          description: 로그인하지 않은 사용자
-          content:
-            application/json:
-              schema:
-                $ref: "#/definitions/Unauthorized-response"            
-        403:
-          description: 접근 권한 오류
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: "#/definitions/Forbidden-suspension-response"
-                  - $ref: "#/definitions/Forbidden-before-response"
-              examples:
-                suspended-user:
-                  summary: 정지된 사용자
-                  value:
-                    data: ""
-                    message: FORBIDDEN_SUSPENSION
-                email-unauthorized-user:
-                  summary: 이메일 인증이 되지 않은 사용자
-                  value:
-                    data: ""
-                    message: FORBIDDEN_BEFORE   
-        409:
-          description: 사용자가 좋아요를 누른 적이 없는 게시글에 대한 요청 거부
-          content:
-            application/json:
-              schema:
-                $ref: "#/definitions/Conflict-response"
+                    message: FORBIDDEN_BEFORE
+
   /post/{id}/report:
     post:
       summary: 게시글 신고

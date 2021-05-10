@@ -27,17 +27,27 @@ exports.addLike = async (req,res,next) => {
             },{
                 transaction: t
             });
-            res.status(200).json({
-                data: "",
-                message: ""
-            });
             });
         } else {
-            res.status(409).json({
-                data: "",
-                message: "CONFLICT"
+            await sequelize.transaction(async (t)=> {
+                await Post.update({
+                    like: sequelize.literal('`like`-1')
+                }, {
+                    where: { id: postId },
+                    transaction: t
+                });
+                await LikeRecordOfPost.destroy({
+                    postId: postId,
+                    userId: userId,
+                    transaction: t
+                });
             });
         }
+        res.status(200).json({
+            data: "",
+            message: ""
+        });
+
 
     } catch (err) {
         console.error(err);
