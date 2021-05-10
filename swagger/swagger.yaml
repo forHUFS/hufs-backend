@@ -1101,8 +1101,8 @@ paths:
           example: titleAndContent
         - in: query
           name: board
-          description: 전체 게시판 검색 = 0, 세부 게시판 검색 = 1 이상
-          required: true
+          description: 전체 게시판 검색일 경우 필요 X, 세부 게시판 검색 = 1 이상
+          required: false
           example: 1
       responses:
         200:

@@ -8,13 +8,14 @@ exports.searchPosts = async (req, res, next) => {
         let keyword = req.query.keyword;
         let option = req.query.option;
         let boardNumber = req.query.board;
-        if (!keyword || !option || !boardNumber) {
+        if (!keyword || !option) {
             res.status(422).json({
                 data: "",
                 message: "QUERY"
             });
         } else {
             keyword = keyword.trim();
+            boardNumber = boardNumber?boardNumber:0;
             boardNumber = parseInt(boardNumber);
             if (keyword.length < 2) {
                 return res.status(422).json({
