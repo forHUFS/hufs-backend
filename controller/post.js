@@ -37,8 +37,9 @@ exports.addLike = async (req,res,next) => {
                     transaction: t
                 });
                 await LikeRecordOfPost.destroy({
+                    where: {
                     postId: postId,
-                    userId: userId,
+                    userId: userId },
                     transaction: t
                 });
             });
