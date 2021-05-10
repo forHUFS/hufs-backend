@@ -16,7 +16,7 @@ const configurePassport = require('./config/passport');
 
 // routes
 const { sequelize }     = require('./models');
-const mainRouter        = require('./routes/main');
+const searchRouter        = require('./routes/search');
 const postRouter        = require('./routes/post');
 const boardRouter       = require('./routes/board');
 const replyRouter       = require('./routes/reply');
@@ -60,7 +60,7 @@ app.use('/user', userRouter);
 app.use('/campus', campusRouter);
 app.use('/major', majorRouter);
 app.use('/scholarship', scholarShipRouter);
-app.use('/', mainRouter);
+app.use('/search', searchRouter);
 
 // API Document by using swagger
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
