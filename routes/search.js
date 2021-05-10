@@ -4,6 +4,6 @@ const { authUtil } = require('../middlewares/auth');
 
 const router = express.Router();
 
-router.get('/',  searchPosts ); //authUtil.isSignedIn, authUtil.isAuthorized
+router.get('/',  authUtil.isSignedIn, authUtil.isAuthorized, searchPosts );
 
 module.exports = router;
