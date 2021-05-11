@@ -2329,18 +2329,10 @@ paths:
                 type: object
                 properties:
                   data:
-                    items:
-                      $ref: "#/definitions/Review"
-                  count:
-                    type: integer
-                    description: 리뷰 개수
-                    example: 19
-                  average:
-                    type: string
-                    description: 리뷰 평점 평균
-                    example: "4.2"
+                    description: 리뷰 데이터 배열, 마지막에는 리뷰 개수와 평점
+                    example: [
+                      { "id": 1, "title": "제목", "content": "내용", "score": 3.5, "createdAt": "2021-03-12T11:44:34.000Z", "updatedAt": "2021-03-12T11:44:34.000Z","storeId": 1,"userId": 2,"User": {"nickname": "하연"}},{ "count": 19, "average": "4.2" } ]
                   message:
-                    type: string
                     example: ""
         401:
           description: 로그인하지 않은 사용자
@@ -2897,3 +2889,12 @@ definitions:
         type: integer
         description: 댓글 갯수
         example: 0
+  CountAndScoreAvg:
+    type: object
+    properties:
+      count:
+        type: integer
+        example: 19
+      average:
+        type: string
+        example: 4.2

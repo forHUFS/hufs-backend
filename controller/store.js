@@ -61,8 +61,9 @@ exports.readReviews = async(req,res,next) => {
         });
         let count = review.length;
         let average = count?(await (review.reduce((a,b)=>a+parseFloat(b.score),0))/count).toFixed(1):0;
+        review.push( { count, average } );
         res.status(200).json({
-            data: review, count, average,
+            data: review,
             message: ""
         });
 
