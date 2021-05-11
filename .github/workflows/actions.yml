@@ -29,7 +29,8 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Deploy
-        run: aws deploy create-deployment \
+        run: |
+          aws deploy create-deployment \
             --application-name ${{ secrets.AWS_CODE_DEPLOY_APP_NAME }} \
             --deployment-config-name ${{ secrets.AWS_CODE_DEPLOY_CONFIG_TYPE }} \
             --deployment-group-name ${{ secrets.AWS_CODE_DEPLOY_GROUP_NAME }} \
