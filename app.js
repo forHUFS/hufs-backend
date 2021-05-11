@@ -11,9 +11,6 @@ const YAML        = require('yamljs');
 const swaggerUi   = require('swagger-ui-express');
 const swaggerSpec = YAML.load(path.join(__dirname, 'swagger/swagger.yaml'))
 
-// config
-const configurePassport = require('./config/passport');
-
 // routes
 const { sequelize }     = require('./models');
 const authRouter        = require('./routes/auth');
@@ -40,8 +37,6 @@ app.set('port', process.env.PORT || 80);
 app.use(morgan('dev'));
 app.use(cookieParser());
 app.use(cors(corsOptions));
-
-configurePassport(app);
 
 sequelize.sync({force:false})
     .then(()=>{
