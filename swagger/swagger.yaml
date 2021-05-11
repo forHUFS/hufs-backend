@@ -2584,6 +2584,8 @@ definitions:
         example: 1
       Board:
         type: object
+        description: 전체 게시판 검색일 경우에만 표시
+        required: false
         properties:
           title:
             type: string
@@ -2596,6 +2598,10 @@ definitions:
             type: string
             description: 글 작성한 사용자의 닉네임
             example: 하연
+      Replies:
+        type: array
+        example: [ { "id":22 }, { "id": 33 } ]
+        description: 게시글에 달린 댓글 id
   PostAndReply:
     type: object
     properties:
