@@ -1,0 +1,18 @@
+{
+    "development": {
+        "username"        : "root",
+        "password"        : "GK2ahdzl2!",
+        "database"        : "test",
+        "host"            : "localhost",
+        "dialect"         : "mysql",
+        "operatorAliases" : false
+    },
+    "test": {
+        "username"        : "admin",
+        "password"        : "HufsWeb!234",
+        "database"        : "hufs_web",
+        "host"            : "hufs-test.ceh3kn3pcvlc.ap-northeast-2.rds.amazonaws.com",
+        "dialect"         : "mysql",
+        "operatorAliases" : false
+    }
+}
