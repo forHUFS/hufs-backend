@@ -1,6 +1,6 @@
 const express = require('express');
 const { authUtil } = require('../middlewares/auth');
-const { addReview, readReview, readReviews, readAllReviews, modifyReview, deleteReview, readStoresOfSeoul, readStoresOfGlobal } = require('../controller/store');
+const { addReview, readReview, readReviews, modifyReview, deleteReview, readDetail } = require('../controller/store');
 const { uploadForReview } = require('../middlewares/upload');
 const router = express.Router();
 
@@ -25,5 +25,7 @@ router.post('/:id/review', authUtil.isSignedIn, authUtil.isAuthorized, addReview
 router.get('/:id/review', authUtil.isSignedIn, authUtil.isAuthorized, readReviews);
 // 특정 상점의 리뷰들 조회
 
+router.get('/:id/detail', authUtil.isSignedIn, authUtil.isAuthorized, readDetail);
+// 상점 상세보기 페이지
 module.exports = router;
 

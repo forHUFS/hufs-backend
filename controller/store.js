@@ -3,7 +3,7 @@ const User = require('../models/users');
 const Store = require('../models/stores');
 const StoreSubCategory = require('../models/storeSubCategories');
 const { deleteImg } = require('../middlewares/upload');
-const sequelize = require('../models').sequelize;
+const { fn, col } = require('sequelize');
 
 exports.addReview = async(req,res,next) => {
     try {
@@ -59,9 +59,10 @@ exports.readReviews = async(req,res,next) => {
             where: { storeId: req.params.id },
             include: [{ model: User, attributes: ['nickname']}]
         });
-
+        let count = review.length;
+        let average = count?(await (review.reduce((a,b)=>a+parseFloat(b.score),0))/count).toFixed(1):0;
         res.status(200).json({
-            data: review,
+            data: review, count, average,
             message: ""
         });
 
@@ -155,6 +156,26 @@ exports.deleteReview = async (req,res,next) => {
         console.error(err);
         next(err);
     }
+}
+
+exports.readDetail = async (req,res,next) => {
+    try {
+        const store = await StoreReview.findAll({
+            where: { storeId: req.params.id },
+            attributes: [
+                [fn('COUNT','id'), 'count'],
+                [fn('ROUND', fn('AVG', col('score')),1), 'average']
+            ]
+        });
+        res.status(200).json({
+            data: store,
+            message: ""
+        });
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+
 }
 
 exports.readStoresOfSeoul = async(req,res,next) => {
