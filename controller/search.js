@@ -1,7 +1,9 @@
 const Post = require('../models/posts');
 const Board = require('../models/boards');
 const User = require('../models/users');
+const Reply = require('../models/replies');
 const { Op } = require('sequelize');
+const { sequelize } = require('../models/index');
 
 exports.searchPosts = async (req, res, next) => {
     try {
@@ -42,22 +44,29 @@ exports.searchPosts = async (req, res, next) => {
                         include: [
                             {model: User , attributes: ['nickname']},
                             {model: Board, attributes: ['title']},
-                           ]
+                            {model: Reply, attributes: ['id']}
+                           ],
                     });
 
                 } else if (option === 'title') {
 
                     var post = await Post.findAll({
                         where: {title: {[Op.and]: key}},
-                        include: [{model: Board, attributes: ['title']},
-                            {model: User, attributes: ['nickname']}]
+                        include: [
+                            {model: Board, attributes: ['title']},
+                            {model: User, attributes: ['nickname']},
+                            {model: Reply, attributes: ['id']}
+                            ]
                     });
 
                 } else if (option === 'content') {
                     var post = await Post.findAll({
                         where: {content: {[Op.and]: key}},
-                        include: [{model: Board, attributes: ['title']},
-                            {model: User, attributes: ['nickname']}]
+                        include: [
+                            {model: Board, attributes: ['title']},
+                            {model: User, attributes: ['nickname']},
+                            {model: Reply, attributes: ['id']}
+                            ]
                     });
 
                 } else if (option === 'nick') {
@@ -67,8 +76,11 @@ exports.searchPosts = async (req, res, next) => {
                     if (user) {
                         var post = await Post.findAll({
                             where: {userId: user.id},
-                            include: [{model: Board, attributes: ['title']},
-                                {model: User, attributes: ['nickname']}]
+                            include: [
+                                {model: Board, attributes: ['title']},
+                                {model: User, attributes: ['nickname']},
+                                {model: Reply, attributes: ['id']}
+                                ]
                         });
                     }
                 } else {
@@ -87,21 +99,30 @@ exports.searchPosts = async (req, res, next) => {
                                 {content: {[Op.and]: key}}],
                             boardId: boardNumber,
                         },
-                        include: [{model: User, attributes: ['nickname']}]
+                        include: [
+                            {model: User, attributes: ['nickname']},
+                            {model: Reply, attributes: ['id']}
+                            ]
                     });
 
                 } else if (option === 'title') {
 
                     var post = await Post.findAll({
                         where: {title: {[Op.and]: key}, boardId: boardNumber},
-                        include: [{model: User, attributes: ['nickname']}]
+                        include: [
+                            {model: User, attributes: ['nickname']},
+                            {model: Reply, attributes: ['id']}
+                            ]
                     });
 
 
                 } else if (req.query.option === 'content') {
                     var post = await Post.findAll({
                         where: {content: {[Op.and]: key}, boardId: boardNumber},
-                        include: [{model: User, attributes: ['nickname']}]
+                        include: [
+                            {model: User, attributes: ['nickname']},
+                            {model: Reply, attributes: ['id']}
+                            ]
                     });
 
                 } else if (option === 'nick') {
@@ -111,7 +132,10 @@ exports.searchPosts = async (req, res, next) => {
                     if (user) {
                         var post = await Post.findAll({
                             where: {userId: user.id, boardId: boardNumber},
-                            include: [{model: User, attributes: ['nickname']}]
+                            include: [
+                                {model: User, attributes: ['nickname']},
+                                {model: Reply, attributes: ['id']}
+                                ]
                         });
                     }
                 } else {
