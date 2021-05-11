@@ -2889,12 +2889,3 @@ definitions:
         type: integer
         description: 댓글 갯수
         example: 0
-  CountAndScoreAvg:
-    type: object
-    properties:
-      count:
-        type: integer
-        example: 19
-      average:
-        type: string
-        example: 4.2
