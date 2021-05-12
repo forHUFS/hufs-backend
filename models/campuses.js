@@ -22,5 +22,6 @@ module.exports = class Campus extends Sequelize.Model{
     static associate(db) {
         db.Campus.hasMany(db.MainMajor, {foreignKey: 'campusId', sourceKey: 'id'});
         db.Campus.hasMany(db.DoubleMajor, {foreignKey: 'campusId', sourceKey: 'id'});
+        db.Campus.hasMany(db.Scholarship, {foreignKey: 'campusId', sourceKey: 'id'});
     }
 }

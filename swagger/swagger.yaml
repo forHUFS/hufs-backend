@@ -997,7 +997,7 @@ paths:
                 properties:
                   data:
                     type: array
-                    example: [ { "id": 1487, "title": "전라남도 해외유학생 선발 안내", "link": "http://hufs.ac.kr/user/boardList.action?command=view&page=2&boardId=118188197&boardSeq=150497904", "scholarshipDateId": 3, "scholarshipOptionId": 1, "scholarshipSchoolOptionId": 1, "ScholarshipDate": { "date": "2021-03-31T00:00:00.000Z" }, "ScholarshipOption": { "name": "교외" }, "ScholarshipSchoolOption": { "name": "공통" } } ]
+                    example: [ { "id": 1487, "title": "전라남도 해외유학생 선발 안내", "link": "http://hufs.ac.kr/user/boardList.action?command=view&page=2&boardId=118188197&boardSeq=150497904", "ScholarshipDate": { "id": 39, "date": "2021-03-31T00:00:00.000Z" }, "ScholarshipOption": { "id": 4, "name": "교외" }, "Campus": { "id": 0, "name": "공통" } } ]
                   message:
                     type: string
                     example: ""

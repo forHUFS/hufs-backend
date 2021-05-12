@@ -1,9 +1,9 @@
 const { Op }                  = require('sequelize');
 
+const Campus                  = require('../models/campuses');
 const Scholarship             = require('../models/scholarships');
 const ScholarshipDate         = require('../models/scholarshipDate');
 const ScholarshipOption       = require('../models/scholarshipOptions');
-const ScholarshipSchoolOption = require('../models/scholarshipSchoolOption');
 
 
 const scholarshipController = {
@@ -19,15 +19,16 @@ const scholarshipController = {
         }
 
         if (req.body.campusId){
-            where['scholarshipSchoolOptionId'] = { [Op.in]: req.body.campusId }
+            where['campusId'] = { [Op.in]: req.body.campusId }
         }
 
         const scholarship = await Scholarship.findAll(
             {
+                attributes: ['id', 'title', 'link'],
                 include: [
-                    {model: ScholarshipDate, attributes: ['date']},
-                    {model: ScholarshipOption, attributes: ['name']},
-                    {model: ScholarshipSchoolOption, attributes: ['name']}
+                    {model: ScholarshipDate, attributes: ['id', 'date']},
+                    {model: ScholarshipOption, attributes: ['id', 'name']},
+                    {model: Campus, attributes: ['id', 'name']}
                 ],
                 where
             }
@@ -65,11 +66,11 @@ const scholarshipController = {
     },
 
     getShoclarshipSchoolOPtion: async(req, res) => {
-        const scholarshipSchoolOptions = await ScholarshipSchoolOption.findAll({});
+        const campuses = await Campus.findAll({});
 
         return res.status(200).json(
             {
-                data: scholarshipSchoolOptions,
+                data: campuses,
                 message: ""
             }
         );
