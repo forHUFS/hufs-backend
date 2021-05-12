@@ -23,7 +23,7 @@ paths:
                 properties:
                   data:
                     type: object
-                    example: { id: 46, webMail: dlxogus0417, nickName: 닉네임, phone: null, birth: null, Providers: [ { name: google, email: 0417taehyun@gmail.com } ], Token: { isEmailAuthenticated: true }, MainMajor: { id: 37, name: 스칸디나비아어과 }, DoubleMajor: { id: 104, name: 융복합소프트웨어전공 }, Posts: [ { id: 15, title: 게시글 제목 22 } ], Replies: [ { id: 3, content: 졸업생 게시판 첫 번째 게시글에 대한 첫 댓글, Post: { id: 3, title: 졸업생 게시판 첫 번째 게시글 } }, { id: 13, content: 123123, Post: { id: 2, title: 두번째 게시글 }} ] }
+                    example: { id: 46, webMail: dlxogus0417, nickName: 닉네임, phone: null, birth: null, Providers: [ { name: google, email: 0417taehyun@gmail.com } ], Token: { isEmailAuthenticated: true }, MainMajor: { id: 37, name: 스칸디나비아어과 }, DoubleMajor: { id: 104, name: 융복합소프트웨어전공 }, Posts: [ { id: 15, title: 게시글 제목 22, Board: { id: 1, title: "떠들어 Boo" } } ], Replies: [ { id: 3, content: 졸업생 게시판 첫 번째 게시글에 대한 첫 댓글, Post: { id: 3, title: 졸업생 게시판 첫 번째 게시글, Board: { id: 1, title: "떠들어 Boo" } } }, { id: 13, content: 123123, Post: { id: 2, title: 두번째 게시글, Board: { id: 1, title: "떠들어 Boo" } }} ] }
                   message:
                     type: string
                     example: ""
@@ -568,7 +568,7 @@ paths:
                 properties:
                   data:
                     type: array
-                    example: [ { "id": 3, "Post": { "id": 2, "title": "두번째 게시글" } }, { "id": 4, "Post": { "id": 3, "title": "졸업생 게시판 첫 번째 게시글" } } ]
+                    example: [ { "id": 3, "Post": { "id": 2, "title": "두번째 게시글", Board: { id: 1, title: "떠들어 Boo" } } }, { "id": 4, "Post": { "id": 3, "title": "졸업생 게시판 첫 번째 게시글", Board: { id: 1, title: "떠들어 Boo" } } } ]
                   message:
                     type: string
                     example: ""
@@ -2877,11 +2877,7 @@ definitions:
         type: integer
         description: 게시판 아이디
         example: 1
-      userId:
-        type: integer
-        description: 글 작성한 사용자의 아이디(PK)
-        example: 1
-      userNickname:
+      nickname:
         type: string
         description: 글 작성한 사용자의 닉네임
         example: 후니

@@ -6,7 +6,7 @@ const { authUtil } = require('../middlewares/auth');
 
 const router = express.Router();
 
-router.get('', authUtil.isSignedIn ,userInfo.getUser);
+router.get('', authUtil.isSignedIn , userInfo.getUser);
 router.put('', authUtil.isSignedIn, userInfo.updateUser);
 router.delete('', authUtil.isSignedIn, userInfo.deleteUser);
 

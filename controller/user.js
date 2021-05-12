@@ -10,6 +10,7 @@ const { transporter } = require('../config/email');
 
 const User        = require('../models/users');
 const Provider    = require('../models/providers');
+const Board       = require('../models/boards');
 const Post        = require('../models/posts');
 const Reply       = require('../models/replies');
 const Token       = require('../models/tokens');
@@ -331,7 +332,7 @@ const userInfo = {
                         model: Provider,
                         attributes: ['name', 'email']
                     },
-                    {
+                    { 
                         model: Token,
                         attributes: ['isEmailAuthenticated']
                     },
@@ -343,12 +344,24 @@ const userInfo = {
                     },
                     { 
                         model: Post,
-                        attributes: ['id', 'title']
+                        attributes: ['id', 'title'],
+                        include: [
+                            { model: Board, attributes: ['id', 'title'] }
+                        ]
                     },
                     { 
                         model: Reply,
                         attributes: ['id', 'content'],
-                        include: [{model: Post, attributes: ['id', 'title']}]
+                        include: [
+                            {
+                                model: Post,
+                                attributes: ['id', 'title'],
+                                include: [{
+                                    model: Board,
+                                    attributes: ['id', 'title']
+                                }]
+                            }
+                        ]
                     }
                 ]
             },
@@ -675,7 +688,13 @@ const postScrap = {
                         {
                             model: Scrap,
                             attributes: ['id'],
-                            include: {model: Post, attributes: ['id', 'title']}
+                            include: {
+                                model: Post,
+                                attributes: ['id', 'title'],
+                                include: [
+                                    {model: Board, attributes: ['id', 'title']}
+                                ]
+                            }
                         }
                     ]
                 }
