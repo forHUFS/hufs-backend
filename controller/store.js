@@ -59,9 +59,7 @@ exports.readReviews = async(req,res,next) => {
             where: { storeId: req.params.id },
             include: [{ model: User, attributes: ['nickname']}]
         });
-        let count = review.length;
-        let average = count?(await (review.reduce((a,b)=>a+parseFloat(b.score),0))/count).toFixed(1):0;
-        review.push( { count, average } );
+
         res.status(200).json({
             data: review,
             message: ""
