@@ -18,10 +18,11 @@ exports.readPosts = async (req,res,next)=>{
                 posts.created_at AS "createdAt",
                 posts.updated_at AS "updatedAt",
                 posts.board_id AS "boardId",
-                (SELECT nickname FROM users where id = posts.user_id) AS "nickname",
+                (SELECT id FROM users WHERE id = posts.user_id) AS "userId",
+                (SELECT type FROM users WHERE id = posts.user_id) AS "type",
+                (SELECT nickname FROM users WHERE id = posts.user_id) AS "nickname",
                 COUNT(CASE WHEN replies.id = null THEN 0 ELSE replies.id END) AS "repliesCount"
                 FROM posts
-                LEFT OUTER JOIN users ON posts.user_id = users.id
                 LEFT OUTER JOIN replies ON replies.post_id = posts.id
                 WHERE posts.board_id = ${req.params.id}
                 GROUP BY posts.id

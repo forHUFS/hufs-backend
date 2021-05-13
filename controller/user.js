@@ -196,6 +196,21 @@ const userAuth = {
                         }
                 );
             }
+            if (!req.body.mainMajorId) {
+                return res.status(422).json(
+                    {
+                        data: "",
+                        message: "BODY_MAIN_MAJOR"
+                    }
+                )
+            } else if (!req.body.doubleMajorId) {
+                return res.status(422).json(
+                    {
+                        data: "",
+                        message: "BODY_DOUBLE_MAJOR"
+                    }
+                )
+            }
             if (req.body.isAgreed) {
                 const user = await User.create(
                     {
@@ -414,7 +429,7 @@ const userInfo = {
                 const aDay = 24 * 60 * 60 * 1000
 
                 if (parseInt(date / aDay) >= 30) {
-                    user.nickname           = req.body.nicname
+                    user.nickname           = req.body.nickname
                     user.nincknameUpdatedAt = today
                 } else {
                     return res.status(400).json(

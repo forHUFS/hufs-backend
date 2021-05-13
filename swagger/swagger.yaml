@@ -259,11 +259,30 @@ paths:
                   value:
                     data: ""
                     message: "CONFLICT_NICKNAME"
-                user-onflict:
+                user-conflict:
                   summary: 이미 가입 된 사용자 (이메일과 웹메일로 판단)
                   value:
                     data: ""
                     message: "CONFLICT"
+        422:
+          description: 전공을 입력하지 않은 경우
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/definitions/Body-main-major-response"
+                  - $ref: "#/definitions/Body-double-major-response"
+              examples:
+                main-major-error:
+                  summary: 주전공을 입력하지 않은 경우
+                  value:
+                    data: ""
+                    message: "BODY_MAIN_MAJOR"
+                double-major-error:
+                  summary: 이중전공을 입력하지 않은 경우
+                  value:
+                    data: ""
+                    message: "BODY_DOUBLE_MAJOR"
 
   /user/sign-out:
     post:
@@ -887,7 +906,74 @@ paths:
                     example: ""
                   message:
                     type: string
-                    example: "FORBIDDEN"                                     
+                    example: "FORBIDDEN"          
+
+  /auth/owner:
+    get:
+      summary: 본인이 작성한 게시글 및 댓글 수정 가능 여부 인증 엔드포인트
+      consumes: application/json
+      produces: application/json
+      parameters:
+        - in: query
+          name: type
+          description: 게시글(post) 또는 댓글(reply)
+          required: true
+          example: post
+        - in: query
+          name: id
+          description: 게시글 아이디 또는 댓글 아이디
+          required: true
+          example: 1
+      responses:
+        200:
+          content:
+             application/json:
+              schema:
+                $ref: "#/definitions/Success-response" 
+        401:
+          description: 로그인하지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Unauthorized-response"        
+        403:
+          description: 접근 권한 오류
+          content:
+            application/json:
+              schema:
+                type:
+                properties:
+                  data:
+                    type: string
+                    example: ""
+                  message:
+                    type: string
+                    example: "FORBIDDEN"
+        422:
+          description: 쿼리 스트링 관련 오류
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/definitions/Query-response"
+                  - $ref: "#/definitions/Query-type-response"
+                  - $ref: "#/definitions/Query-option-response"
+              examples:
+                query-error:
+                  summary: 허용되지 않은 타입을 입력하는 등의 쿼리 스트링 관련 오류
+                  value:
+                    data: ""
+                    message: QUERY
+                type-error:
+                  summary: 쿼리 스트링 중 타입이 입력되지 않은 경우
+                  value:
+                    data: ""
+                    message: QUERY_KEYWORD
+                option-error:
+                  summary: 쿼리 스트링 중 옵션이 입력되지 않은 경우
+                  value:
+                    data: ""
+                    message: QUERY_OPTION
 
 
   /campus:
@@ -945,7 +1031,7 @@ paths:
       produces: application/json
       parameters:
         - in: query
-          name: query
+          name: campusId
           description: 전공 목록 캠퍼스를 통해 조회
           required: true
           schema:
@@ -960,7 +1046,7 @@ paths:
                 type: object
                 properties:
                   data:
-                    type: object
+                    type: array
                     example: [{"id":1,"name":"LD전공","campusId":1},{"id":2,"name":"LT전공","campusId":1},{"id":3,"name":"경영학전공","campusId":1},{"id":4,"name":"경제학전공","campusId":1},{"id":5,"name":"국제학전공","campusId":1},{"id":6,"name":"국제통상학과","campusId":1},{"id":7,"name":"정치외교학과","campusId":1},{"id":8,"name":"행정학과","campusId":1},{"id":9,"name":"광고.PR.브랜딩전공","campusId":1}]
                   message:
                     type: string
@@ -986,10 +1072,10 @@ paths:
                 example: [1]
               campusId:
                 type: array
-                exmaple: [1, 2]
+                example: [1, 2]
       responses:
         200:
-          description:
+          description: 장학금 정보 목록 조회
           content:
             application/json:
               schema:
@@ -997,35 +1083,10 @@ paths:
                 properties:
                   data:
                     type: array
-                    example: [ { "id": 1487, "title": "전라남도 해외유학생 선발 안내", "link": "http://hufs.ac.kr/user/boardList.action?command=view&page=2&boardId=118188197&boardSeq=150497904", "ScholarshipDate": { "id": 39, "date": "2021-03-31T00:00:00.000Z" }, "ScholarshipOption": { "id": 4, "name": "교외" }, "Campus": { "id": 0, "name": "공통" } } ]
+                    example: [{"id":1461,"title":"2021학년도 1학기 재학생 고지서 감면 안내","link":"http://hufs.ac.kr/user/boardList.action?command=view&page=5&boardId=118188197&boardSeq=150168019","ScholarshipDate":null,"ScholarshipOption":{"id":8,"name":"미지정"},"Campus":{"id":2,"name":"글로벌"}}]
                   message:
                     type: string
                     example: ""
-        401:
-          description: 로그인하지 않은 사용자
-          content:
-            application/json:
-              schema:
-                $ref: "#/definitions/Unauthorized-response"            
-        403:
-          description: 접근 권한 오류
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: "#/definitions/Forbidden-suspension-response"
-                  - $ref: "#/definitions/Forbidden-before-response"
-              examples:
-                suspended-user:
-                  summary: 정지된 사용자
-                  value:
-                    data: ""
-                    message: FORBIDDEN_SUSPENSION
-                email-unauthorized-user:
-                  summary: 이메일 인증이 되지 않은 사용자
-                  value:
-                    data: ""
-                    message: FORBIDDEN_BEFORE
 
   /scholarship/date:
     get:
@@ -2425,6 +2486,7 @@ definitions:
     type: object
     properties:
       data:
+        type: string
         example: ""
       message:
         type: string
@@ -2434,6 +2496,7 @@ definitions:
     type: object
     properties:
       data:
+        type: string
         example: ""
       message:
         type: string
@@ -2443,6 +2506,7 @@ definitions:
     type: object
     properties:
       data:
+        type: string
         example: ""
       message:
         type: string
@@ -2452,6 +2516,7 @@ definitions:
     type: object
     properties:
       data:
+        type: string
         example: ""
       message:
         type: string
@@ -2461,6 +2526,7 @@ definitions:
     type: object
     properties:
       data:
+        type: string
         example: ""
       message:
         type: string
@@ -2470,6 +2536,7 @@ definitions:
     type: object
     properties:
       data:
+        type: string
         example: ""
       message:
         type: string
@@ -2479,10 +2546,41 @@ definitions:
     type: object
     properties:
       data:
+        type: string
         example: ""
       message:
         type: string
-        example: QUERY_OPTION  
+        example: QUERY_OPTION
+
+  Query-type-response:
+    type: object
+    properties:
+      data:
+        type: string
+        example: ""
+      message:
+        type: string
+        example: QUERY_TYPE
+
+  Body-main-major-response:
+    type: object
+    properties:
+      data:
+        type: string
+        example: ""
+      message:
+        type: string
+        example: BODY_MAIN_MAJOR
+
+  Body-double-major-response:
+    type: object
+    properties:
+      data:
+        type: string
+        example: ""
+      message:
+        type: string
+        example: BODY_DOUBLE_MAJOR        
 
   Unauthorized-response:
     type: object
@@ -2862,9 +2960,9 @@ definitions:
         description: 신고 개수 / 5회 이상일 경우 숨김 처리
         example: 2
       admin:
-        type: boolean
-        description: 작성자가 admin이면 true, 아니면 false
-        example: false
+        type: integer
+        description: 작성자가 admin이면 1, 아니면 0
+        example: 0
       createdAt:
         type: date
         description: 글 생성 날짜 및 시간
@@ -2877,6 +2975,14 @@ definitions:
         type: integer
         description: 게시판 아이디
         example: 1
+      userId:
+        type: integer
+        description: 게시글 작성 사용자 아이디 (PK)
+        example: 1
+      type:
+        type: string
+        description: 게시글 작성 사용자의 타입 ('user', 'admin' 등)
+        example: user
       nickname:
         type: string
         description: 글 작성한 사용자의 닉네임
