@@ -430,10 +430,8 @@ const userInfo = {
                 const aDay = 24 * 60 * 60 * 1000
 
                 if (parseInt(date / aDay) >= 30) {
-                    console.log(date);
-                    console.log(today);
-                    user.nickname           = req.body.nickname
-                    user.nincknameUpdatedAt = today
+                    user.nickname          = req.body.nickname
+                    user.nicknameUpdatedAt = today
                 } else {
                     return res.status(400).json(
                         {
@@ -454,10 +452,9 @@ const userInfo = {
                 user.isDoubleMajorUpdated = true
                 user.doubleMajorId        = doubleMajor.id;
             }
-            console.log(user.nicknameUpdatedAt);
+
             await user.save();
 
-            console.log(user.nicknameUpdatedAt);
             return res.status(200).json(
                 {
                     data: "",
