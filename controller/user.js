@@ -1,7 +1,6 @@
-const jwt                       = require('jsonwebtoken');
-const crypto                    = require('crypto');
-const passport                  = require('passport');
-const { Sequelize, QueryTypes } = require('sequelize');
+const jwt            = require('jsonwebtoken');
+const crypto         = require('crypto');
+const { QueryTypes } = require('sequelize');
 
 const jwtSecretKey    = require('../config/secretKey').jwtSecretKey;
 const jwtOptions      = require('../config/secretKey').jwtOptions;
