@@ -425,7 +425,7 @@ const userInfo = {
                 );
             }
 
-            if (nickname !== req.body.nickname) {
+            if (user.nickname !== req.body.nickname) {
                 const date = today - user.nicknameUpdatedAt;
                 const aDay = 24 * 60 * 60 * 1000
 
