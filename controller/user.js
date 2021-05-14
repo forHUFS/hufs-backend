@@ -402,65 +402,71 @@ const userInfo = {
 
     updateUser: async(req, res) => {
         try {
-            const today       = new Date()
-            const user        = await User.findOne( { where: { id: req.user.id } } );
-            const mainMajor   = await MainMajor.findOne({ where: { id: req.body.mainMajorId } });
-            const doubleMajor = await DoubleMajor.findOne( { where: { id: req.body.doubleMajorId } } );
+            const today = new Date()
+            if (req.user.id) {
+                const user = await User.findOne( { where: { id: req.user.id } } );
 
-            if (user.isMainMajorUpdated) {
-                return res.status(409).json(
+                if (req.body.nickname) {
+                    const date = today - user.nicknameUpdatedAt;
+                    const aDay = 24 * 60 * 60 * 1000
+    
+                    if (parseInt(date / aDay) >= 30) {
+                        user.nickname          = req.body.nickname
+                        user.nicknameUpdatedAt = today
+                    } else {
+                        return res.status(400).json(
+                            {
+                                data    : "",
+                                messagae: "INVALID_NICKNAME_TIME"
+                            }
+                        );
+                    }
+                }
+
+                if (req.body.mainMajorId) {
+                    if (user.isMainMajorUpdated) {
+                        return res.status(409).json(
+                            {
+                                data   : "",
+                                message: "CONFLICT_MAIN_MAJOR"
+                            }
+                        );
+                    } else {
+                        user.isMainMajorUpdated = true
+                        user.mainMajorId        = req.body.mainMajorId;
+                    }
+                }
+    
+                if (req.body.doubleMajorId) {
+                    if (user.isDoubleMajorUpdated) {
+                        return res.status(409).json(
+                            {
+                                data   : "",
+                                message: "CONFLICT_DOUBLE_MAJOR"
+                            }
+                        );
+                    } else {
+                        user.isDoubleMajorUpdated = true
+                        user.doubleMajorId        = req.body.doubleMajorId;
+                    }
+                }
+
+                await user.save();
+                return res.status(200).json(
                     {
-                        data   : "",
-                        message: "CONFLICT_MAIN_MAJOR"
+                        data: "",
+                        message: ""
                     }
                 );
-            }
-
-            if (user.isDoubleMajorUpdated) {
-                return res.status(409).json(
+            } else {
+                return res.status(401).json(
                     {
-                        data   : "",
-                        message: "CONFLICT_DOUBLE_MAJOR"
+                        data: "",
+                        message: "UNAUTHORIZED"
                     }
-                );
+                )
             }
 
-            if (user.nickname !== req.body.nickname) {
-                const date = today - user.nicknameUpdatedAt;
-                const aDay = 24 * 60 * 60 * 1000
-
-                if (parseInt(date / aDay) >= 30) {
-                    user.nickname          = req.body.nickname
-                    user.nicknameUpdatedAt = today
-                } else {
-                    return res.status(400).json(
-                        {
-                            data    : "",
-                            messagae: "INVALID_NICKNAME_TIME"
-                        }
-                    );
-                }
-            }
-
-
-            if (mainMajor.id !== user.mainMajorId) {
-                user.isMainMajorUpdated = true
-                user.mainMajorId        = mainMajor.id;
-            }
-
-            if (doubleMajor.id !== user.doubleMajorId) {
-                user.isDoubleMajorUpdated = true
-                user.doubleMajorId        = doubleMajor.id;
-            }
-
-            await user.save();
-
-            return res.status(200).json(
-                {
-                    data: "",
-                    message: ""
-                }
-            );
         } catch (error) {
             console.log(error);
 

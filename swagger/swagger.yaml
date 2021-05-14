@@ -41,14 +41,10 @@ paths:
       parameters:
         - in: body
           name: body
-          description: 회원 정보 수정
-          required: true
+          description: 회원 정보 수정 (변경하는 값만 전달한다.)
+          required: false
           schema:
             type: object
-            required:
-              - nickname
-              - mainMajorId
-              - doubleMajorId
             properties:
               nickname:
                 type: string
