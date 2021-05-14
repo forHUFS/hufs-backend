@@ -7,8 +7,8 @@ const DoubleMajor = require('../models/doubleMajors');
 const majorController = {
     getMainMajor: async(req, res) => {
         try {
-            const mainMajor = await MainMajor.findAll({where: {[Op.or]: [{campusId: req.query.campusId}, {campusId: 3}]}});
-            // const mainMajor = await MainMajor.findAll({});
+            // const mainMajor = await MainMajor.findAll({where: {[Op.or]: [{campusId: req.query.campusId}, {campusId: 3}]}});
+            const mainMajor = await MainMajor.findAll({});
 
             return res.status(200).json(
                 {
@@ -30,8 +30,9 @@ const majorController = {
     
     getDoubleMajor: async(req, res) => {
         try {
-            const doubleMajor = await DoubleMajor.findAll({where: {[Op.or]: [{campusId: req.query.campusId}, {campusId: 3}]}});
-            // const doubleMajor = await DoubleMajor.findAll({});
+            // const doubleMajor = await DoubleMajor.findAll({where: {[Op.or]: [{campusId: req.query.campusId}, {campusId: 3}]}});
+            const doubleMajor = await DoubleMajor.findAll({});
+
             return res.status(200).json(
                 {
                     data: doubleMajor,
