@@ -211,6 +211,7 @@ const userAuth = {
                     }
                 )
             }
+
             if (req.body.isAgreed) {
                 const user = await User.create(
                     {
@@ -424,7 +425,7 @@ const userInfo = {
                 );
             }
 
-            if (!nickname === req.body.nickname) {
+            if (nickname !== req.body.nickname) {
                 const date = today - user.nicknameUpdatedAt;
                 const aDay = 24 * 60 * 60 * 1000
 
@@ -442,12 +443,12 @@ const userInfo = {
             }
 
 
-            if (!mainMajor.id === user.mainMajorId) {
+            if (mainMajor.id !== user.mainMajorId) {
                 user.isMainMajorUpdated = true
                 user.mainMajorId        = mainMajor.id;
             }
 
-            if (!doubleMajor.id === user.doubleMajorId) {
+            if (doubleMajor.id !== user.doubleMajorId) {
                 user.isDoubleMajorUpdated = true
                 user.doubleMajorId        = doubleMajor.id;
             }
