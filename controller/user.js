@@ -186,14 +186,17 @@ const emailAuth = {
 const userAuth = {
     signUp: async(req, res, next) => {
         try {
-            const user = await User.findOne({where: {webMail: req.body.webMail}})
-            if (user) {
-                    return res.status(409).json(
-                        {
-                            data: "",
-                            message: "CONFLICT"
-                        }
-                );
+            const webMail = req.body.webMail
+            if (webMail) {
+                const user = await User.findOne({where: {webMail: webMail}})
+                if (user) {
+                        return res.status(409).json(
+                            {
+                                data: "",
+                                message: "CONFLICT"
+                            }
+                    );
+                }
             }
             if (!req.body.mainMajorId) {
                 return res.status(422).json(
@@ -215,7 +218,7 @@ const userAuth = {
                 const user = await User.create(
                     {
                         nickname: req.body.nickname,
-                        webMail: req.body.webMail,
+                        webMail: webMail,
                         mainMajorId: req.body.mainMajorId,
                         doubleMajorId: req.body.doubleMajorId,
                         isAgreed: req.body.isAgreed
