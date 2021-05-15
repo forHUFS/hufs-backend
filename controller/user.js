@@ -244,6 +244,7 @@ const userAuth = {
                 );
             }
         } catch (error) {
+            console.log(error)
             if (error.message === "Validation error") {
                 return res.status(409).json(
                     {
