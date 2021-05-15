@@ -430,7 +430,7 @@ const userInfo = {
                         return res.status(400).json(
                             {
                                 data    : "",
-                                messagae: "INVALID_NICKNAME_TIME"
+                                message: "INVALID_NICKNAME_TIME"
                             }
                         );
                     }
