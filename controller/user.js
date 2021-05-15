@@ -21,6 +21,17 @@ const DoubleMajor = require('../models/doubleMajors');
 
 const emailAuth = {
     sendEmail: async(req, res) => {
+        if (req.body.webMail) {
+            if (await User.findOne({where: {webMail: req.body.webMail}})) {
+                return res.status(409).json(
+                    {
+                        data: "",
+                        message: "CONFLICT"
+                    }
+                )
+            }
+        }
+
         const token  = crypto.randomBytes(20).toString('hex');
         const jwtToken = req.cookies['user'];
         let toWhom;
