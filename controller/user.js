@@ -31,9 +31,15 @@ const emailAuth = {
                 toWhom = req.user.webMail;
             } else {
                 toWhom = req.body.webMail;
+                user = await User.findOne({where: {id: req.user.id}});
+                user.webMail = toWhom;
+                user.save();
             }
         } else {
             toWhom = req.body.webMail;
+            user = await User.findOne({where: {id: req.user.id}});
+            user.webMail = toWhom;
+            user.save();
         }
         
         const mailOptions = {
@@ -64,7 +70,7 @@ const emailAuth = {
                                 {
                                     where: {userId: req.user.id}
                                 }
-                            )
+                            );
                         } else {
                             await Token.create( 
                                 {
