@@ -26,7 +26,12 @@ const emailAuth = {
         let toWhom;
         if (jwtToken) {
             req.user = jwt.verify(jwtToken, jwtSecretKey);
-            toWhom = req.user.webMail;
+
+            if (req.user.webMail) {
+                toWhom = req.user.webMail;
+            } else {
+                toWhom = req.body.webMail;
+            }
         } else {
             toWhom = req.body.webMail;
         }
@@ -238,12 +243,22 @@ const userAuth = {
                 if (webMail) {
                     return next();
                 } else {
-                    return res.status(200).json(
+                    const payload = {
+                        id      : req.user.id,
+                        webMail : req.user.webMail,
+                        type    : req.user.type
+                    };
+                    accessToken = jwt.sign(payload, jwtSecretKey, jwtOptions);
+                    return res.cookie(
+                        'user',
+                        accessToken,
+                        cookieOptions
+                    ).status(200).json(
                         {
                             data: "",
                             message: ""
                         }
-                    )
+                    );
                 }
             } else {
                 return res.status(401).json(
