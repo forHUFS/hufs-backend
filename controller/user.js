@@ -217,8 +217,9 @@ const userAuth = {
         try {
             const webMail = req.body.webMail
             if (webMail) {
-                const user = await User.findOne({where: {webMail: webMail}})
-                if (user) {
+                const user  = await User.findOne({where: {webMail: webMail}})
+                const email = await Provider.findOne({where: {email: `${req.body.email}@hufs.ac.kr`}})
+                if (user || email) {
                         return res.status(409).json(
                             {
                                 data: "",
