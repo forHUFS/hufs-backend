@@ -24,6 +24,7 @@ const emailAuth = {
         const token  = crypto.randomBytes(20).toString('hex');
         const jwtToken = req.cookies['user'];
         let toWhom;
+
         if (jwtToken) {
             req.user = jwt.verify(jwtToken, jwtSecretKey);
 
@@ -36,6 +37,13 @@ const emailAuth = {
                 user.save();
             }
         } else {
+            toWhom = req.body.webMail;
+            user = await User.findOne({where: {id: req.user.id}});
+            user.webMail = toWhom;
+            user.save();
+        }
+
+        if (req.body.webMail) {
             toWhom = req.body.webMail;
             user = await User.findOne({where: {id: req.user.id}});
             user.webMail = toWhom;
