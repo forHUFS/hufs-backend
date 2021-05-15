@@ -234,7 +234,17 @@ const userAuth = {
                 console.log(user)
                 console.log(provider)
                 req.user = user
-                return next();
+
+                if (webMail) {
+                    return next();
+                } else {
+                    return res.status(200).json(
+                        {
+                            data: "",
+                            message: ""
+                        }
+                    )
+                }
             } else {
                 return res.status(401).json(
                     {
