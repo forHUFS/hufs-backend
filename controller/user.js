@@ -55,15 +55,25 @@ const emailAuth = {
                 try {
                     date = new Date();
                     if (jwtToken) {
-                        await Token.update(
-                            {
-                                emailToken: token,
-                                emailExpirationTime: date
-                            },
-                            {
-                                where: {userId: req.user.id}
-                            }
-                        )
+                        if (req.user.webMail) {
+                            await Token.update(
+                                {
+                                    emailToken: token,
+                                    emailExpirationTime: date
+                                },
+                                {
+                                    where: {userId: req.user.id}
+                                }
+                            )
+                        } else {
+                            await Token.create( 
+                                {
+                                    emailToken         : token,
+                                    emailExpirationTime: date,
+                                    userId             : req.user.id
+                                }
+                            );
+                        }
                         return res.status(200).json(
                             {
                                 data: "",
