@@ -22,7 +22,7 @@ const DoubleMajor = require('../models/doubleMajors');
 const emailAuth = {
     sendEmail: async(req, res) => {
         if (req.body.webMail) {
-            if (await User.findOne({where: {webMail: req.body.webMail}})) {
+            if (await User.findOne({where: {webMail: req.body.webMail, type: before}})) {
                 return res.status(409).json(
                     {
                         data: "",
