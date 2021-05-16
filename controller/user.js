@@ -80,7 +80,7 @@ const emailAuth = {
                 try {
                     date = new Date();
                     if (jwtToken) {
-                        if (req.user.webMail) {
+                        if (req.user.webMail && req.user.type === 'user') {
                             await Token.update(
                                 {
                                     emailToken: token,
