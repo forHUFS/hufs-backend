@@ -30,7 +30,7 @@ const emailAuth = {
                     }
                 )
             }
-        }
+        } // Develop Branch 테스트
 
         const token  = crypto.randomBytes(20).toString('hex');
         const jwtToken = req.cookies['user'];
