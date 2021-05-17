@@ -115,9 +115,12 @@ const emailAuth = {
                         );
                         
                         const payload = {
+                            isOnBoarding: false,
                             id      : req.user.id,
                             webMail : req.user.webMail,
-                            type    : req.user.type
+                            type    : req.user.type,
+                            mainMajorId: req.user.mainMajorId,
+                            doubleMajorId: req.user.doubleMajorId
                         };
                         accessToken = jwt.sign(payload, jwtSecretKey, jwtOptions);
                         return res.cookie(
@@ -140,7 +143,6 @@ const emailAuth = {
                     )
                 }
             }
-            transporter.close()
         });
     },
 
@@ -185,9 +187,12 @@ const emailAuth = {
                     await Directory.create({userId: user.id})
 
                     const payload = {
+                        isOnBoarding: false,
                         id      : user.id,
                         email   : user.webMail,
-                        type    : user.type
+                        type    : user.type,
+                        mainMajorId: user.mainMajorId,
+                        doubleMajorId: user.doubleMajorId
                     };
                     accessToken = jwt.sign(payload, jwtSecretKey, jwtOptions);
 
@@ -280,9 +285,12 @@ const userAuth = {
                     return next();
                 } else {
                     const payload = {
+                        isOnBoarding: true,
                         id      : req.user.id,
                         webMail : req.user.webMail,
-                        type    : req.user.type
+                        type    : req.user.type,
+                        mainMajorId: req.user.mainMajorId,
+                        doubleMajorId: req.user.doubleMajorId
                     };
                     accessToken = jwt.sign(payload, jwtSecretKey, jwtOptions);
                     return res.cookie(
@@ -346,12 +354,15 @@ const userAuth = {
                 `,
                 {type: QueryTypes.SELECT}
             );
-            console.log(exUser)
+
             if (exUser) {
                 const payload = {
+                    isOnBoarding: false,
                     id      : exUser.id,
                     webMail : exUser.webMail,
-                    type    : exUser.type
+                    type    : exUser.type,
+                    mainMajorId: exUser.mainMajorId,
+                    doubleMajorId: exUser.doubleMajorId
                 };
                 accessToken = jwt.sign(payload, jwtSecretKey, jwtOptions);
                 return res.cookie(
@@ -405,6 +416,7 @@ const userInfo = {
                     'nickName',
                     'phone',
                     'birth',
+                    'type'
                 ],
                 where: { id: req.user.id },
                 include: [
