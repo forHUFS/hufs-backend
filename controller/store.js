@@ -187,7 +187,7 @@ exports.readStores = async(req,res,next) => {
             FROM stores AS Store LEFT OUTER JOIN store_sub_categories AS StoreSubCategory
             ON Store.store_sub_category_id = StoreSubCategory.id AND (StoreSubCategory.deleted_at IS NULL)
             LEFT OUTER JOIN store_reviews AS StoreReviews ON Store.id = StoreReviews.store_id
-            WHERE Store.campus = ${req.params.id} GROUP BY Store.id;
+            WHERE Store.campus = ${req.params.campusId} GROUP BY Store.id;
             `
         )
         res.status(200).json({

@@ -2466,14 +2466,14 @@ paths:
                   value:
                     data: ""
                     message: FORBIDDEN_BEFORE
-  /store/{id}:
+  /store/{campusId}:
     get:
       summary: 상점 리스트
       consumes: application/json
       produces: application/json
       parameters:
         - in: path
-          name: id
+          name: campusId
           description: 상점을 조회할 캠퍼스 id. 서울캠퍼스 - 1 , 글로벌캠퍼스 - 2
           example: 1
           required: true

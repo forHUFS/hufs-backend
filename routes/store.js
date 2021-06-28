@@ -26,6 +26,6 @@ router.get('/:id/review', authUtil.isSignedIn, authUtil.isAuthorized, readReview
 router.get('/:id/detail', authUtil.isSignedIn, authUtil.isAuthorized, readDetail);
 // 상점 상세보기 페이지
 
-router.get('/:id', readStores);
+router.get('/:campusId', readStores);
 module.exports = router;
 
