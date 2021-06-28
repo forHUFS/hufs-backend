@@ -1,4 +1,3 @@
-package-lock.json
 .DS_Store
 # Created by https://www.toptal.com/developers/gitignore/api/node,intellij
 # Edit at https://www.toptal.com/developers/gitignore?templates=node,intellij
@@ -182,7 +181,6 @@ typings/
 .yarn-integrity
 
 # dotenv environment variables file
-.env
 .env.test
 .env*.local
 
@@ -221,7 +219,6 @@ dist
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
 
-config
 .idea/
 
 # End of https://www.toptal.com/developers/gitignore/api/node,intellij

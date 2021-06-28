@@ -35,6 +35,6 @@ module.exports = class Scholarship extends Sequelize.Model{
     static associate(db)    {
         db.Scholarship.belongsTo(db.ScholarshipDate, { foreignKey: 'scholarshipDateId', targetKey: 'id'});
         db.Scholarship.belongsTo(db.ScholarshipOption, { foreignKey: 'scholarshipOptionId', targetKey: 'id'});
-        db.Scholarship.belongsTo(db.ScholarshipSchoolOption, { foreignKey: 'scholarshipSchoolOptionId', targetKey: 'id'});
+        db.Scholarship.belongsTo(db.Campus, { foreignKey: 'CampusId', targetKey: 'id'});
     }
 }

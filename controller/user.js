@@ -1,7 +1,6 @@
-const jwt                       = require('jsonwebtoken');
-const crypto                    = require('crypto');
-const passport                  = require('passport');
-const { Sequelize, QueryTypes } = require('sequelize');
+const jwt            = require('jsonwebtoken');
+const crypto         = require('crypto');
+const { QueryTypes } = require('sequelize');
 
 const jwtSecretKey    = require('../config/secretKey').jwtSecretKey;
 const jwtOptions      = require('../config/secretKey').jwtOptions;
@@ -10,6 +9,7 @@ const { transporter } = require('../config/email');
 
 const User        = require('../models/users');
 const Provider    = require('../models/providers');
+const Board       = require('../models/boards');
 const Post        = require('../models/posts');
 const Reply       = require('../models/replies');
 const Token       = require('../models/tokens');
@@ -21,14 +21,44 @@ const DoubleMajor = require('../models/doubleMajors');
 
 const emailAuth = {
     sendEmail: async(req, res) => {
+        if (req.body.webMail) {
+            if (await User.findOne({where: {webMail: req.body.webMail, type: 'user'}})) {
+                return res.status(409).json(
+                    {
+                        data: "",
+                        message: "CONFLICT"
+                    }
+                )
+            }
+        }
+
         const token  = crypto.randomBytes(20).toString('hex');
         const jwtToken = req.cookies['user'];
         let toWhom;
+
         if (jwtToken) {
             req.user = jwt.verify(jwtToken, jwtSecretKey);
-            toWhom = req.user.webMail;
+
+            if (req.user.webMail) {
+                toWhom = req.user.webMail;
+            } else {
+                toWhom = req.body.webMail;
+                user = await User.findOne({where: {id: req.user.id}});
+                user.webMail = toWhom;
+                user.save();
+            }
         } else {
             toWhom = req.body.webMail;
+            user = await User.findOne({where: {id: req.user.id}});
+            user.webMail = toWhom;
+            user.save();
+        }
+
+        if (req.body.webMail) {
+            toWhom = req.body.webMail;
+            user = await User.findOne({where: {id: req.user.id}});
+            user.webMail = toWhom;
+            user.save();
         }
         
         const mailOptions = {
@@ -50,15 +80,25 @@ const emailAuth = {
                 try {
                     date = new Date();
                     if (jwtToken) {
-                        await Token.update(
-                            {
-                                emailToken: token,
-                                emailExpirationTime: date
-                            },
-                            {
-                                where: {userId: req.user.id}
-                            }
-                        )
+                        if (req.user.webMail && req.user.type === 'user') {
+                            await Token.update(
+                                {
+                                    emailToken: token,
+                                    emailExpirationTime: date
+                                },
+                                {
+                                    where: {userId: req.user.id}
+                                }
+                            );
+                        } else {
+                            await Token.create( 
+                                {
+                                    emailToken         : token,
+                                    emailExpirationTime: date,
+                                    userId             : req.user.id
+                                }
+                            );
+                        }
                         return res.status(200).json(
                             {
                                 data: "",
@@ -186,20 +226,40 @@ const emailAuth = {
 const userAuth = {
     signUp: async(req, res, next) => {
         try {
-            const user = await User.findOne({where: {webMail: req.body.webMail}})
-            if (user) {
-                    return res.status(409).json(
-                        {
-                            data: "",
-                            message: "CONFLICT"
-                        }
-                );
+            const webMail = req.body.webMail
+            if (webMail) {
+                const user  = await User.findOne({where: {webMail: webMail}})
+                const email = await Provider.findOne({where: {email: `${req.body.email}@hufs.ac.kr`}})
+                if (user || email) {
+                        return res.status(409).json(
+                            {
+                                data: "",
+                                message: "CONFLICT"
+                            }
+                    );
+                }
             }
+            if (!req.body.mainMajorId) {
+                return res.status(422).json(
+                    {
+                        data: "",
+                        message: "BODY_MAIN_MAJOR"
+                    }
+                )
+            } else if (!req.body.doubleMajorId) {
+                return res.status(422).json(
+                    {
+                        data: "",
+                        message: "BODY_DOUBLE_MAJOR"
+                    }
+                )
+            }
+
             if (req.body.isAgreed) {
                 const user = await User.create(
                     {
                         nickname: req.body.nickname,
-                        webMail: req.body.webMail,
+                        webMail: webMail,
                         mainMajorId: req.body.mainMajorId,
                         doubleMajorId: req.body.doubleMajorId,
                         isAgreed: req.body.isAgreed
@@ -215,7 +275,27 @@ const userAuth = {
                 console.log(user)
                 console.log(provider)
                 req.user = user
-                return next();
+
+                if (webMail) {
+                    return next();
+                } else {
+                    const payload = {
+                        id      : req.user.id,
+                        webMail : req.user.webMail,
+                        type    : req.user.type
+                    };
+                    accessToken = jwt.sign(payload, jwtSecretKey, jwtOptions);
+                    return res.cookie(
+                        'user',
+                        accessToken,
+                        cookieOptions
+                    ).status(200).json(
+                        {
+                            data: "",
+                            message: ""
+                        }
+                    );
+                }
             } else {
                 return res.status(401).json(
                     {
@@ -225,6 +305,7 @@ const userAuth = {
                 );
             }
         } catch (error) {
+            console.log(error)
             if (error.message === "Validation error") {
                 return res.status(409).json(
                     {
@@ -331,7 +412,7 @@ const userInfo = {
                         model: Provider,
                         attributes: ['name', 'email']
                     },
-                    {
+                    { 
                         model: Token,
                         attributes: ['isEmailAuthenticated']
                     },
@@ -343,12 +424,24 @@ const userInfo = {
                     },
                     { 
                         model: Post,
-                        attributes: ['id', 'title']
+                        attributes: ['id', 'title'],
+                        include: [
+                            { model: Board, attributes: ['id', 'title'] }
+                        ]
                     },
                     { 
                         model: Reply,
                         attributes: ['id', 'content'],
-                        include: [{model: Post, attributes: ['id', 'title']}]
+                        include: [
+                            {
+                                model: Post,
+                                attributes: ['id', 'title'],
+                                include: [{
+                                    model: Board,
+                                    attributes: ['id', 'title']
+                                }]
+                            }
+                        ]
                     }
                 ]
             },
@@ -373,65 +466,71 @@ const userInfo = {
 
     updateUser: async(req, res) => {
         try {
-            const today       = new Date()
-            const user        = await User.findOne( { where: { id: req.user.id } } );
-            const mainMajor   = await MainMajor.findOne({ where: { id: req.body.mainMajorId } });
-            const doubleMajor = await DoubleMajor.findOne( { where: { id: req.body.doubleMajorId } } );
+            const today = new Date()
+            if (req.user.id) {
+                const user = await User.findOne( { where: { id: req.user.id } } );
 
-            if (user.isMainMajorUpdated) {
-                return res.status(409).json(
+                if (req.body.nickname) {
+                    const date = today - user.nicknameUpdatedAt;
+                    const aDay = 24 * 60 * 60 * 1000
+    
+                    if (parseInt(date / aDay) >= 30) {
+                        user.nickname          = req.body.nickname
+                        user.nicknameUpdatedAt = today
+                    } else {
+                        return res.status(400).json(
+                            {
+                                data    : "",
+                                message: "INVALID_NICKNAME_TIME"
+                            }
+                        );
+                    }
+                }
+
+                if (req.body.mainMajorId) {
+                    if (user.isMainMajorUpdated) {
+                        return res.status(409).json(
+                            {
+                                data   : "",
+                                message: "CONFLICT_MAIN_MAJOR"
+                            }
+                        );
+                    } else {
+                        user.isMainMajorUpdated = true
+                        user.mainMajorId        = req.body.mainMajorId;
+                    }
+                }
+    
+                if (req.body.doubleMajorId) {
+                    if (user.isDoubleMajorUpdated) {
+                        return res.status(409).json(
+                            {
+                                data   : "",
+                                message: "CONFLICT_DOUBLE_MAJOR"
+                            }
+                        );
+                    } else {
+                        user.isDoubleMajorUpdated = true
+                        user.doubleMajorId        = req.body.doubleMajorId;
+                    }
+                }
+
+                await user.save();
+                return res.status(200).json(
                     {
-                        data   : "",
-                        message: "CONFLICT_MAIN_MAJOR"
+                        data: "",
+                        message: ""
                     }
                 );
-            }
-
-            if (user.isDoubleMajorUpdated) {
-                return res.status(409).json(
+            } else {
+                return res.status(401).json(
                     {
-                        data   : "",
-                        message: "CONFLICT_DOUBLE_MAJOR"
+                        data: "",
+                        message: "UNAUTHORIZED"
                     }
-                );
+                )
             }
 
-            if (!nickname === req.body.nickname) {
-                const date = today - user.nicknameUpdatedAt;
-                const aDay = 24 * 60 * 60 * 1000
-
-                if (parseInt(date / aDay) >= 30) {
-                    user.nickname           = req.body.nicname
-                    user.nincknameUpdatedAt = today
-                } else {
-                    return res.status(400).json(
-                        {
-                            data    : "",
-                            messagae: "INVALID_NICKNAME_TIME"
-                        }
-                    );
-                }
-            }
-
-
-            if (!mainMajor.id === user.mainMajorId) {
-                user.isMainMajorUpdated = true
-                user.mainMajorId        = mainMajor.id;
-            }
-
-            if (!doubleMajor.id === user.doubleMajorId) {
-                user.isDoubleMajorUpdated = true
-                user.doubleMajorId        = doubleMajor.id;
-            }
-            
-            await user.save();
-
-            return res.status(200).json(
-                {
-                    data: "",
-                    message: ""
-                }
-            );
         } catch (error) {
             console.log(error);
 
@@ -675,7 +774,13 @@ const postScrap = {
                         {
                             model: Scrap,
                             attributes: ['id'],
-                            include: {model: Post, attributes: ['id', 'title']}
+                            include: {
+                                model: Post,
+                                attributes: ['id', 'title'],
+                                include: [
+                                    {model: Board, attributes: ['id', 'title']}
+                                ]
+                            }
                         }
                     ]
                 }

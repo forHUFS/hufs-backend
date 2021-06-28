@@ -26,7 +26,6 @@ const DoubleMajor             = require('./doubleMajors');
 const Scholarship             = require('./scholarships');
 const ScholarshipDate         = require('./scholarshipDate');
 const ScholarshipOption       = require('./scholarshipOptions');
-const ScholarshipSchoolOption = require('./scholarshipSchoolOption');
 
 const db = {};
 const sequelize = new Sequelize(
@@ -56,7 +55,6 @@ db.DoubleMajor                = DoubleMajor;
 db.Scholarship                = Scholarship;
 db.ScholarshipDate            = ScholarshipDate;
 db.ScholarshipOption          = ScholarshipOption;
-db.ScholarshipSchoolOption    = ScholarshipSchoolOption;
 
 
 Object.keys(db).forEach(modelName => {

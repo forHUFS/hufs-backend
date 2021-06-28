@@ -11,12 +11,10 @@ const YAML        = require('yamljs');
 const swaggerUi   = require('swagger-ui-express');
 const swaggerSpec = YAML.load(path.join(__dirname, 'swagger/swagger.yaml'))
 
-// config
-const configurePassport = require('./config/passport');
-
 // routes
 const { sequelize }     = require('./models');
-const searchRouter        = require('./routes/search');
+const authRouter        = require('./routes/auth');
+const searchRouter      = require('./routes/search');
 const postRouter        = require('./routes/post');
 const boardRouter       = require('./routes/board');
 const replyRouter       = require('./routes/reply');
@@ -40,8 +38,6 @@ app.use(morgan('dev'));
 app.use(cookieParser());
 app.use(cors(corsOptions));
 
-configurePassport(app);
-
 sequelize.sync({force:false})
     .then(()=>{
         console.log('데이터 베이스 연결 성공');
@@ -61,6 +57,7 @@ app.use('/campus', campusRouter);
 app.use('/major', majorRouter);
 app.use('/scholarship', scholarShipRouter);
 app.use('/search', searchRouter);
+app.use('/auth', authRouter);
 
 // API Document by using swagger
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
