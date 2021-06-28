@@ -1091,7 +1091,7 @@ paths:
       parameters:
         - in: query
           name: keyword
-          description: 검색 키워드
+          description: 키워드
           required: true
           example: 검색할 내용
         - in: query
