@@ -2466,11 +2466,17 @@ paths:
                   value:
                     data: ""
                     message: FORBIDDEN_BEFORE
-  /store/seoul:
+  /store/{campusId}:
     get:
-      summary: 서울캠퍼스 상점 리스트
+      summary: 상점 리스트
       consumes: application/json
       produces: application/json
+      parameters:
+        - in: path
+          name: campusId
+          description: 상점을 조회할 캠퍼스 id. 서울캠퍼스 - 1 , 글로벌캠퍼스 - 2
+          example: 1
+          required: true
       responses:
         200:
           description: 리스트 조회 성공
@@ -2481,27 +2487,7 @@ paths:
                 properties:
                   data:
                     type: array
-                    example: [ { "id": 1, "long": 127.0612756, "lat": 37.59585367, "name": "24시해장국", "tel": "209656790", "numAddress": "서울특별시 동대문구 이문동 305-59번지 ", "roadAddress": "서울특별시 동대문구 휘경로 12 (이문동)", "campus": 1, "storeSubCategoryId": 1, "StoreSubCategory": { "name": "한식" } }]
-                    description: 리뷰 데이터
-                  message:
-                    type: string
-                    example: ""
-  /store/global:
-    get:
-      summary: 글로벌캠퍼스 상점 리스트
-      consumes: application/json
-      produces: application/json
-      responses:
-        200:
-          description: 리스트 조회 성공
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    example: [ { "id": 959, "long": 127.2546727,"lat": 37.3355024, "name": "49포차", "tel": "031 333 6322", "numAddress": "경기도 용인시 처인구 모현읍 왕산리 494-11 ","roadAddress": "경기도 용인시 처인구 모현읍 외대로 48", "campus": 2, "storeSubCategoryId": 1, "StoreSubCategory": { "name": "한식" }}]
+                    example: [ { "id": 1, "long": 127.0612756, "lat": 37.59585367, "name": "24시해장국", "tel": "209656790","numAddress": "서울특별시 동대문구 이문동 305-59번지 ","roadAddress": "서울특별시 동대문구 휘경로 12 (이문동)","StoreSubCategory": "한식","reviewCount": 2, "reviewAverage": "3.8" } ]
                     description: 리뷰 데이터
                   message:
                     type: string
