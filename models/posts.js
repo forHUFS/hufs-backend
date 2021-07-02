@@ -27,6 +27,10 @@ module.exports = class Post extends Sequelize.Model{
                 type: Sequelize.BOOLEAN,
                 allowNull: false,
                 defaultValue: false
+            },
+            header: {
+                type: Sequelize.STRING,
+                allowNull: true
             }
 
         }, {

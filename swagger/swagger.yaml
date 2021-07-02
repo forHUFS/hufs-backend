@@ -1221,6 +1221,9 @@ paths:
                 type: string
                 example: 글 내용
                 required: true
+              header:
+                type: string
+                example: 말머리
               url:
                 type: array
                 description: 삭제할 이미지 url 배열
@@ -1640,6 +1643,9 @@ paths:
                 type: string
                 example: 글 내용
                 required: true
+              header:
+                type: string
+                example: 말머리
               url:
                 type: array
                 description: 삭제할 이미지 url 배열

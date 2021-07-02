@@ -112,6 +112,7 @@ exports.modifyPost = async(req,res,next)=> {
          const post = await Post.update({
             title: req.body.title,
             content: req.body.content,
+            header: req.body.header
         },{
             where : {
                 id: req.params.id,
