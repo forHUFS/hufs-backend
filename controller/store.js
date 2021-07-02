@@ -177,30 +177,21 @@ exports.readDetail = async (req,res,next) => {
 
 }
 
-exports.readStoresOfSeoul = async(req,res,next) => {
+exports.readStores = async(req,res,next) => {
     try {
-        const store = await Store.findAll({
-            where: { campus: 1 },
-            include: [{model: StoreSubCategory, attributes: ['name']}]
-        });
+        const store = await Store.sequelize.query(
+            `
+            SELECT Store.id, Store.long, Store.lat, Store.name, Store.tel, Store.num_address AS numAddress,
+            Store.road_address AS roadAddress, StoreSubCategory.name AS StoreSubCategory,
+            COUNT(StoreReviews.id) AS reviewCount, ROUND(AVG(score), 1) AS reviewAverage
+            FROM stores AS Store LEFT OUTER JOIN store_sub_categories AS StoreSubCategory
+            ON Store.store_sub_category_id = StoreSubCategory.id AND (StoreSubCategory.deleted_at IS NULL)
+            LEFT OUTER JOIN store_reviews AS StoreReviews ON Store.id = StoreReviews.store_id
+            WHERE Store.campus = ${req.params.campusId} GROUP BY Store.id;
+            `
+        )
         res.status(200).json({
-            data: store,
-            message: ""
-        });
-    } catch (err) {
-        console.error(err);
-        next(err);
-    }
-}
-
-exports.readStoresOfGlobal = async(req,res,next) => {
-    try {
-        const review = await Store.findAll({
-            where: { campus: 2 },
-            include: [{model: StoreSubCategory, attributes: ['name']}]
-        });
-        res.status(200).json({
-            data: review,
+            data: store[0],
             message: ""
         });
 
