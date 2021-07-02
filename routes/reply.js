@@ -1,5 +1,5 @@
 const express = require('express');
-const { addReply, deleteReply, modifyReply, addReplyLike, cancelReplyLike, report } = require('../controller/reply');
+const { addReply, addReReply, deleteReply, modifyReply, addReplyLike, cancelReplyLike, report } = require('../controller/reply');
 const { authUtil } = require('../middlewares/auth');
 
 const router = express.Router();
