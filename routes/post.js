@@ -13,7 +13,7 @@ router.post('/img', upload.array('img',10), uploadImg);
 
 
 router.get('/:id/addlike', authUtil.isSignedIn, authUtil.isAuthorized, addLike);
-//router.get('/:id/dellike', authUtil.isSignedIn, authUtil.isAuthorized, delLike);
+//grouter.get('/:id/dellike', authUtil.isSignedIn, authUtil.isAuthorized, delLike);
 
 router.post('/:id/report', authUtil.isSignedIn, authUtil.isAuthorized, report);
 

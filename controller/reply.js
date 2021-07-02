@@ -8,12 +8,20 @@ const sequelize = require('../models').sequelize;
 
 exports.addReply = async(req,res,next)=> {
     try {
-        const reply = await Reply.create({
-            content: req.body.content,
-            postId: req.body.postId,
-            userId: req.user.id
-        });
-
+        if (!req.body.parentId) {
+            const reply = await Reply.create({
+                content: req.body.content,
+                postId: req.body.postId,
+                userId: req.user.id
+            });
+        } else if (req.body.parentId) {
+            const reply = await Reply.create({
+                content: req.body.content,
+                parentId: req.body.parentId,
+                postId: req.body.postId,
+                userId: req.user.id
+            });
+        }
         res.status(200).json({
             data: "",
             message: ""
@@ -25,6 +33,7 @@ exports.addReply = async(req,res,next)=> {
         next(err);
     }
 }
+
 exports.addReReply = async(req,res,next)=>{
     try {
         const reply = await Reply.create({
@@ -42,6 +51,7 @@ exports.addReReply = async(req,res,next)=>{
         next(err);
     }
 }
+
 exports.deleteReply = async(req,res,next) => {
     try {
         const reply = await Reply.findOne({

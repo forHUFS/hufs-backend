@@ -44,6 +44,7 @@ exports.addPost = async (req,res,next)=> {
             await Post.create({
                 title: req.body.title,
                 content: req.body.content,
+                header: req.body.header,
                 boardId: req.params.id,
                 userId: req.user.id
             });
@@ -51,6 +52,7 @@ exports.addPost = async (req,res,next)=> {
             await Post.create({
                 title: req.body.title,
                 content: req.body.content,
+                header: req.body.header,
                 boardId: req.params.id,
                 userId: req.user.id,
                 admin: true
