@@ -2803,6 +2803,10 @@ definitions:
         type: boolean
         description: 작성자가 admin이면 true, 아니면 false
         example: false
+      header:
+        type: string
+        description: 말머리. 없을 경우 null
+        example: 말머리
       createdAt:
         type: date
         description: 글 생성 날짜 및 시간
@@ -2990,6 +2994,10 @@ definitions:
         type: integer
         description: 작성자가 admin이면 1, 아니면 0
         example: 0
+      header:
+        type: string
+        description: 말머리. 없을 경우 null
+        example: 말머리
       createdAt:
         type: date
         description: 글 생성 날짜 및 시간
