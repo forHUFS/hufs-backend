@@ -74,7 +74,7 @@ exports.readAllReviews = async (req,res,next) => {
     try {
         const reviews = await StoreReview.findAll({
             include: [{ model: User , attributes: ['nickname']},
-                      { model: Store, attributes: ['name']}]
+                      { model: Store, attributes: ['id','name']}]
         });
         res.status(200).json({
             data: reviews,

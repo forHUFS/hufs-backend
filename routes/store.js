@@ -1,12 +1,12 @@
 const express = require('express');
 const { authUtil } = require('../middlewares/auth');
-const { readStores, addReview, readReview, readReviews, modifyReview, deleteReview, readDetail } = require('../controller/store');
+const { readStores, addReview, readReview, readReviews, modifyReview, deleteReview, readDetail, readAllReviews } = require('../controller/store');
 const { uploadForReview } = require('../middlewares/upload');
 const router = express.Router();
 
 
-//router.get('/review', authUtil.isSignedIn, readAllReviews);
-
+router.get('/review', authUtil.isSignedIn, readAllReviews);
+// 리뷰 전체 조회
 
 router.get('/review/:id', authUtil.isSignedIn, authUtil.isAuthorized, readReview);
 // 특정 리뷰 조회
@@ -23,7 +23,7 @@ router.post('/:id/review', authUtil.isSignedIn, authUtil.isAuthorized, addReview
 router.get('/:id/review', authUtil.isSignedIn, authUtil.isAuthorized, readReviews);
 // 특정 상점의 리뷰들 조회
 
-router.get('/:id/detail', authUtil.isSignedIn, authUtil.isAuthorized, readDetail);
+router.get('/:id', authUtil.isSignedIn, authUtil.isAuthorized, readDetail);
 // 상점 상세보기 페이지
 
 router.get('/:campusId', readStores);

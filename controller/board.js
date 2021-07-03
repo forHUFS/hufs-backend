@@ -46,7 +46,7 @@ exports.addPost = async (req,res,next)=> {
                 title: req.body.title,
                 content: req.body.content,
                 header: req.body.header,
-                boardId: req.params.id,
+                boardId: req.parmas.id,
                 userId: req.user.id
             });
         } else if (req.user.type === 'admin') {

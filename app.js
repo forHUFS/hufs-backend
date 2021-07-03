@@ -23,6 +23,8 @@ const userRouter        = require('./routes/user');
 const campusRouter      = require('./routes/campus');
 const majorRouter       = require('./routes/major');
 const scholarShipRouter = require('./routes/scholarship');
+const reportRouter      = require('./routes/report');
+const likeRouter        = require('./routes/like');
 
 dotenv.config();
 
@@ -58,6 +60,8 @@ app.use('/major', majorRouter);
 app.use('/scholarship', scholarShipRouter);
 app.use('/search', searchRouter);
 app.use('/auth', authRouter);
+app.use('/report', reportRouter);
+app.use('/like', likeRouter);
 
 // API Document by using swagger
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
