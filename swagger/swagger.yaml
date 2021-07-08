@@ -2811,10 +2811,6 @@ definitions:
         type: date
         description: 글 마지막으로 업데이트된 시간
         example: 2021-03-14T06:21:29.000Z
-      deletedAt:
-        type: date
-        description: 일반 댓글일 경우 null, 삭제된 댓글이면 삭제된 시간
-        example: 2021-03-14T06:21:29.000Z
       boardId:
         type: integer
         description: 게시판 아이디
@@ -2860,6 +2856,10 @@ definitions:
       updatedAt:
         type: date
         description: 댓글 마지막으로 업데이트된 시간
+        example: 2021-03-14T06:21:29.000Z
+      deletedAt:
+        type: date
+        description: 일반 댓글일 경우 null, 삭제된 댓글이면 삭제된 시간
         example: 2021-03-14T06:21:29.000Z
       postId:
         type: integer
