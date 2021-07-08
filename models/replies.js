@@ -23,7 +23,7 @@ module.exports = class Reply extends Sequelize.Model{
             underscored: true,
             modelName: 'Reply',
             tableName: 'replies',
-            paranoid: false,
+            paranoid: true,
             charset: 'utf8mb4',
             collate: 'utf8mb4_general_ci',
         });
