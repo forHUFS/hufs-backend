@@ -17,7 +17,7 @@ router.get('/:id/addlike', authUtil.isSignedIn, authUtil.isAuthorized, addLike);
 
 router.post('/:id/report', authUtil.isSignedIn, authUtil.isAuthorized, report);
 
-router.get('/:id', authUtil.isSignedIn, authUtil.isAuthorized, readPost);
+router.get('/:title', authUtil.isSignedIn, authUtil.isAuthorized, readPost);
 router.put('/:id', authUtil.isSignedIn, authUtil.isAuthorized, modifyPost);
 router.delete('/:id', authUtil.isSignedIn, authUtil.isAuthorized, deletePost); 
 

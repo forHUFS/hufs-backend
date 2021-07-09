@@ -24,7 +24,8 @@ exports.readPosts = async (req,res,next)=>{
                 COUNT(CASE WHEN replies.id = null THEN 0 ELSE replies.id END) AS "repliesCount"
                 FROM posts
                 LEFT OUTER JOIN replies ON replies.post_id = posts.id
-                WHERE posts.board_id = ${req.params.id}
+                LEFT OUTER JOIN boards ON boards.id = posts.board_id
+                WHERE boards.title = ${req.params.title}
                 GROUP BY posts.id
             `,
             {type: QueryTypes.SELECT}
