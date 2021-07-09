@@ -59,7 +59,7 @@ exports.readPost = async(req,res,next)=>{
     try {
         const post = await Post.findOne({
             where: { id: req.params.id, report: { [Op.lt]: 5 } },
-            include: [{ model: Reply, include: [{model: User, attributes: ['nickname']}] },
+            include: [{ model: Reply, paranoid: false, include: [{model: User, attributes: ['nickname']}] },
                       { model: User , attributes: ['nickname'] }]
         });
         if (post) {
