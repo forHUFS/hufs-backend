@@ -86,6 +86,11 @@ exports.like = async (req,res,next) => {
                 data: "",
                 message: ""
             });
+        } else {
+            res.status(422).json({
+                data: "",
+                message: "BODY_OPTION"
+            });
         }
     } catch (err) {
         console.error(err);

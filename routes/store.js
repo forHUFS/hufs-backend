@@ -5,7 +5,7 @@ const { uploadForReview } = require('../middlewares/upload');
 const router = express.Router();
 
 
-router.get('/review', authUtil.isSignedIn, readAllReviews);
+router.get('/reviews', authUtil.isSignedIn, readAllReviews);
 // 리뷰 전체 조회
 
 router.get('/review/:id', authUtil.isSignedIn, authUtil.isAuthorized, readReview);
@@ -20,7 +20,7 @@ router.delete('/review/:id', authUtil.isSignedIn, authUtil.isAuthorized, deleteR
 router.post('/:id/review', authUtil.isSignedIn, authUtil.isAuthorized, addReview);
 // 특정 상점에 리뷰 작성
 
-router.get('/:id/review', authUtil.isSignedIn, authUtil.isAuthorized, readReviews);
+router.get('/:id/reviews', authUtil.isSignedIn, authUtil.isAuthorized, readReviews);
 // 특정 상점의 리뷰들 조회
 
 router.get('/:id', authUtil.isSignedIn, authUtil.isAuthorized, readDetail);

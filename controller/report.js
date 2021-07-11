@@ -99,6 +99,11 @@ exports.report = async(req,res,next) => {
                     message: "CONFLICT"
                 });
             }
+        } else {
+            res.status(422).json({
+                data: "",
+                message: "BODY_OPTION"
+            });
         }
 
     } catch (err) {

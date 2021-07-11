@@ -1499,6 +1499,14 @@ paths:
                   value:
                     data: ""
                     message: FORBIDDEN_BEFORE
+        422:
+          description: postId, replyId 모두 누락
+          content:
+            application/json:
+              example:
+                data: ""
+                message: "BODY_OPTION"
+
 
   /report:
     post:
@@ -1571,6 +1579,13 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Conflict-response"
+        422:
+          description: postId, replyId 모두 누락
+          content:
+            application/json:
+              example:
+                data: ""
+                message: "BODY_OPTION"
   /post/{id}:
     get:
       summary: 게시글 조회
@@ -2166,6 +2181,8 @@ paths:
                   value:
                     data: ""
                     message: FORBIDDEN_BEFORE                 
+
+  /store/{id}/reviews:
     get:
       summary: 특정 상점의 리뷰들 조회
       consumes: application/json
@@ -2194,7 +2211,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Unauthorized-response"            
+                $ref: "#/definitions/Unauthorized-response"
         403:
           description: 접근 권한 오류
           content:
@@ -2213,8 +2230,9 @@ paths:
                   summary: 이메일 인증이 되지 않은 사용자
                   value:
                     data: ""
-                    message: FORBIDDEN_BEFORE                    
-  /store/{id}/detail:
+                    message: FORBIDDEN_BEFORE
+
+  /store/{id}:
     get:
       summary: 상점 상세보기 페이지
       consumes: application/json
@@ -2290,7 +2308,7 @@ paths:
                   message:
                     type: string
                     example: ""
-  /store/review:
+  /store/reviews:
     get:
       summary: 모든 리뷰 리스트
       consumes: application/json
