@@ -11,6 +11,6 @@ router.post('/4/post', authUtil.isSignedIn, authUtil.isGraduated, addPost); // �
 
 router.post('/:id/post', authUtil.isSignedIn, authUtil.isAuthorized, addPost); // 일반 게시판 글쓰기
 
-router.get('/:id', authUtil.isSignedIn, authUtil.isAuthorized, readPosts );
+router.get('/:title', authUtil.isSignedIn, authUtil.isAuthorized, readPosts );
 
 module.exports = router;
