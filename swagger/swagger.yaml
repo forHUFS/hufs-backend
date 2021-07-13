@@ -1403,7 +1403,7 @@ paths:
                     data: ""
                     message: FORBIDDEN_BEFORE                 
 
-  /post/img:
+  /post/image:
     post:
       summary: 이미지 업로드
       consumes: application/json
@@ -1452,20 +1452,24 @@ paths:
                   value:
                     data: ""
                     message: FORBIDDEN_BEFORE                      
-  /post/{id}/addlike:
-    get:
-      summary: 게시글 좋아요 +1
+  /like:
+    post:
+      summary: 좋아요 +1, -1
       consumes: application/json
       produces: application/json
       parameters:
-        - in: path
-          name: id
+        - in: body
+          name: postId
           required: true
-          description: 게시글 번호
+          description: 게시글에 대한 추천인 경우 - 게시글 번호
           example: 1
+        - in: body
+          name: replyId
+          required: true
+          description: 댓글에 대한 추천인 경우 - 댓글 번호
       responses:
         200:
-          description: 좋아요 +1 완료
+          description: 좋아요 +1 혹은 -1 완료 (좋아요 이력이 없으면 +1, 아니면 -1)
           content:
             application/json:
               schema:
@@ -1495,18 +1499,31 @@ paths:
                   value:
                     data: ""
                     message: FORBIDDEN_BEFORE
+        422:
+          description: postId, replyId 모두 누락
+          content:
+            application/json:
+              example:
+                data: ""
+                message: "BODY_OPTION"
 
-  /post/{id}/report:
+
+  /report:
     post:
-      summary: 게시글 신고
+      summary: 신고
       consumes: application/json
       produces: application/json
       parameters:
-        - in: path
-          name: id
+        - in: body
+          name: postId
           required: true
-          description: 게시글 번호
+          description: 게시글 신고일 경우 - 게시글 번호
           example: 1
+        - in: body
+          name: replyId
+          required: true
+          description: 댓글 신고일 경우 - 댓글 번호
+          example: 3
         - in: body
           name: body
           description: 신고하는 내용
@@ -1562,6 +1579,13 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Conflict-response"
+        422:
+          description: postId, replyId 모두 누락
+          content:
+            application/json:
+              example:
+                data: ""
+                message: "BODY_OPTION"
   /post/{id}:
     get:
       summary: 게시글 조회
@@ -1737,7 +1761,7 @@ paths:
                   value:
                     data: ""
                     message: FORBIDDEN_BEFORE
-  /reply/add:
+  /reply:
     post:
       summary: 댓글 작성
       consumes: application/json
@@ -1760,6 +1784,11 @@ paths:
                 example: 1
                 required: true
                 description: 댓글 달 게시글 번호
+              parentId:
+                type: integer
+                example: 1
+                required: false
+                description: 대댓글을 작성할 경우 - 부모 댓글 아이디 (일반 댓글일 경우 X)
       responses:
         200:
           description: 댓글 작성 완료
@@ -1792,66 +1821,7 @@ paths:
                   value:
                     data: ""
                     message: FORBIDDEN_BEFORE                 
-  /reply/add/re:
-    post:
-      summary: 대댓글 작성
-      consumes: application/json
-      produces: application/json
-      parameters:
-        - in: body
-          name: body
-          description: 대댓글 작성할 때 필요한 데이터
-          required: true
-          schema:
-            type: object
-            properties:
-              content:
-                type: string
-                example: 댓글
-                required: true
-                description: 댓글 내용
-              postId:
-                type: integer
-                example: 1
-                required: true
-                description: 대댓글 달 게시글 번호
-              parentId:
-                type: integer
-                example: 2
-                required: true
-                description: 대댓글의 부모 댓글 번호
-      responses:
-        200:
-          description: 대댓글 작성 완료
-          content:
-            application/json:
-              schema:
-                $ref: "#/definitions/Success-response"
-        401:
-          description: 로그인하지 않은 사용자
-          content:
-            application/json:
-              schema:
-                $ref: "#/definitions/Unauthorized-response"            
-        403:
-          description: 접근 권한 오류
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: "#/definitions/Forbidden-suspension-response"
-                  - $ref: "#/definitions/Forbidden-before-response"
-              examples:
-                suspended-user:
-                  summary: 정지된 사용자
-                  value:
-                    data: ""
-                    message: FORBIDDEN_SUSPENSION
-                email-unauthorized-user:
-                  summary: 이메일 인증이 되지 않은 사용자
-                  value:
-                    data: ""
-                    message: FORBIDDEN_BEFORE                
+
   /reply/{id}:
     put:
       summary: 댓글 수정
@@ -1961,170 +1931,7 @@ paths:
                   value:
                     data: ""
                     message: FORBIDDEN_BEFORE
-  /reply/{id}/report:
-    post:
-      summary: 댓글 신고
-      consumes: application/json
-      produces: application/json
-      parameters:
-        - in: path
-          name: id
-          required: true
-          description: 댓글 번호
-          example: 1
-        - in: body
-          name: body
-          description: 신고하는 내용
-          required: true
-          schema:
-            type: object
-            properties:
-              content:
-                type: integer
-                example: 1
-                required: true
-                description: 신고 내용(객관식)
-              detail:
-                type: string
-                example: 불쾌함
-                required: false
-                description: 신고 내용(주관식)
-      responses:
-        200:
-          description: 신고 완료
-          content:
-            application/json:
-              schema:
-                $ref: "#/definitions/Success-response"
-        401:
-          description: 로그인하지 않은 사용자
-          content:
-            application/json:
-              schema:
-                $ref: "#/definitions/Unauthorized-response"            
-        403:
-          description: 접근 권한 오류
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: "#/definitions/Forbidden-suspension-response"
-                  - $ref: "#/definitions/Forbidden-before-response"
-              examples:
-                suspended-user:
-                  summary: 정지된 사용자
-                  value:
-                    data: ""
-                    message: FORBIDDEN_SUSPENSION
-                email-unauthorized-user:
-                  summary: 이메일 인증이 되지 않은 사용자
-                  value:
-                    data: ""
-                    message: FORBIDDEN_BEFORE 
-        409:
-          description: 이미 신고한 댓글
-          content:
-            application/json:
-              schema:
-                $ref: "#/definitions/Conflict-response"
-  /reply/{id}/addlike:
-    get:
-      summary: 댓글 좋아요 +1
-      consumes: application/json
-      produces: application/json
-      parameters:
-        - in: path
-          name: id
-          required: true
-          description: 댓글 번호
-          example: 1
-      responses:
-        200:
-          description: 좋아요 +1 완료
-          content:
-            application/json:
-              schema:
-                $ref: "#/definitions/Success-response"
-        401:
-          description: 로그인하지 않은 사용자
-          content:
-            application/json:
-              schema:
-                $ref: "#/definitions/Unauthorized-response"            
-        403:
-          description: 접근 권한 오류
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: "#/definitions/Forbidden-suspension-response"
-                  - $ref: "#/definitions/Forbidden-before-response"
-              examples:
-                suspended-user:
-                  summary: 정지된 사용자
-                  value:
-                    data: ""
-                    message: FORBIDDEN_SUSPENSION
-                email-unauthorized-user:
-                  summary: 이메일 인증이 되지 않은 사용자
-                  value:
-                    data: ""
-                    message: FORBIDDEN_BEFORE 
-        409:
-          description: 사용자가 이미 좋아요를 누른 댓글에 대한 요청 거부
-          content:
-            application/json:
-              schema:
-                $ref: "#/definitions/Conflict-response"
-  /reply/{id}/dellike:
-    get:
-      summary: 댓글 좋아요 -1
-      consumes: application/json
-      produces: application/json
-      parameters:
-        - in: path
-          name: id
-          description: 댓글 번호
-          required: true
-          example: 1
-      responses:
-        200:
-          description: 좋아요 -1 완료
-          content:
-            application/json:
-              schema:
-                $ref: "#/definitions/Success-response"
-        401:
-          description: 로그인하지 않은 사용자
-          content:
-            application/json:
-              schema:
-                $ref: "#/definitions/Unauthorized-response"            
-        403:
-          description: 접근 권한 오류
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: "#/definitions/Forbidden-suspension-response"
-                  - $ref: "#/definitions/Forbidden-before-response"
-              examples:
-                suspended-user:
-                  summary: 정지된 사용자
-                  value:
-                    data: ""
-                    message: FORBIDDEN_SUSPENSION
-                email-unauthorized-user:
-                  summary: 이메일 인증이 되지 않은 사용자
-                  value:
-                    data: ""
-                    message: FORBIDDEN_BEFORE 
-        409:
-          description: 사용자가 좋아요를 누른 적이 없는 댓글에 대한 요청 거부
-          content:
-            application/json:
-              schema:
-                $ref: "#/definitions/Conflict-response"
+
 
   /store/review/{id}:
     get:
@@ -2374,6 +2181,8 @@ paths:
                   value:
                     data: ""
                     message: FORBIDDEN_BEFORE                 
+
+  /store/{id}/reviews:
     get:
       summary: 특정 상점의 리뷰들 조회
       consumes: application/json
@@ -2402,7 +2211,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/definitions/Unauthorized-response"            
+                $ref: "#/definitions/Unauthorized-response"
         403:
           description: 접근 권한 오류
           content:
@@ -2421,8 +2230,9 @@ paths:
                   summary: 이메일 인증이 되지 않은 사용자
                   value:
                     data: ""
-                    message: FORBIDDEN_BEFORE                    
-  /store/{id}/detail:
+                    message: FORBIDDEN_BEFORE
+
+  /store/{id}:
     get:
       summary: 상점 상세보기 페이지
       consumes: application/json
@@ -2498,6 +2308,28 @@ paths:
                   message:
                     type: string
                     example: ""
+  /store/reviews:
+    get:
+      summary: 모든 리뷰 리스트
+      consumes: application/json
+      produces: application/json
+      responses:
+        200:
+          description: 리스트 조회 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    example: [{ "id": 20, "title": "싼맛으로 ", "content": "<p>좋아용 </p>", "score": "4.5", "createdAt": "2021-05-14T13:30:38.000Z", "updatedAt": "2021-05-14T13:30:38.000Z", "storeId": 979, "userId": 10, "User": { "nickname": "우주최강여신교윤" }, "Store": { "id": 979, "name": "더더피자"   } }]
+                    description: 리뷰 데이터
+                  message:
+                    type: string
+                    example: ""
+
+
 definitions:
   Success-response:
     type: object
@@ -2803,6 +2635,10 @@ definitions:
         type: boolean
         description: 작성자가 admin이면 true, 아니면 false
         example: false
+      header:
+        type: string
+        description: 말머리. 없을 경우 null
+        example: 말머리
       createdAt:
         type: date
         description: 글 생성 날짜 및 시간
@@ -2994,6 +2830,10 @@ definitions:
         type: integer
         description: 작성자가 admin이면 1, 아니면 0
         example: 0
+      header:
+        type: string
+        description: 말머리. 없을 경우 null
+        example: 말머리
       createdAt:
         type: date
         description: 글 생성 날짜 및 시간

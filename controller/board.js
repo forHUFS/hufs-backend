@@ -15,6 +15,7 @@ exports.readPosts = async (req,res,next)=>{
                 posts.like AS "like",
                 posts.report AS "report",
                 posts.admin AS "admin",
+                posts.header AS "header",
                 posts.created_at AS "createdAt",
                 posts.updated_at AS "updatedAt",
                 posts.board_id AS "boardId",
