@@ -26,7 +26,7 @@ exports.readPosts = async (req,res,next)=>{
                 FROM posts
                 LEFT OUTER JOIN replies ON replies.post_id = posts.id
                 LEFT OUTER JOIN boards ON boards.id = posts.board_id
-                WHERE boards.title = ${req.params.title}
+                WHERE boards.title = '${req.params.title}'
                 GROUP BY posts.id
             `,
             {type: QueryTypes.SELECT}
