@@ -2232,7 +2232,7 @@ paths:
                     data: ""
                     message: FORBIDDEN_BEFORE
 
-  /store/{id}:
+  /store/{id}/detail:
     get:
       summary: 상점 상세보기 페이지
       consumes: application/json
