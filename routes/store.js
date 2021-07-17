@@ -23,9 +23,11 @@ router.post('/:id/review', authUtil.isSignedIn, authUtil.isAuthorized, addReview
 router.get('/:id/reviews', authUtil.isSignedIn, authUtil.isAuthorized, readReviews);
 // 특정 상점의 리뷰들 조회
 
-router.get('/:id', authUtil.isSignedIn, authUtil.isAuthorized, readDetail);
+router.get('/:id/detail', authUtil.isSignedIn, authUtil.isAuthorized, readDetail);
 // 상점 상세보기 페이지
 
 router.get('/:campusId', readStores);
+
+
 module.exports = router;
 
