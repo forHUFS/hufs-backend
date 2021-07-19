@@ -1,5 +1,5 @@
 const express = require('express');
-const { readPosts, addPost, test } = require('../controller/board');
+const { readPosts, addPost } = require('../controller/board');
 const { authUtil } = require('../middlewares/auth');
 
 const router = express.Router();
