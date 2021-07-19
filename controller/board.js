@@ -2,8 +2,10 @@ const sequelize = require('sequelize');
 const Post = require('../models/posts');
 const User = require('../models/users');
 const Reply = require('../models/replies');
+const Board = require('../models/boards')
 const { deleteImg } = require('../middlewares/upload');
 const { Op, QueryTypes } = require('sequelize');
+const { authUtil } = require('../middlewares/auth');
 
 
 exports.readPosts = async (req,res,next)=>{
@@ -42,24 +44,27 @@ exports.readPosts = async (req,res,next)=>{
 }
 exports.addPost = async (req,res,next)=> {
     try {
-        if (req.user.type === 'user') {
-            await Post.create({
-                title: req.body.title,
-                content: req.body.content,
-                header: req.body.header,
-                boardId: req.params.id,
-                userId: req.user.id
-            });
-        } else if (req.user.type === 'admin') {
-            await Post.create({
-                title: req.body.title,
-                content: req.body.content,
-                header: req.body.header,
-                boardId: req.params.id,
-                userId: req.user.id,
-                admin: true
-            });
+
+        const board = await Board.findOne({
+            where: { title: req.params.title },
+        });
+        if (board.categoryId === 4) {
+            return await authUtil.isGraduated(req,res,next);
         }
+        if (req.user.type === 'user') {
+            var admin = false
+        } else if (req.user.type === 'admin') {
+            var admin = true
+        }
+            await Post.create({
+                title: req.body.title,
+                content: req.body.content,
+                header: req.body.header,
+                boardId: board.id,
+                userId: req.user.id,
+                admin: admin
+            });
+
         const url = req.body.url;
         if (url && url.length) {
             await deleteImg(url);
@@ -74,4 +79,3 @@ exports.addPost = async (req,res,next)=> {
         next(err);
     }
 }
-
