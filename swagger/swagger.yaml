@@ -1151,7 +1151,7 @@ paths:
       produces: application/json
       parameters:
         - in: path
-          name: id
+          name: title
           description: 게시판 제목
           required: true
           example: 자유공간
@@ -1201,7 +1201,7 @@ paths:
       produces: application/json
       parameters:
         - in: path
-          name: id
+          name: title
           description: 게시판 제목
           required: true
           example: 자유공간
