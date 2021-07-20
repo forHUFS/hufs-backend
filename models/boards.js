@@ -7,10 +7,6 @@ module.exports = class Board extends Sequelize.Model{
                 type: Sequelize.STRING(16),
                 allowNull: false,
             },
-            admin: {
-                type: Sequelize.BOOLEAN,
-                allowNull: false
-            }
         }, {
             sequelize,
             timestamps: true,
