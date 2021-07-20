@@ -664,7 +664,7 @@ paths:
                     message: FORBIDDEN_BEFORE 
         404:
           description: 존재하지 않는 게시글
-          cotent:
+          content:
             application/json:
               schema:
                 $ref: "#/definitions/ResourceNotFound-response"             
@@ -2308,6 +2308,31 @@ paths:
                   message:
                     type: string
                     example: ""
+        401:
+          description: 로그인하지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Unauthorized-response"
+        403:
+          description: 접근 권한 오류
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/definitions/Forbidden-suspension-response"
+                  - $ref: "#/definitions/Forbidden-before-response"
+              examples:
+                suspended-user:
+                  summary: 정지된 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_SUSPENSION
+                email-unauthorized-user:
+                  summary: 이메일 인증이 되지 않은 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_BEFORE
   /store/reviews/{campusId}:
     get:
       summary: 모든 리뷰 리스트
@@ -2334,6 +2359,40 @@ paths:
                   message:
                     type: string
                     example: ""
+        404:
+          description: 존재하지 않는 campusId
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/ResourceNotFound-response"
+        401:
+          description: 로그인하지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Unauthorized-response"
+        403:
+          description: 접근 권한 오류
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/definitions/Forbidden-suspension-response"
+                  - $ref: "#/definitions/Forbidden-before-response"
+              examples:
+                suspended-user:
+                  summary: 정지된 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_SUSPENSION
+                email-unauthorized-user:
+                  summary: 이메일 인증이 되지 않은 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_BEFORE
+
+
+
 
 
 definitions:
