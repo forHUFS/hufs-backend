@@ -1,10 +1,8 @@
-const sequelize = require('sequelize');
 const Post = require('../models/posts');
-const User = require('../models/users');
-const Reply = require('../models/replies');
-const Board = require('../models/boards')
+const Board = require('../models/boards');
+const Category = require('../models/categories');
 const { deleteImg } = require('../middlewares/upload');
-const { Op, QueryTypes } = require('sequelize');
+const { QueryTypes } = require('sequelize');
 const { authUtil } = require('../middlewares/auth');
 
 
@@ -47,14 +45,16 @@ exports.addPost = async (req,res,next)=> {
 
         const board = await Board.findOne({
             where: { title: req.params.title },
+            include: { model: Category, attributes: ['title']}
         });
-        if (board.categoryId === 4) {
+
+        if (board.Category.title === '학교떠난Boo') {
             return await authUtil.isGraduated(req,res,next);
         }
-        if (req.user.type === 'user') {
-            var admin = false
-        } else if (req.user.type === 'admin') {
-            var admin = true
+
+        let admin = false
+        if (req.user.type === 'admin') {
+            admin = true
         }
             await Post.create({
                 title: req.body.title,
