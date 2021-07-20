@@ -5,7 +5,7 @@ const { uploadForReview } = require('../middlewares/upload');
 const router = express.Router();
 
 
-router.get('/reviews', authUtil.isSignedIn, readAllReviews);
+router.get('/reviews/:campusId', authUtil.isSignedIn, readAllReviews);
 // 리뷰 전체 조회
 
 router.get('/review/:id', authUtil.isSignedIn, authUtil.isAuthorized, readReview);
