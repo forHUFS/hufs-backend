@@ -81,7 +81,7 @@ exports.readAllReviews = async (req,res,next) => {
         }
         const reviews = await StoreReview.findAll({
             include: [{ model: User , attributes: ['nickname']},
-                      { model: Store, attributes: ['name'], where: { campus: req.params.campusId }}]
+                      { model: Store, attributes: ['name'], where: { campus: campusId }}]
         });
 
         res.status(200).json({
