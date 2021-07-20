@@ -664,7 +664,7 @@ paths:
                     message: FORBIDDEN_BEFORE 
         404:
           description: 존재하지 않는 게시글
-          cotent:
+          content:
             application/json:
               schema:
                 $ref: "#/definitions/ResourceNotFound-response"             
@@ -2308,11 +2308,42 @@ paths:
                   message:
                     type: string
                     example: ""
-  /store/reviews:
+        401:
+          description: 로그인하지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Unauthorized-response"
+        403:
+          description: 접근 권한 오류
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/definitions/Forbidden-suspension-response"
+                  - $ref: "#/definitions/Forbidden-before-response"
+              examples:
+                suspended-user:
+                  summary: 정지된 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_SUSPENSION
+                email-unauthorized-user:
+                  summary: 이메일 인증이 되지 않은 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_BEFORE
+  /store/reviews/{campusId}:
     get:
       summary: 모든 리뷰 리스트
       consumes: application/json
       produces: application/json
+      parameters:
+        - in: path
+          name: campusId
+          description: 조회할 캠퍼스 id. 서울캠퍼스 - 1 , 글로벌캠퍼스 - 2
+          example: 1
+          required: true
       responses:
         200:
           description: 리스트 조회 성공
@@ -2323,11 +2354,45 @@ paths:
                 properties:
                   data:
                     type: array
-                    example: [{ "id": 20, "title": "싼맛으로 ", "content": "<p>좋아용 </p>", "score": "4.5", "createdAt": "2021-05-14T13:30:38.000Z", "updatedAt": "2021-05-14T13:30:38.000Z", "storeId": 979, "userId": 10, "User": { "nickname": "우주최강여신교윤" }, "Store": { "id": 979, "name": "더더피자"   } }]
+                    example: [ {"id": 73, "title": "ㅁㄴㅇㅁㄴㅇ", "content": "<p>ㅁㄴㅇㅁㄴㅇㄴㅁㅊ</p>","score": "3.0","createdAt": "2021-07-19T04:29:51.000Z","updatedAt": "2021-07-19T04:29:51.000Z","storeId": 1,"userId": 10,"User": {"nickname": "우주최강여신교윤"},"Store": {"name": "24시해장국"}}]
                     description: 리뷰 데이터
                   message:
                     type: string
                     example: ""
+        404:
+          description: 존재하지 않는 campusId
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/ResourceNotFound-response"
+        401:
+          description: 로그인하지 않은 사용자
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Unauthorized-response"
+        403:
+          description: 접근 권한 오류
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/definitions/Forbidden-suspension-response"
+                  - $ref: "#/definitions/Forbidden-before-response"
+              examples:
+                suspended-user:
+                  summary: 정지된 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_SUSPENSION
+                email-unauthorized-user:
+                  summary: 이메일 인증이 되지 않은 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_BEFORE
+
+
+
 
 
 definitions:
