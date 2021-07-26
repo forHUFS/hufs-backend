@@ -1286,9 +1286,9 @@ paths:
           example: titleAndContent
         - in: query
           name: board
-          description: 전체 게시판 검색일 경우 필요 X, 세부 게시판 검색 = 1 이상
+          description: 전체 게시판 검색일 경우 필요 X, 세부 게시판 검색 = 게시판 제목
           required: false
-          example: 1
+          example: 자유공간
       responses:
         200:
           description: 게시글 검색 완료
@@ -1355,11 +1355,20 @@ paths:
                     data: ""
                     message: QUERY_OPTION
         404:
-          description: 검색 결과가 없음
+          description: 검색 결과가 없음 / 존재하지 않는 게시판
           content:
             application/json:
-              schema:
-                $ref: "#/definitions/ResourceNotFound-response"
+              examples:
+                board-not-found:
+                  summary: 존재하지 않는 게시판
+                  value:
+                    data: ""
+                    message: "BOARD_NOT_FOUND"
+                resource-not-found:
+                  summary: 검색 결과가 없음
+                  value:
+                    data: ""
+                    message: "RESOURCE_NOT_FOUND"
   /post/back:
     post:
       summary: 이미지 업로드 후 글 작성 취소
