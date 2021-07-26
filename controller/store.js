@@ -72,10 +72,18 @@ exports.readReviews = async(req,res,next) => {
 }
 exports.readAllReviews = async (req,res,next) => {
     try {
+        const campusId = parseInt(req.params.campusId);
+        if (campusId !== 1 && campusId !== 2) {
+            return res.status(404).json({
+                data: "",
+                message: "RESOURCE_NOT_FOUND"
+            });
+        }
         const reviews = await StoreReview.findAll({
             include: [{ model: User , attributes: ['nickname']},
-                      { model: Store, attributes: ['name']}]
+                      { model: Store, attributes: ['name'], where: { campus: campusId }}]
         });
+
         res.status(200).json({
             data: reviews,
             message: ""
