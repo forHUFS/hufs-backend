@@ -1235,6 +1235,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/definitions/Success-response"
+        404:
+          description: 존재하지 않는 게시판
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/ResourceNotFound-response"
         401:
           description: 로그인하지 않은 사용자
           content:

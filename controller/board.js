@@ -47,7 +47,12 @@ exports.addPost = async (req,res,next)=> {
             where: { title: req.params.title },
             include: { model: Category, attributes: ['title']}
         });
-
+        if (!board) {
+            return res.status(404).json({
+                data: "",
+                message: "RESOURCE_NOT_FOUND"
+            })
+        }
         if (board.Category.title === '학교떠난Boo' && board.title !== '취창업공간-질문') {
             return await authUtil.isGraduated(req,res,next);
         }
