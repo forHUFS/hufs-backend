@@ -2,14 +2,15 @@ const Post = require('../models/posts');
 const Board = require('../models/boards');
 const User = require('../models/users');
 const Reply = require('../models/replies');
+const Category = require('../models/categories');
 const { Op } = require('sequelize');
 const { sequelize } = require('../models/index');
 
 exports.searchPosts = async (req, res, next) => {
     try {
+
         let keyword = req.query.keyword;
         let option = req.query.option;
-        let boardNumber = req.query.board;
         if (!keyword || !option) {
             res.status(422).json({
                 data: "",
@@ -17,8 +18,7 @@ exports.searchPosts = async (req, res, next) => {
             });
         } else {
             keyword = keyword.trim();
-            boardNumber = boardNumber?boardNumber:0;
-            boardNumber = parseInt(boardNumber);
+
             if (keyword.length < 2) {
                 return res.status(422).json({
                     data: "",
@@ -29,11 +29,11 @@ exports.searchPosts = async (req, res, next) => {
 
             let key = [];
             keyword.split(' ').map(k => {
-                if (k.length > 1) {
+                if (k.length >= 1) {
                     key.push({[Op.regexp]: k});
                 }
             });
-            if (boardNumber === 0) {
+            if (!req.query.board) {
                 if (option === 'titleAndContent') {
                     var post = await Post.findAll({
                         where: {
@@ -90,7 +90,20 @@ exports.searchPosts = async (req, res, next) => {
                     });
                 }
 
-            } else if (boardNumber > 0) {
+            } else {  // req.query.board가 있을 때
+
+                const board = await Board.findOne({
+                    where: {title: req.query.board},
+                    include: {model: Category, attributes: ['title']}
+                });
+                if (!board) {
+                    return res.status(404).json({
+                        data: "",
+                        message: "BOARD_NOT_FOUND"
+                    });
+                }
+                const boardNumber = board.id;
+
                 if (option === 'titleAndContent') {
                     var post = await Post.findAll({
                         where: {
