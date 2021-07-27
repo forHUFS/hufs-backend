@@ -15,8 +15,8 @@ const Reply       = require('../models/replies');
 const Token       = require('../models/tokens');
 const Scrap       = require('../models/scraps');
 const Directory   = require('../models/directories');
-const MainMajor   = require('../models/mainMajors');
-const DoubleMajor = require('../models/doubleMajors');
+const FirstMajor  = require('../models/firstMajors');
+const SecondMajor = require('../models/secondMajors');
 
 
 const emailAuth = {
@@ -119,8 +119,8 @@ const emailAuth = {
                             id      : req.user.id,
                             webMail : req.user.webMail,
                             type    : req.user.type,
-                            mainMajorId: req.user.mainMajorId,
-                            doubleMajorId: req.user.doubleMajorId
+                            firstMajorId: req.user.firstMajorId,
+                            secondMajorId: req.user.secondMajorId
                         };
                         accessToken = jwt.sign(payload, jwtSecretKey, jwtOptions);
                         return res.cookie(
@@ -191,8 +191,8 @@ const emailAuth = {
                         id      : user.id,
                         email   : user.webMail,
                         type    : user.type,
-                        mainMajorId: user.mainMajorId,
-                        doubleMajorId: user.doubleMajorId
+                        firstMajorId: user.firstMajorId,
+                        secondMajorId: user.secondMajorId
                     };
                     accessToken = jwt.sign(payload, jwtSecretKey, jwtOptions);
 
@@ -244,18 +244,18 @@ const userAuth = {
                     );
                 }
             }
-            if (!req.body.mainMajorId) {
+            if (!req.body.firstMajorId) {
                 return res.status(422).json(
                     {
                         data: "",
-                        message: "BODY_MAIN_MAJOR"
+                        message: "BODY_FIRST_MAJOR"
                     }
                 )
-            } else if (!req.body.doubleMajorId) {
+            } else if (!req.body.secondMajorId) {
                 return res.status(422).json(
                     {
                         data: "",
-                        message: "BODY_DOUBLE_MAJOR"
+                        message: "BODY_SECOND_MAJOR"
                     }
                 )
             }
@@ -265,8 +265,8 @@ const userAuth = {
                     {
                         nickname: req.body.nickname,
                         webMail: webMail,
-                        mainMajorId: req.body.mainMajorId,
-                        doubleMajorId: req.body.doubleMajorId,
+                        firstMajorId: req.body.firstMajorId,
+                        secondMajorId: req.body.secondMajorId,
                         isAgreed: req.body.isAgreed
                     }
                 );
@@ -289,8 +289,8 @@ const userAuth = {
                         id      : req.user.id,
                         webMail : req.user.webMail,
                         type    : req.user.type,
-                        mainMajorId: req.user.mainMajorId,
-                        doubleMajorId: req.user.doubleMajorId
+                        firstMajorId: req.user.firstMajorId,
+                        secondMajorId: req.user.secondMajorId
                     };
                     accessToken = jwt.sign(payload, jwtSecretKey, jwtOptions);
                     return res.cookie(
@@ -361,8 +361,8 @@ const userAuth = {
                     id      : exUser.id,
                     webMail : exUser.webMail,
                     type    : exUser.type,
-                    mainMajorId: exUser.mainMajorId,
-                    doubleMajorId: exUser.doubleMajorId
+                    firstMajorId: exUser.firstMajorId,
+                    secondMajorId: exUser.secondMajorId
                 };
                 accessToken = jwt.sign(payload, jwtSecretKey, jwtOptions);
                 return res.cookie(
@@ -429,10 +429,10 @@ const userInfo = {
                         attributes: ['isEmailAuthenticated']
                     },
                     {
-                        model: MainMajor
+                        model: FirstMajor
                     },
                     {
-                        model: DoubleMajor
+                        model: SecondMajor
                     },
                     { 
                         model: Post,
@@ -499,31 +499,31 @@ const userInfo = {
                     }
                 }
 
-                if (req.body.mainMajorId) {
-                    if (user.isMainMajorUpdated) {
+                if (req.body.firstMajorId) {
+                    if (user.isFirstMajorUpdated) {
                         return res.status(409).json(
                             {
                                 data   : "",
-                                message: "CONFLICT_MAIN_MAJOR"
+                                message: "CONFLICT_FIRST_MAJOR"
                             }
                         );
                     } else {
-                        user.isMainMajorUpdated = true
-                        user.mainMajorId        = req.body.mainMajorId;
+                        user.isFirstMajorpdated = true
+                        user.firstMajorId        = req.body.firstMajorId;
                     }
                 }
     
-                if (req.body.doubleMajorId) {
-                    if (user.isDoubleMajorUpdated) {
+                if (req.body.secondMajorId) {
+                    if (user.isSecondMajorUpdated) {
                         return res.status(409).json(
                             {
                                 data   : "",
-                                message: "CONFLICT_DOUBLE_MAJOR"
+                                message: "CONFLICT_SECOND_MAJOR"
                             }
                         );
                     } else {
-                        user.isDoubleMajorUpdated = true
-                        user.doubleMajorId        = req.body.doubleMajorId;
+                        user.isSecondMajorUpdated = true
+                        user.secondMajorId        = req.body.secondMajorId;
                     }
                 }
 

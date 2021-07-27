@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 
 
-module.exports = class DoubleMajor extends Sequelize.Model{
+module.exports = class SecondMajor extends Sequelize.Model{
     static init(sequelize) {
         return super.init({
             name: {
@@ -12,17 +12,16 @@ module.exports = class DoubleMajor extends Sequelize.Model{
             sequelize,
             timestamps: false,
             underscored: true,
-            modelName: 'DoubleMajor',
-            tableName: 'double_majors',
+            modelName: 'SecondMajor',
+            tableName: 'second_majors',
             paranoid: false,
             charset: 'utf8',
             collate: 'utf8_general_ci',
         });
-
-
     }
     static associate(db){
-        db.DoubleMajor.hasMany(db.User, { foreignKey: 'doubleMajorId', sourceKey: 'id'});
-        db.MainMajor.belongsTo(db.Campus, { foreignKey: 'campusId', targetKey: 'id' });
+        db.SecondMajor.hasMany(db.User, { foreignKey: 'secondMajorId', sourceKey: 'id'});
+        db.SecondMajor.belongsTo(db.Campus, { foreignKey: 'campusId', targetKey: 'id' });
+        db.SecondMajor.belongsTo(db.MajorCategory, { foreignKey: 'majorCategoryId', targetKey: 'id' });
     }
 }
