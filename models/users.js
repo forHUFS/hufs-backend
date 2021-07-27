@@ -36,11 +36,11 @@ module.exports = class User extends Sequelize.Model{
                 type: Sequelize.DATE(),
                 allowNull: true,
             },
-            isMainMajorUpdated :{
+            isFirstMajorUpdated :{
                 type: Sequelize.BOOLEAN,
                 defaultValue: false
             },
-            isDoubleMajorUpdated : {
+            isSecondMajorUpdated : {
                 type: Sequelize.BOOLEAN,
                 defaultValue: false
             },
@@ -76,7 +76,7 @@ module.exports = class User extends Sequelize.Model{
         db.User.hasMany(db.LikeRecordOfReply, { foreignKey: "userId", sourceKey: "id" });
         db.User.hasMany(db.ReportOfPost, { foreignKey: "userId", sourceKey: "id" });
         db.User.hasMany(db.ReportOfReply, { foreignKey: "userId", sourceKey: "id" });
-        db.User.belongsTo(db.MainMajor, { foreignKey: 'mainMajorId', targetKey: 'id' });
-        db.User.belongsTo(db.DoubleMajor, { foreignKey: 'doubleMajorId', targetKey: 'id' });
+        db.User.belongsTo(db.FirstMajor, { foreignKey: 'firstMajorId', targetKey: 'id' });
+        db.User.belongsTo(db.SecondMajor, { foreignKey: 'secondMajorId', targetKey: 'id' });
     }
 }

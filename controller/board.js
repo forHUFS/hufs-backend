@@ -1,13 +1,34 @@
 const Post = require('../models/posts');
 const Board = require('../models/boards');
 const Category = require('../models/categories');
+const FirstMajor = require('../models/firstMajors');
+const SecondMajor = require('../models/secondMajors');
 const { deleteImg } = require('../middlewares/upload');
-const { QueryTypes } = require('sequelize');
+const { QueryTypes, Op } = require('sequelize');
 const { authUtil } = require('../middlewares/auth');
 
 
 exports.readPosts = async (req,res,next)=>{
     try {
+        boad = await Board.findOne(
+            {
+                where: {title: req.params.title},
+                include: [{model: Category, attributes: ['title']}]
+            }
+        )
+
+        if (boards.Category.title === '학교해Boo') {
+            const firstMajor = FirstMajor.findOne({where: {id: req.user.firstMajorId}})
+            const secondMajor = SecondMajor.findOne({where: {id: req.user.secondMajorId}})
+            if (!(board.title === firstMajor.name) && !(board.title === secondMajor.name)) {
+                return res.status(403).json({
+                    data: "",
+                    message: "FORBIDDEN_MAJOR"
+                })
+            } 
+        }
+
+
         const posts = await Post.sequelize.query(
             `
                 SELECT posts.id AS "id",
@@ -31,7 +52,8 @@ exports.readPosts = async (req,res,next)=>{
             `,
             {type: QueryTypes.SELECT}
         );
-        res.status(200).json({
+
+        return res.status(200).json({
             data: posts,
             message: ""
         });

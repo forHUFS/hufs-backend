@@ -1,20 +1,40 @@
-const { Op }      = require('sequelize');
+const { Op }        = require('sequelize');
 
-const MainMajor   = require('../models/mainMajors');
-const DoubleMajor = require('../models/doubleMajors');
+const MajorCategory = require('../models/majorCategories');
+const FirstMajor    = require('../models/firstMajors');
+const SecondMajor   = require('../models/secondMajors');
 
 
 const majorController = {
-    getMainMajor: async(req, res) => {
+    getMajors: async(req, res) => {
         try {
-            const mainMajor = await MainMajor.findAll({where: {[Op.or]: [{campusId: req.query.campusId}, {campusId: 3}]}});
+            let majors;
+            if (req.query.type === 'first' && req.query.campusId) {
+                majors = await FirstMajor.findAll(
+                    {where: {[Op.or]: [{campusId: req.query.campusId}, {campusId: 3}]}}
+                )
+
+            } else if (req.query.type === 'second' && req.query.campusId) {
+                majors = await SecondMajor.findAll(
+                    {where: {[Op.or]: [{campusId: req.query.campusId}, {campusId: 3}]}}
+                )
+            } else {
+                majors = await MajorCategory.findAll(
+                    {
+                        include: [
+                            { model: SecondMajor , attributes: ['id', 'name']}
+                        ]
+                    }
+                )
+            }
 
             return res.status(200).json(
                 {
-                    data: mainMajor,
+                    data: majors,
                     message: ""
                 }
             );
+
         } catch (error) {
             console.log(error);
 
@@ -22,30 +42,8 @@ const majorController = {
                 {
                     data: "",
                     message: error
-                }
-            );
-        }
-    },
-    
-    getDoubleMajor: async(req, res) => {
-        try {
-            const doubleMajor = await DoubleMajor.findAll({where: {[Op.or]: [{campusId: req.query.campusId}, {campusId: 3}]}});
-
-            return res.status(200).json(
-                {
-                    data: doubleMajor,
-                    message: ""
                 }
             )
-        } catch (error) {
-            console.log(error);
-
-            return res.status(500).json(
-                {
-                    data: "",
-                    message: error
-                }
-            );
         }
     },
 
