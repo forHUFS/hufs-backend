@@ -15,8 +15,8 @@ const Reply       = require('../models/replies');
 const Token       = require('../models/tokens');
 const Scrap       = require('../models/scraps');
 const Directory   = require('../models/directories');
-const MainMajor   = require('../models/mainMajors');
-const DoubleMajor = require('../models/doubleMajors');
+const FirstMajor  = require('../models/firstMajors');
+const SecondMajor = require('../models/secondMajors');
 
 
 const emailAuth = {
@@ -115,9 +115,12 @@ const emailAuth = {
                         );
                         
                         const payload = {
+                            isOnBoarding: false,
                             id      : req.user.id,
                             webMail : req.user.webMail,
-                            type    : req.user.type
+                            type    : req.user.type,
+                            firstMajorId: req.user.firstMajorId,
+                            secondMajorId: req.user.secondMajorId
                         };
                         accessToken = jwt.sign(payload, jwtSecretKey, jwtOptions);
                         return res.cookie(
@@ -140,7 +143,6 @@ const emailAuth = {
                     )
                 }
             }
-            transporter.close()
         });
     },
 
@@ -185,9 +187,12 @@ const emailAuth = {
                     await Directory.create({userId: user.id})
 
                     const payload = {
+                        isOnBoarding: false,
                         id      : user.id,
                         email   : user.webMail,
-                        type    : user.type
+                        type    : user.type,
+                        firstMajorId: user.firstMajorId,
+                        secondMajorId: user.secondMajorId
                     };
                     accessToken = jwt.sign(payload, jwtSecretKey, jwtOptions);
 
@@ -239,18 +244,18 @@ const userAuth = {
                     );
                 }
             }
-            if (!req.body.mainMajorId) {
+            if (!req.body.firstMajorId) {
                 return res.status(422).json(
                     {
                         data: "",
-                        message: "BODY_MAIN_MAJOR"
+                        message: "BODY_FIRST_MAJOR"
                     }
                 )
-            } else if (!req.body.doubleMajorId) {
+            } else if (!req.body.secondMajorId) {
                 return res.status(422).json(
                     {
                         data: "",
-                        message: "BODY_DOUBLE_MAJOR"
+                        message: "BODY_SECOND_MAJOR"
                     }
                 )
             }
@@ -260,8 +265,8 @@ const userAuth = {
                     {
                         nickname: req.body.nickname,
                         webMail: webMail,
-                        mainMajorId: req.body.mainMajorId,
-                        doubleMajorId: req.body.doubleMajorId,
+                        firstMajorId: req.body.firstMajorId,
+                        secondMajorId: req.body.secondMajorId,
                         isAgreed: req.body.isAgreed
                     }
                 );
@@ -280,9 +285,12 @@ const userAuth = {
                     return next();
                 } else {
                     const payload = {
+                        isOnBoarding: true,
                         id      : req.user.id,
                         webMail : req.user.webMail,
-                        type    : req.user.type
+                        type    : req.user.type,
+                        firstMajorId: req.user.firstMajorId,
+                        secondMajorId: req.user.secondMajorId
                     };
                     accessToken = jwt.sign(payload, jwtSecretKey, jwtOptions);
                     return res.cookie(
@@ -346,12 +354,15 @@ const userAuth = {
                 `,
                 {type: QueryTypes.SELECT}
             );
-            console.log(exUser)
+
             if (exUser) {
                 const payload = {
+                    isOnBoarding: false,
                     id      : exUser.id,
                     webMail : exUser.webMail,
-                    type    : exUser.type
+                    type    : exUser.type,
+                    firstMajorId: exUser.firstMajorId,
+                    secondMajorId: exUser.secondMajorId
                 };
                 accessToken = jwt.sign(payload, jwtSecretKey, jwtOptions);
                 return res.cookie(
@@ -405,6 +416,7 @@ const userInfo = {
                     'nickName',
                     'phone',
                     'birth',
+                    'type'
                 ],
                 where: { id: req.user.id },
                 include: [
@@ -417,10 +429,10 @@ const userInfo = {
                         attributes: ['isEmailAuthenticated']
                     },
                     {
-                        model: MainMajor
+                        model: FirstMajor
                     },
                     {
-                        model: DoubleMajor
+                        model: SecondMajor
                     },
                     { 
                         model: Post,
@@ -487,31 +499,31 @@ const userInfo = {
                     }
                 }
 
-                if (req.body.mainMajorId) {
-                    if (user.isMainMajorUpdated) {
+                if (req.body.firstMajorId) {
+                    if (user.isFirstMajorUpdated) {
                         return res.status(409).json(
                             {
                                 data   : "",
-                                message: "CONFLICT_MAIN_MAJOR"
+                                message: "CONFLICT_FIRST_MAJOR"
                             }
                         );
                     } else {
-                        user.isMainMajorUpdated = true
-                        user.mainMajorId        = req.body.mainMajorId;
+                        user.isFirstMajorpdated = true
+                        user.firstMajorId        = req.body.firstMajorId;
                     }
                 }
     
-                if (req.body.doubleMajorId) {
-                    if (user.isDoubleMajorUpdated) {
+                if (req.body.secondMajorId) {
+                    if (user.isSecondMajorUpdated) {
                         return res.status(409).json(
                             {
                                 data   : "",
-                                message: "CONFLICT_DOUBLE_MAJOR"
+                                message: "CONFLICT_SECOND_MAJOR"
                             }
                         );
                     } else {
-                        user.isDoubleMajorUpdated = true
-                        user.doubleMajorId        = req.body.doubleMajorId;
+                        user.isSecondMajorUpdated = true
+                        user.secondMajorId        = req.body.secondMajorId;
                     }
                 }
 
