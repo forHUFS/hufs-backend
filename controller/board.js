@@ -61,6 +61,11 @@ exports.addPost = async (req,res,next)=> {
         } else if (board.Category.title === '학교해Boo') {
             const firstMajor = FirstMajor.findOne({where: {id: req.user.firstMajorId}})
             const secondMajor = SecondMajor.findOne({where: {id: req.user.secondMajorId}})
+
+            console.log(board)
+            console.log(firstMajor.name)
+            console.log(secondMajor.name)
+
             if (board.title !== firstMajor.name && board.title !== secondMajor.name) {
                 return res.status(403).json({
                     data: "",
