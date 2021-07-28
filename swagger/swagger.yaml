@@ -1169,7 +1169,6 @@ paths:
                 oneOf:
                   - $ref: "#/definitions/Forbidden-suspension-response"
                   - $ref: "#/definitions/Forbidden-before-response"
-                  - $ref: "#/definitions/Forbidden-major-response"
               examples:
                 suspended-user:
                   summary: 정지된 사용자
@@ -1181,11 +1180,7 @@ paths:
                   value:
                     data: ""
                     message: FORBIDDEN_BEFORE
-                major-forbidden-user:
-                  summary: 본인의 전공이 아닌 게시판 접근
-                  value:
-                    data: ""
-                    message: FORBIDDEN_MAJOR                                            
+                                          
     post:
       summary: 게시글 작성
       consumes: application/json
@@ -1246,6 +1241,7 @@ paths:
                 oneOf:
                   - $ref: "#/definitions/Forbidden-suspension-response"
                   - $ref: "#/definitions/Forbidden-before-response"
+                  - $ref: "#/definitions/Forbidden-major-response"
               examples:
                 suspended-user:
                   summary: 정지된 사용자
@@ -1257,6 +1253,11 @@ paths:
                   value:
                     data: ""
                     message: FORBIDDEN_BEFORE
+                major-forbidden-user:
+                  summary: 본인의 전공이 아닌 사용자
+                  value:
+                    data: ""
+                    message: FORBIDDEN_MAJOR                          
 
 
   /search:
