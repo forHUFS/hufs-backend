@@ -1012,7 +1012,7 @@ paths:
           schema:
             type: string
             example: first
-      response:
+      responses:
         200:
           description:
           content:

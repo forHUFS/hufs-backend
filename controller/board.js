@@ -10,7 +10,7 @@ const { authUtil } = require('../middlewares/auth');
 
 exports.readPosts = async (req,res,next)=>{
     try {
-        boad = await Board.findOne(
+        boards = await Board.findOne(
             {
                 where: {title: req.params.title},
                 include: [{model: Category, attributes: ['title']}]
