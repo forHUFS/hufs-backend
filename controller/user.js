@@ -347,7 +347,9 @@ const userAuth = {
             const [webMail, address] = req.body.email.split('@');
             const [ exUser ] = await User.sequelize.query(
                 `
-                    SELECT users.id AS id, web_mail as webMail, type
+                    SELECT users.id AS id, web_mail as webMail, type,
+                    first_major_id AS firstMajorId,
+                    second_major_id AS secondMajorId
                     FROM users 
                     LEFT JOIN providers ON users.id = providers.user_id
                     WHERE web_mail = '${webMail}' or (email = '${req.body.email}' and name = '${req.body.provider}')
