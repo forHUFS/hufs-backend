@@ -59,10 +59,10 @@ exports.addPost = async (req,res,next)=> {
         if (board.Category.title === '학교떠난Boo' && board.title !== '취창업공간-질문') {
             return await authUtil.isGraduated(req,res,next);
         } else if (board.Category.title === '학교해Boo') {
+            console.log(req.user)
             const firstMajor = FirstMajor.findOne({where: {id: req.user.firstMajorId}})
             const secondMajor = SecondMajor.findOne({where: {id: req.user.secondMajorId}})
 
-            console.log(board)
             console.log(firstMajor.name)
             console.log(secondMajor.name)
 
