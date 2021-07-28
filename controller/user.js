@@ -389,7 +389,7 @@ const userAuth = {
             return res.status(500).json(
                 {
                     data: "",
-                    message: error.messagae
+                    message: error.message
                 }
             )
         }
