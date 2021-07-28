@@ -59,7 +59,7 @@ exports.addPost = async (req,res,next)=> {
         if (board.Category.title === '학교떠난Boo' && board.title !== '취창업공간-질문') {
             return await authUtil.isGraduated(req,res,next);
         } else if (board.Category.title === '학교해Boo') {
-            const firstMajor = await irstMajor.findOne({where: {id: req.user.firstMajorId}});
+            const firstMajor = await FirstMajor.findOne({where: {id: req.user.firstMajorId}});
             const secondMajor = await SecondMajor.findOne({where: {id: req.user.secondMajorId}});
         
             if (board.title !== firstMajor.name && board.title !== secondMajor.name) {
