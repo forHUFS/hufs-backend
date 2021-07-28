@@ -10,14 +10,14 @@ const { authUtil } = require('../middlewares/auth');
 
 exports.readPosts = async (req,res,next)=>{
     try {
-        boards = await Board.findOne(
+        const board = await Board.findOne(
             {
                 where: {title: req.params.title},
                 include: [{model: Category, attributes: ['title']}]
             }
         )
 
-        if (boards.Category.title === '학교해Boo') {
+        if (board.Category.title === '학교해Boo') {
             const firstMajor = FirstMajor.findOne({where: {id: req.user.firstMajorId}})
             const secondMajor = SecondMajor.findOne({where: {id: req.user.secondMajorId}})
             if (!(board.title === firstMajor.name) && !(board.title === secondMajor.name)) {
@@ -27,7 +27,6 @@ exports.readPosts = async (req,res,next)=>{
                 })
             } 
         }
-
 
         const posts = await Post.sequelize.query(
             `
